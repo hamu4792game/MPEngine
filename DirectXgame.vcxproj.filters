@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Engine\Camera\Camera.cpp">
+      <Filter>Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Base\CommandDirectX.cpp">
+      <Filter>Engine\CommandDirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\AudioInput\AudioInput.cpp">
+      <Filter>Engine\Input\AudioInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\KeyInput\KeyInput.cpp">
+      <Filter>Engine\Input\KeyInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Manager\AudioManager\AudioManager.cpp">
+      <Filter>Engine\Manager\AudioManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Manager\ShaderManager.cpp">
+      <Filter>Engine\Manager\ShaderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Manager\TextureManager.cpp">
+      <Filter>Engine\Manager\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Model.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Texture2D.cpp">
+      <Filter>Engine\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Base\WinApp.cpp">
+      <Filter>Engine\WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp">
+      <Filter>Engine\WorldTransform</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Camera\DebugCamera\DebugCamera.cpp">
+      <Filter>Engine\Camera\DebugCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Base\GraphicsPipeline\GraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Matrix4x4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector2.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector3.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameScene\GameScene.cpp">
+      <Filter>Game\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ground\Ground.cpp">
+      <Filter>Game\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Easing\Ease.cpp">
+      <Filter>Engine\Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Skydome\Skydome.cpp">
+      <Filter>Game\Skydome</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\TimeBaseLoopExecuter\TimeBaseLoopExecuter.cpp">
+      <Filter>Engine\TimeBaseLoopExecuter</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engine\Camera\Camera.h">
+      <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\CommandDirectX.h">
+      <Filter>Engine\CommandDirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Easing\Easing.h">
+      <Filter>Engine\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\AudioInput\AudioInput.h">
+      <Filter>Engine\Input\AudioInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\KeyInput\KeyInput.h">
+      <Filter>Engine\Input\KeyInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Manager\AudioManager\AudioManager.h">
+      <Filter>Engine\Manager\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Manager\ShaderManager.h">
+      <Filter>Engine\Manager\ShaderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Manager\TextureManager.h">
+      <Filter>Engine\Manager\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Model.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Texture2D.h">
+      <Filter>Engine\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\WinApp.h">
+      <Filter>Engine\WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\WorldTransform\WorldTransform.h">
+      <Filter>Engine\WorldTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\ConstantBuffer.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Camera\DebugCamera\DebugCamera.h">
+      <Filter>Engine\Camera\DebugCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\GraphicsPipeline\GraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Log.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Matrix4x4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector4.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector3.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector2.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameScene\GameScene.h">
+      <Filter>Game\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Ground\Ground.h">
+      <Filter>Game\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Easing\Ease.h">
+      <Filter>Engine\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Skydome\Skydome.h">
+      <Filter>Game\Skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\TimeBaseLoopExecuter\TimeBaseLoopExecuter.h">
+      <Filter>Engine\TimeBaseLoopExecuter</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{ea1512f0-ff0a-41b5-abc5-079d70e17f3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Camera">
+      <UniqueIdentifier>{7ce7437c-302c-4262-9012-56d66ed28e78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\CommandDirectX">
+      <UniqueIdentifier>{b2a4589a-495d-45de-b3f2-4ec39a8f663c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Easing">
+      <UniqueIdentifier>{f962be3c-f413-4205-866c-0698393c6f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{26705c6f-8cb3-433f-a582-7c02d9ca7a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input\AudioInput">
+      <UniqueIdentifier>{012c4740-422f-4b0f-9d1b-42be4da72041}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input\KeyInput">
+      <UniqueIdentifier>{93413b76-0ab5-4063-a46e-339a3ad6b674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager">
+      <UniqueIdentifier>{8582e121-b2e5-43b6-a988-f2b417b9143a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager\AudioManager">
+      <UniqueIdentifier>{9b23d19a-124d-4c12-9b38-106d9b4e7590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager\ShaderManager">
+      <UniqueIdentifier>{4d18751a-1689-47c8-8783-acb427318f4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager\TextureManager">
+      <UniqueIdentifier>{15d90bdf-5fc6-48a7-8ca8-fd7ebc4b7346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Model">
+      <UniqueIdentifier>{e96bed89-f1fc-4f25-b651-dda88c242102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Texture">
+      <UniqueIdentifier>{6383f2ed-4d38-4943-b887-e51f86a2de9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\WinApp">
+      <UniqueIdentifier>{d479967e-da47-4259-aafc-7f4c20691499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\WorldTransform">
+      <UniqueIdentifier>{e87d1099-f085-4574-881c-32bb991baebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Camera\DebugCamera">
+      <UniqueIdentifier>{cfb571e1-9cde-49dc-ba97-bb0639074471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GraphicsPipeline">
+      <UniqueIdentifier>{e5f2fc00-9aea-45be-997b-e33e61adfe44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{9c32842a-616d-47b7-a1fd-84702f61b1cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{1bc5df33-c290-41ee-b4db-b9f6b0d0758c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{3ba9cce2-d55c-4668-9f9d-4fd5d463027b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GameScene">
+      <UniqueIdentifier>{f2714010-80f6-4a11-8576-2117702fd88e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Ground">
+      <UniqueIdentifier>{cc10d3d5-f517-46c1-8689-f9886c7bf5d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Skydome">
+      <UniqueIdentifier>{98e905e7-226c-42f7-8f4f-b6dfa157f94f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\TimeBaseLoopExecuter">
+      <UniqueIdentifier>{c6624870-76a9-40a9-98f5-f85f997b9828}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="externals\imgui\LICENSE.txt">
+      <Filter>imgui</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXgame.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\icon.ico" />
+  </ItemGroup>
+</Project>
