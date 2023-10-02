@@ -22,7 +22,7 @@ void GameScene::Initialize()
 	oldscene = Scene::RESULT;
 
 	hud = std::make_unique<Texture2D>();
-	hud->Texture("Resources/hud/titleText.png", "./Shader/Texture2D.VS.hlsl", "./Shader/Texture2D.PS.hlsl");
+	hud->Texture("Resources/hud/titleText.png", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
 
 }
@@ -31,10 +31,10 @@ void GameScene::Update()
 {
 #ifdef _DEBUG
 	ImGui::Begin("camera");
-	ImGui::DragFloat3("translate", &hudTrans.translation_.x, 1.0f);
-	ImGui::DragFloat3("scale", &hudTrans.scale_.x, 0.1f);
+	//ImGui::DragFloat3("translate", &hudTrans.translation_.x, 1.0f);
+	//ImGui::DragFloat3("scale", &hudTrans.scale_.x, 0.1f);
 	ImGui::End();
-#endif // _DEBUG
+#endif DEBUG
 
 	
 
