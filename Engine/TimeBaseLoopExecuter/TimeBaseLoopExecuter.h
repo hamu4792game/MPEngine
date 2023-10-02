@@ -26,13 +26,5 @@ private:
 	LARGE_INTEGER mTimeEnd;
 	//計測周波数
 	LARGE_INTEGER mTimeFreq;
-
-#ifdef _DEBUG
-public:
-private:
-	int mFrameCount = 0;
-	int mDebugCount = 10;
-#endif // _DEBUG
-
 };
 

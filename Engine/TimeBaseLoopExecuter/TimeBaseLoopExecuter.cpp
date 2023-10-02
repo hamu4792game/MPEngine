@@ -11,7 +11,7 @@ double TimeBaseLoopExecuter::TimeAdjustment()
 	if (frameTime < FRAME_TIME)
 	{
 		//Sleepの時間を計算
-		DWORD sleepTime = static_cast<DWORD>((FRAME_TIME - frameTime) * 1000);
+		DWORD sleepTime = static_cast<DWORD>((FRAME_TIME - frameTime) * 1000.0);
 		timeBeginPeriod(1);
 		//寝る
 		Sleep(sleepTime);
@@ -19,20 +19,8 @@ double TimeBaseLoopExecuter::TimeAdjustment()
 	}
 	fps = 1 / frameTime;
 
-	//FPSを出力窓に出す
-#ifdef _DEBUG
-#ifdef UNICODE
-		std::wstringstream stream;
-#else
-		std::stringstream stream;
-#endif
-		mFrameCount++;
-		if (mFrameCount % mDebugCount == 0)
-		{
-			stream << std::to_string(fps).c_str() << " FPS" << std::endl;
-			OutputDebugString(stream.str().c_str());
-		}
-#endif // _DEBUG
+	//代入大事
 	mTimeStart = mTimeEnd;
+	
 	return fps;
 }
