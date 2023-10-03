@@ -40,6 +40,11 @@ private:
 	std::unique_ptr<Texture2D> hud;
 	WorldTransform hudTrans;
 
+	std::unique_ptr<Model> fence1;
+	std::unique_ptr<Model> fence2;
+	WorldTransform fenceTrans1;
+	WorldTransform fenceTrans2;
+
 public:
 
 	void Initialize();
