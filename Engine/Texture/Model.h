@@ -24,13 +24,14 @@ public:
 
 	ModelData modelData;
 
-	ID3D12DescriptorHeap* SRVHeap = nullptr;
+	//ID3D12DescriptorHeap* SRVHeap = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SRVHeap = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-private:
+protected:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource[1] = {};
 
@@ -44,8 +45,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
 	//	DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので、ShaderVisibleはfalse
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = nullptr;
-
-private:
 
 public:
 	

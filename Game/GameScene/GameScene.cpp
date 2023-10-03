@@ -25,14 +25,18 @@ void GameScene::Initialize()
 	hud = std::make_unique<Texture2D>();
 	hud->Texture("Resources/hud/titleText.png", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
-	fence1 = std::make_unique<Model>();
+	fence1 = std::make_unique<Particle>();
 	fence2 = std::make_unique<Model>();
-	fence1->Texture("Resources/fence/fence.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	fence1->Texture("Resources/plane/plane.obj", "./Resources/Shader/Particle.VS.hlsl", "./Resources/Shader/Particle.PS.hlsl", 10);
 	fence2->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
 	//fenceTrans2.rotation_.x = AngleToRadian(-90.0f);
-	fenceTrans1.rotation_.x = 0.6f;
-	fenceTrans1.rotation_.y = 3.0f;
+	for (uint8_t i = 0; i < 10; i++)
+	{
+		fenceTrans1[i].translation_ = Vector3(10.0f * i, 10.0f * i, 0.0f);
+		fenceTrans1[i].rotation_ = Vector3(0.6f, 3.0f, 0.0f);
+		fenceTrans1[i].UpdateMatrix();
+	}
 
 }
 
@@ -42,8 +46,8 @@ void GameScene::Update()
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("translate", &camera->transform.translation_.x, 1.0f);
 	ImGui::DragFloat3("scale", &camera->transform.scale_.x, 0.1f);
-	ImGui::DragFloat3("transform", &fenceTrans1.rotation_.x, 0.1f);
-	ImGui::DragFloat3("transform2", &fenceTrans1.scale_.x, 0.1f);
+	//ImGui::DragFloat3("transform", &fenceTrans1.rotation_.x, 0.1f);
+	//ImGui::DragFloat3("transform2", &fenceTrans1.scale_.x, 0.1f);
 	ImGui::End();
 #endif DEBUG
 
@@ -79,7 +83,9 @@ void GameScene::Update()
 
 
 	hudTrans.UpdateMatrix();
-	fenceTrans1.UpdateMatrix();
+	for (auto& i : fenceTrans1) {
+		i.UpdateMatrix();
+	}
 	fenceTrans2.UpdateMatrix();
 	
 	//	カメラ行列の更新
@@ -113,8 +119,10 @@ void GameScene::Draw()
 		break;
 	}
 
-	Model::ModelDraw(fenceTrans1, viewProjectionMatrix, 0xffffffff, fence1.get());
-	//Model::ModelDraw(fenceTrans2, viewProjectionMatrix, 0xffffffff, fence2.get());
+	//Model::ModelDraw(fenceTrans1, viewProjectionMatrix, 0xffffffff, fence1.get());
+	Particle::ParticleDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence1.get());
+
+	//Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence2.get());
 
 	//Texture2D::TextureDraw(hudTrans, viewProjectionMatrix2d, 0xffffffff, hud.get());
 

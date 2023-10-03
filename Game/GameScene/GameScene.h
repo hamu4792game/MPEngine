@@ -6,6 +6,7 @@
 #include "Engine/Input/AudioInput/AudioInput.h"
 
 #include "Engine/WorldTransform/WorldTransform.h"
+#include "Engine/Texture/Particle/Particle.h"
 
 class GameScene
 {
@@ -40,9 +41,9 @@ private:
 	std::unique_ptr<Texture2D> hud;
 	WorldTransform hudTrans;
 
-	std::unique_ptr<Model> fence1;
+	std::unique_ptr<Particle> fence1;
 	std::unique_ptr<Model> fence2;
-	WorldTransform fenceTrans1;
+	WorldTransform fenceTrans1[10];
 	WorldTransform fenceTrans2;
 
 public:

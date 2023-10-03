@@ -38,7 +38,7 @@ void Engine::Initialize(const char* title, int width, int height)
 	winApp = WinApp::GetInstance();
 	winApp->CreateGameWindow(ConvertString(title).c_str(), Engine::GetInstance()->WindowWidth, Engine::GetInstance()->WindowHeight);
 
-#ifdef _Debug
+#ifdef _DEBUG
 	//	デバッグレイヤー
 	DebugLayer();
 #endif

@@ -6,7 +6,7 @@ class Matrix4x4
 {
 public:
 	Matrix4x4();
-	~Matrix4x4();
+	~Matrix4x4() = default;
 
 public:
 	//	mの多重配列 固定長配列
