@@ -122,7 +122,7 @@ void Particle::CreateVertexResource()
 
 void Particle::ParticleDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* model)
 {
-	*worldTransform.cMat = worldTransform.worldMatrix * viewProjectionMat;
+	//*worldTransform.cMat = worldTransform.worldMatrix * viewProjectionMat;
 	*worldTransform.cColor = ChangeColor(color);
 
 	//	書き込むためのアドレスを取得
@@ -144,7 +144,7 @@ void Particle::ParticleDraw(WorldTransform& worldTransform, const Matrix4x4& vie
 
 	Engine::GetList()->SetDescriptorHeaps(1, model->SRVHeap.GetAddressOf());
 	Engine::GetList()->SetGraphicsRootDescriptorTable(0, model->textureSrvHandleGPU);
-	//Engine::GetList()->SetGraphicsRootDescriptorTable(1, model->instancingSrvHandleGPU);
+	//Engine::GetList()->SetGraphicsRootDescriptorTable(0, model->instancingSrvHandleGPU);
 
 	//Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cMat.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cColor.GetGPUVirtualAddress());

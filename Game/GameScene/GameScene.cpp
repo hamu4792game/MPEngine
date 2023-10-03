@@ -22,13 +22,13 @@ void GameScene::Initialize()
 	scene = Scene::TITLE;
 	oldscene = Scene::RESULT;
 
-	hud = std::make_unique<Texture2D>();
-	hud->Texture("Resources/hud/titleText.png", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	//hud = std::make_unique<Texture2D>();
+	//hud->Texture("Resources/hud/titleText.png", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
 	fence1 = std::make_unique<Particle>();
-	fence2 = std::make_unique<Model>();
+	//fence2 = std::make_unique<Model>();
 	fence1->Texture("Resources/plane/plane.obj", "./Resources/Shader/Particle.VS.hlsl", "./Resources/Shader/Particle.PS.hlsl", 10);
-	fence2->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	//fence2->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
 	//fenceTrans2.rotation_.x = AngleToRadian(-90.0f);
 	for (uint8_t i = 0; i < 10; i++)
@@ -77,16 +77,10 @@ void GameScene::Update()
 		break;
 	}
 
-	if (KeyInput::PushKey(DIK_SPACE)) {
-		hud->SetAnchorPoint(Texture2D::AnchorPoint::LeftTop);
-	}
-
-
-	hudTrans.UpdateMatrix();
+	
 	for (auto& i : fenceTrans1) {
 		i.UpdateMatrix();
 	}
-	fenceTrans2.UpdateMatrix();
 	
 	//	カメラ行列の更新
 	viewProjectionMatrix = camera->GetViewProMat();

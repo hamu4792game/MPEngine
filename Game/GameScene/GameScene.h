@@ -38,13 +38,13 @@ private:
 
 	//	シーン用インスタンス
 
-	std::unique_ptr<Texture2D> hud;
-	WorldTransform hudTrans;
+	//std::unique_ptr<Texture2D> hud;
+	//WorldTransform hudTrans;
 
 	std::unique_ptr<Particle> fence1;
-	std::unique_ptr<Model> fence2;
+	//std::unique_ptr<Model> fence2;
 	WorldTransform fenceTrans1[10];
-	WorldTransform fenceTrans2;
+	//WorldTransform fenceTrans2;
 
 public:
 
