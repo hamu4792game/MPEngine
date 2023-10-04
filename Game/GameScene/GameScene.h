@@ -43,7 +43,7 @@ private:
 
 	std::unique_ptr<Particle> fence1;
 	//std::unique_ptr<Model> fence2;
-	WorldTransform fenceTrans1[1];
+	WorldTransform fenceTrans1[5];
 	//WorldTransform fenceTrans2;
 
 public:

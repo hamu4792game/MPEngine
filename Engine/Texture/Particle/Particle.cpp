@@ -16,6 +16,8 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 	//	個数の設定
 	kNumInstance = num;
 
+	CreateInstancingResource();
+
 	//	モデルのロードとデスクリプタヒープの生成
 	CreateDescriptor(filePath);
 
@@ -24,8 +26,6 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 	pixelShader = ShaderManager::GetInstance()->CompileShader(ConvertString(psFileName), L"ps_6_0");
 	//pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
 	GraphicsPipeline::GetInstance()->pixelShader = pixelShader;
-
-	CreateInstancingResource();
 
 	//	頂点データの生成
 	CreateVertexResource();
@@ -129,17 +129,17 @@ void Particle::CreateVertexResource()
 
 }
 
-void Particle::ParticleDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* model)
+void Particle::ParticleDraw(WorldTransform* worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* model)
 {
 	//*worldTransform.cMat = worldTransform.worldMatrix * viewProjectionMat;
-	*worldTransform.cColor = ChangeColor(color);
+	*worldTransform[0].cColor = ChangeColor(color);
 
 	//	書き込むためのアドレスを取得
 	Matrix4x4* instancingData = nullptr;
 	model->instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
 	//	念のため単位行列を書き込んでおく
 	for (uint8_t i = 0; i < model->kNumInstance; i++) {
-		instancingData[i] = worldTransform.worldMatrix * viewProjectionMat;
+		instancingData[i] = worldTransform[i].worldMatrix * viewProjectionMat;
 	}
 	model->instancingResource->Unmap(0, nullptr);
 
@@ -156,8 +156,8 @@ void Particle::ParticleDraw(WorldTransform& worldTransform, const Matrix4x4& vie
 	//Engine::GetList()->SetGraphicsRootDescriptorTable(0, model->instancingSrvHandleGPU);
 
 	//Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cMat.GetGPUVirtualAddress());
-	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cColor.GetGPUVirtualAddress());
-	Engine::GetList()->SetGraphicsRootConstantBufferView(2, worldTransform.cMono.GetGPUVirtualAddress());
+	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform[0].cColor.GetGPUVirtualAddress());
+	Engine::GetList()->SetGraphicsRootConstantBufferView(2, worldTransform[0].cMono.GetGPUVirtualAddress());
 
 	Engine::GetList()->DrawInstanced(UINT(model->modelData.vertices.size()), model->kNumInstance, 0, 0);
 }

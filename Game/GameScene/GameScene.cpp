@@ -27,13 +27,13 @@ void GameScene::Initialize()
 
 	fence1 = std::make_unique<Particle>();
 	//fence2 = std::make_unique<Model>();
-	fence1->Texture("Resources/plane/plane.obj", "./Resources/Shader/Particle.VS.hlsl", "./Resources/Shader/Particle.PS.hlsl", 1);
+	fence1->Texture("Resources/plane/plane.obj", "./Resources/Shader/Particle.VS.hlsl", "./Resources/Shader/Particle.PS.hlsl", 5);
 	//fence1->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
 	//fenceTrans2.rotation_.x = AngleToRadian(-90.0f);
-	for (uint8_t i = 0; i < 1; i++)
+	for (uint8_t i = 0; i < 5; i++)
 	{
-		fenceTrans1[i].translation_ = Vector3(10.0f * i, 10.0f * i, 0.0f);
+		fenceTrans1[i].translation_ = Vector3(0.1f * i, 0.0f, 0.0f);
 		fenceTrans1[i].rotation_ = Vector3(0.6f, 3.0f, 0.0f);
 		fenceTrans1[i].UpdateMatrix();
 	}
@@ -114,7 +114,7 @@ void GameScene::Draw()
 	}
 
 	//Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence1.get());
-	Particle::ParticleDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence1.get());
+	Particle::ParticleDraw(fenceTrans1, viewProjectionMatrix, 0xffffffff, fence1.get());
 
 	//Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence2.get());
 

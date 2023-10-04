@@ -29,6 +29,6 @@ private:
 	//void CreateDescriptor(const std::string& filePath, const std::string& texturePath);
 
 public:
-	static void ParticleDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* model);
+	static void ParticleDraw(WorldTransform* worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* model);
 
 };
