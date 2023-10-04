@@ -22,7 +22,7 @@ void Texture2D::Finalize()
 
 void Texture2D::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName)
 {
-	blend = BlendMode::Normal;
+	//blend = BlendMode::Normal;
 
 	CreateDescriptor(filePath);
 
@@ -240,9 +240,9 @@ void Texture2D::TextureDraw(WorldTransform& worldTransform, const Matrix4x4& vie
 	Engine::GetList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
-void Texture2D::SetBlend(BlendMode blend_)
-{
-	blend = blend_;
-	//CreateGraphicsPipeline();
-}
+//void Texture2D::SetBlend(BlendMode blend_)
+//{
+//	blend = blend_;
+//	//CreateGraphicsPipeline();
+//}
 

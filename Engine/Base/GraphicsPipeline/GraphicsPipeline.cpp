@@ -7,21 +7,21 @@
 //decltype(GraphicsPipeline::graphicsPipelineState) GraphicsPipeline::graphicsPipelineState;
 decltype(GraphicsPipeline::SRVHeap) GraphicsPipeline::SRVHeap;
 
-GraphicsPipeline* GraphicsPipeline::GetInstance()
-{
+GraphicsPipeline::GraphicsPipeline() {
+	
+}
+
+GraphicsPipeline* GraphicsPipeline::GetInstance() {
 	static GraphicsPipeline Instance;
 	return &Instance;
 }
 
-Microsoft::WRL::ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline()
-{
-	if (graphicsPipelineState) {
-		return graphicsPipelineState;
+Microsoft::WRL::ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(BlendMode blendType) {
+	if (graphicsPipelineState[static_cast<int>(blendType)]) {
+		return graphicsPipelineState[static_cast<int>(blendType)];
 	}
 	else {
-		graphicsPipelineState = nullptr;
-
-
+		graphicsPipelineState[static_cast<int>(blendType)] = nullptr;
 
 #pragma region InputLayout
 
@@ -53,10 +53,53 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipe
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 
-		blendDesc.RenderTarget[0].BlendEnable = true;
-		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		switch (blendType) {
+		case BlendMode::None:
+			blendDesc.RenderTarget[0].BlendEnable = false;
+			break;
+		case BlendMode::Normal:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+			break;
+		case BlendMode::Add:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			break;
+		case BlendMode::Subtract:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_SUBTRACT;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			break;
+		case BlendMode::Multily:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+			break;
+		case BlendMode::Screen:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			break;
+		case BlendMode::Dark:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_MIN;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			break;
+		case BlendMode::Light:
+			blendDesc.RenderTarget[0].BlendEnable = true;
+			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_MAX;
+			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+			break;
+		}
 
 #pragma endregion
 
@@ -112,10 +155,10 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipe
 #pragma endregion
 
 		//	実際に生成
-		HRESULT hr = Engine::GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
+		HRESULT hr = Engine::GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState[static_cast<int>(blendType)]));
 		assert(SUCCEEDED(hr));
 
-		return graphicsPipelineState;
+		return graphicsPipelineState[static_cast<int>(blendType)];
 	}
 }
 
@@ -130,25 +173,6 @@ Microsoft::WRL::ComPtr<ID3D12RootSignature> GraphicsPipeline::CreateRootSignatur
 	//	ルートシグネチャーの作成
 	D3D12_ROOT_SIGNATURE_DESC sigDesc{};
 	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-	//D3D12_DESCRIPTOR_RANGE range[2] = {};
-	//range[0].BaseShaderRegister = 0;
-	//range[0].NumDescriptors = 1;	//	必要な数
-	//range[0].RegisterSpace = 0;
-	//range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	//range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-	//
-	//range[1].BaseShaderRegister = 0;
-	//range[1].NumDescriptors = 3;	//	必要な数
-	//range[1].RegisterSpace = 0;
-	//range[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	//range[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	//D3D12_ROOT_PARAMETER rootParameter[1] = {};
-	//rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	//rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	//rootParameter[0].DescriptorTable.pDescriptorRanges = range;
-	//rootParameter[0].DescriptorTable.NumDescriptorRanges = _countof(range);
 
 	sigDesc.pParameters = rootParameter;
 	sigDesc.NumParameters = num;

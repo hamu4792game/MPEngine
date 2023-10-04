@@ -12,7 +12,9 @@
 #include "math/Matrix4x4.h"
 #include "Engine/Manager/TextureManager.h"
 #include <wrl.h>
-#include <Engine/WorldTransform/WorldTransform.h>
+#include "Engine/WorldTransform/WorldTransform.h"
+#include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
+
 
 class Model
 {
@@ -21,10 +23,11 @@ public:
 	~Model();
 
 public:
-
+	//	モデルデータ構造体
 	ModelData modelData;
+	//	ブレンドモード用タイプ変数
+	BlendMode blendType = BlendMode::Normal;
 
-	//ID3D12DescriptorHeap* SRVHeap = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SRVHeap = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;

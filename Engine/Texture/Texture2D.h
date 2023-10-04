@@ -12,19 +12,6 @@
 #include "math/Matrix4x4.h"
 #include "Engine/WorldTransform/WorldTransform.h"
 
-
-// ブレンドモード
-enum BlendMode {
-	None,   //!< ブレンドなし
-	Normal, //!< 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
-	Add,    //!< 加算。Src * SrcA + Dest * 1
-	Subtract, //!< 減算。Dest * 1 - Src * SrcA
-	Multily,  //!< 乗算。Src * 0 + Dest * Src
-	Screen,   //!< スクリーン。Src * (1 - Dest) + Dest * 1
-	Dark,	//	比較暗
-	Light,	//	比較明
-};
-
 class Texture2D
 {
 public:
@@ -87,8 +74,8 @@ public:
 
 	static void TextureDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Texture2D* texture);
 
-	BlendMode blend = BlendMode::Normal;
-	void SetBlend(BlendMode blend_);
+	//BlendMode blend = BlendMode::Normal;
+	//void SetBlend(BlendMode blend_);
 	
 
 

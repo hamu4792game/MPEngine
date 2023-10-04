@@ -144,7 +144,8 @@ void Particle::ParticleDraw(WorldTransform* worldTransform, const Matrix4x4& vie
 	model->instancingResource->Unmap(0, nullptr);
 
 	Engine::GetList()->SetGraphicsRootSignature(model->rootSignature.Get());
-	Engine::GetList()->SetPipelineState(model->graphicsPipelineState.Get());
+	//Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->graphicsPipelineState[static_cast<int>(model->blendType)].Get());
+	Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(model->blendType).Get());
 	// インデックスを使わずに四角形以上を書くときは
 	// 個々の設定はD3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 	// インデックスを使うときは D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST

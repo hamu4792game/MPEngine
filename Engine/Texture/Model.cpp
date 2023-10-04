@@ -4,8 +4,6 @@
 
 #include "externals/imgui/imgui.h"
 
-#include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
-
 //	便利なtmpみたいなやつ
 //decltype(Model::rootSignature) Model::rootSignature;
 //decltype(Model::graphicsPipelineState) Model::graphicsPipelineState;
@@ -72,7 +70,7 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline();
+	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(blendType);
 }
 
 void Model::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& texturePath)
@@ -117,7 +115,7 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline();
+	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(blendType);
 }
 
 void Model::CreateDescriptor(const std::string& filePath)
@@ -204,7 +202,7 @@ void Model::ModelDraw(WorldTransform& worldTransform, const Matrix4x4& viewProje
 	//*cMat = worldTransform.worldMatrix * viewProjectionMat;
 
 	Engine::GetList()->SetGraphicsRootSignature(model->rootSignature.Get());
-	Engine::GetList()->SetPipelineState(model->graphicsPipelineState.Get());
+	Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->graphicsPipelineState[static_cast<int>(model->blendType)].Get());
 	// インデックスを使わずに四角形以上を書くときは
 	// 個々の設定はD3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 	// インデックスを使うときは D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST

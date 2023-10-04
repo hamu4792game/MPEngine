@@ -37,6 +37,7 @@ void GameScene::Initialize()
 		fenceTrans1[i].rotation_ = Vector3(0.6f, 3.0f, 0.0f);
 		fenceTrans1[i].UpdateMatrix();
 	}
+	fence1->blendType = BlendMode::Screen;
 
 }
 
@@ -77,6 +78,9 @@ void GameScene::Update()
 		break;
 	}
 
+	if (KeyInput::PushKey(DIK_SPACE)) {
+		fence1->blendType = BlendMode::Multily;
+	}
 	
 	for (auto& i : fenceTrans1) {
 		i.UpdateMatrix();
