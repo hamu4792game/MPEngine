@@ -186,6 +186,7 @@ void CommandDirectX::Finalize()
 	commandQueue->Release();
 	useAdapter->Release();
 	dxgiFactory->Release();
+	depthStencilResource->Release();
 }
 
 void CommandDirectX::CreateFactry()

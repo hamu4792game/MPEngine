@@ -18,7 +18,7 @@ class Model
 {
 public:
 	Model() = default;
-	~Model() = default;
+	~Model();
 
 public:
 

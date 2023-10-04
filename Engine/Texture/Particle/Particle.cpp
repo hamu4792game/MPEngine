@@ -2,6 +2,15 @@
 #include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
 
 
+Particle::~Particle()
+{
+	if (instancingResource) {
+		instancingResource->Release();
+		instancingResource.Reset();
+	}
+	
+}
+
 void Particle::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, uint16_t num)
 {
 	//	個数の設定
@@ -24,7 +33,7 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 	D3D12_DESCRIPTOR_RANGE range[1] = {};
 	range[0].BaseShaderRegister = 0;
 	range[0].NumDescriptors = 2;	//	必要な数
-	range[0].RegisterSpace = 0;
+	//range[0].RegisterSpace = 0;
 	range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -96,7 +105,7 @@ void Particle::CreateDescriptor(const std::string& filePath)
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(Matrix4x4);
 	//
 	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(SRVHeap.Get(), Engine::GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 1);
-	instancingSrvHandleGPU = GetGPUDescriptorHandle(SRVHeap.Get(), Engine::GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 1);
+	//instancingSrvHandleGPU = GetGPUDescriptorHandle(SRVHeap.Get(), Engine::GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 1);
 	Engine::GetDevice()->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
 }
 

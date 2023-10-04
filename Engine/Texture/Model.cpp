@@ -10,6 +10,26 @@
 //decltype(Model::rootSignature) Model::rootSignature;
 //decltype(Model::graphicsPipelineState) Model::graphicsPipelineState;
 
+Model::~Model() {
+	
+	if (SRVHeap) {
+		SRVHeap->Release();
+		SRVHeap.Reset();
+	}
+	if (depthStencilResource) {
+		depthStencilResource->Release();
+		depthStencilResource.Reset();
+	}
+	if (vertexResource) {
+		vertexResource->Release();
+		vertexResource.Reset();
+	}
+	if (resource[0]) {
+		resource[0]->Release();
+		resource[0].Reset();
+	}
+}
+
 void Model::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName)
 {
 	//	モデルのロードとデスクリプタヒープの生成
@@ -191,7 +211,7 @@ void Model::ModelDraw(WorldTransform& worldTransform, const Matrix4x4& viewProje
 	Engine::GetList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	Engine::GetList()->IASetVertexBuffers(0, 1, &model->vertexBufferView);
 
-	Engine::GetList()->SetDescriptorHeaps(1, &model->SRVHeap);
+	Engine::GetList()->SetDescriptorHeaps(1, model->SRVHeap.GetAddressOf());
 	Engine::GetList()->SetGraphicsRootDescriptorTable(0, model->textureSrvHandleGPU);
 
 	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cMat.GetGPUVirtualAddress());

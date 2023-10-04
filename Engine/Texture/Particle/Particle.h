@@ -4,7 +4,7 @@
 class Particle : public Model {
 public:
 	Particle() = default;
-	~Particle() = default;
+	~Particle();
 private:
 	uint16_t kNumInstance = 1;
 	// Instancing用のリソースを作る
