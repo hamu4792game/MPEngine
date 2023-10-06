@@ -8,7 +8,14 @@ Particle::~Particle()
 		instancingResource->Release();
 		instancingResource.Reset();
 	}
-	
+	if (rootSignature) {
+		rootSignature->Release();
+		rootSignature.Reset();
+	}
+	if (graphicsPipelineState) {
+		graphicsPipelineState->Release();
+		graphicsPipelineState.Reset();
+	}
 }
 
 void Particle::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, uint16_t num)
@@ -53,7 +60,7 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 3);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline();
+	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), blendType);
 }
 
 void Particle::CreateInstancingResource()
@@ -129,37 +136,37 @@ void Particle::CreateVertexResource()
 
 }
 
-void Particle::ParticleDraw(WorldTransform* worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* model)
+void Particle::ParticleDraw(WorldTransform* worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Particle* particle)
 {
 	//*worldTransform.cMat = worldTransform.worldMatrix * viewProjectionMat;
 	*worldTransform[0].cColor = ChangeColor(color);
 
 	//	書き込むためのアドレスを取得
 	Matrix4x4* instancingData = nullptr;
-	model->instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	particle->instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
 	//	念のため単位行列を書き込んでおく
-	for (uint8_t i = 0; i < model->kNumInstance; i++) {
+	for (uint8_t i = 0; i < particle->kNumInstance; i++) {
 		instancingData[i] = worldTransform[i].worldMatrix * viewProjectionMat;
 	}
-	model->instancingResource->Unmap(0, nullptr);
+	particle->instancingResource->Unmap(0, nullptr);
 
-	Engine::GetList()->SetGraphicsRootSignature(model->rootSignature.Get());
-	//Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->graphicsPipelineState[static_cast<int>(model->blendType)].Get());
-	Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(model->blendType).Get());
+	Engine::GetList()->SetGraphicsRootSignature(particle->rootSignature.Get());
+	//Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->graphicsPipelineState[static_cast<int>(particle->blendType)].Get());
+	Engine::GetList()->SetPipelineState(particle->graphicsPipelineState.Get());
 	// インデックスを使わずに四角形以上を書くときは
 	// 個々の設定はD3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 	// インデックスを使うときは D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	Engine::GetList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	Engine::GetList()->IASetVertexBuffers(0, 1, &model->vertexBufferView);
+	Engine::GetList()->IASetVertexBuffers(0, 1, &particle->vertexBufferView);
 
-	Engine::GetList()->SetDescriptorHeaps(1, model->SRVHeap.GetAddressOf());
-	Engine::GetList()->SetGraphicsRootDescriptorTable(0, model->textureSrvHandleGPU);
-	//Engine::GetList()->SetGraphicsRootDescriptorTable(0, model->instancingSrvHandleGPU);
+	Engine::GetList()->SetDescriptorHeaps(1, particle->SRVHeap.GetAddressOf());
+	Engine::GetList()->SetGraphicsRootDescriptorTable(0, particle->textureSrvHandleGPU);
+	//Engine::GetList()->SetGraphicsRootDescriptorTable(0, particle->instancingSrvHandleGPU);
 
 	//Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cMat.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform[0].cColor.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(2, worldTransform[0].cMono.GetGPUVirtualAddress());
 
-	Engine::GetList()->DrawInstanced(UINT(model->modelData.vertices.size()), model->kNumInstance, 0, 0);
+	Engine::GetList()->DrawInstanced(UINT(particle->modelData.vertices.size()), particle->kNumInstance, 0, 0);
 }
 

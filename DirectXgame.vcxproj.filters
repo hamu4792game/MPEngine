@@ -95,6 +95,9 @@
     <ClCompile Include="Engine\Texture\Particle\Particle.cpp">
       <Filter>Engine\Resources\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Texture\Line\Line.cpp">
+      <Filter>Engine\Resources\Line</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -203,6 +206,9 @@
     <ClInclude Include="Engine\Texture\Particle\Particle.h">
       <Filter>Engine\Resources\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Texture\Line\Line.h">
+      <Filter>Engine\Resources\Line</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -282,6 +288,9 @@
     </Filter>
     <Filter Include="Engine\Resources\Particle">
       <UniqueIdentifier>{4ec27334-300d-4eba-8d57-e9dd5e7ef4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources\Line">
+      <UniqueIdentifier>{acbb81e0-2d73-4126-8c42-35333bb2f708}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

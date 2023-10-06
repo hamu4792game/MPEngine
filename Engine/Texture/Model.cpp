@@ -5,8 +5,8 @@
 #include "externals/imgui/imgui.h"
 
 //	便利なtmpみたいなやつ
-//decltype(Model::rootSignature) Model::rootSignature;
-//decltype(Model::graphicsPipelineState) Model::graphicsPipelineState;
+decltype(Model::rootSignature) Model::rootSignature;
+decltype(Model::graphicsPipelineState) Model::graphicsPipelineState;
 
 Model::~Model() {
 	
@@ -26,6 +26,16 @@ Model::~Model() {
 		resource[0]->Release();
 		resource[0].Reset();
 	}
+
+	if (rootSignature) {
+		rootSignature->Release();
+		rootSignature.Reset();
+	}
+	if (graphicsPipelineState) {
+		graphicsPipelineState->Release();
+		graphicsPipelineState.Reset();
+	}
+
 }
 
 void Model::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName)
@@ -70,7 +80,7 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(blendType);
+	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get());
 }
 
 void Model::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& texturePath)
@@ -115,7 +125,7 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(blendType);
+	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), blendType);
 }
 
 void Model::CreateDescriptor(const std::string& filePath)
@@ -202,7 +212,7 @@ void Model::ModelDraw(WorldTransform& worldTransform, const Matrix4x4& viewProje
 	//*cMat = worldTransform.worldMatrix * viewProjectionMat;
 
 	Engine::GetList()->SetGraphicsRootSignature(model->rootSignature.Get());
-	Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->graphicsPipelineState[static_cast<int>(model->blendType)].Get());
+	Engine::GetList()->SetPipelineState(model->graphicsPipelineState.Get());
 	// インデックスを使わずに四角形以上を書くときは
 	// 個々の設定はD3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 	// インデックスを使うときは D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST

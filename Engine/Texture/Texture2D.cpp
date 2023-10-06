@@ -63,7 +63,7 @@ void Texture2D::Texture(const std::string& filePath, const std::string& vsFileNa
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline();
+	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get());
 }
 
 void Texture2D::SetAnchorPoint(AnchorPoint anchor)

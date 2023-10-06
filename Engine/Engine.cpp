@@ -65,6 +65,7 @@ void Engine::Finalize()
 	comDirect->Finalize();
 	comDirect = nullptr;
 	winApp->DeleteGameWindow();
+	winApp = nullptr;
 }
 
 void Engine::BeginFrame()
