@@ -12,6 +12,7 @@ Camera::Camera(float farClip_, bool proType) {
 	else {
 		projectionMatrix = MakeOrthographicMatrix(-float(Engine::GetInstance()->WindowWidth / 2), float(Engine::GetInstance()->WindowHeight / 2),
 			float(Engine::GetInstance()->WindowWidth / 2), -float(Engine::GetInstance()->WindowHeight / 2), 0.01f, farZ);
+		transform.translation_.z = -0.1f;
 	}
 	
 

@@ -13,8 +13,10 @@ Particle::~Particle()
 		rootSignature.Reset();
 	}
 	if (graphicsPipelineState) {
-		graphicsPipelineState->Release();
-		graphicsPipelineState.Reset();
+		for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
+			graphicsPipelineState[i]->Release();
+			graphicsPipelineState[i].Reset();
+		}
 	}
 }
 
@@ -60,7 +62,9 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 3);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), blendType);
+	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
+		graphicsPipelineState[i] = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), blendType);
+	}
 }
 
 void Particle::CreateInstancingResource()
@@ -152,7 +156,7 @@ void Particle::ParticleDraw(WorldTransform* worldTransform, const Matrix4x4& vie
 
 	Engine::GetList()->SetGraphicsRootSignature(particle->rootSignature.Get());
 	//Engine::GetList()->SetPipelineState(GraphicsPipeline::GetInstance()->graphicsPipelineState[static_cast<int>(particle->blendType)].Get());
-	Engine::GetList()->SetPipelineState(particle->graphicsPipelineState.Get());
+	Engine::GetList()->SetPipelineState(particle->graphicsPipelineState[static_cast<uint16_t>(particle->blendType)].Get());
 	// インデックスを使わずに四角形以上を書くときは
 	// 個々の設定はD3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 	// インデックスを使うときは D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST

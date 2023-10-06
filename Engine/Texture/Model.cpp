@@ -32,8 +32,10 @@ Model::~Model() {
 		rootSignature.Reset();
 	}
 	if (graphicsPipelineState) {
-		graphicsPipelineState->Release();
-		graphicsPipelineState.Reset();
+		for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++)	{
+			graphicsPipelineState[i]->Release();
+			graphicsPipelineState[i].Reset();
+		}
 	}
 
 }
@@ -80,7 +82,9 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get());
+	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
+		graphicsPipelineState[i] = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), static_cast<BlendMode>(i));
+	}
 }
 
 void Model::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& texturePath)
@@ -125,7 +129,10 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 
 
 	rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
-	graphicsPipelineState = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), blendType);
+	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
+		graphicsPipelineState[i] = GraphicsPipeline::GetInstance()->CreateGraphicsPipeline(rootSignature.Get(), static_cast<BlendMode>(i));
+	}
+
 }
 
 void Model::CreateDescriptor(const std::string& filePath)
@@ -212,7 +219,7 @@ void Model::ModelDraw(WorldTransform& worldTransform, const Matrix4x4& viewProje
 	//*cMat = worldTransform.worldMatrix * viewProjectionMat;
 
 	Engine::GetList()->SetGraphicsRootSignature(model->rootSignature.Get());
-	Engine::GetList()->SetPipelineState(model->graphicsPipelineState.Get());
+	Engine::GetList()->SetPipelineState(model->graphicsPipelineState[static_cast<int>(model->blendType)].Get());
 	// インデックスを使わずに四角形以上を書くときは
 	// 個々の設定はD3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 	// インデックスを使うときは D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST

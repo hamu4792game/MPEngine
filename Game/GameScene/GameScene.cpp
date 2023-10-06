@@ -80,6 +80,10 @@ void GameScene::Update()
 		break;
 	}
 
+	if (KeyInput::PushKey(DIK_SPACE)) {
+		fence2->blendType = BlendMode::Dark;
+	}
+
 	
 	for (auto& i : fenceTrans1) {
 		i.UpdateMatrix();
@@ -119,7 +123,7 @@ void GameScene::Draw()
 	//Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence1.get());
 	//Particle::ParticleDraw(fenceTrans1, viewProjectionMatrix, 0xffffffff, fence1.get());
 
-	line[0]->DrawLine(start[0], end[0], viewProjectionMatrix, 0xffffffff);
+	line[0]->DrawLine(start[0], end[0], viewProjectionMatrix2d, 0xffffffff);
 	line[1]->DrawLine(Vector3(1.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), viewProjectionMatrix, 0xff0000ff);
 
 	Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence2.get());

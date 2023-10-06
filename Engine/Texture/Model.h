@@ -30,7 +30,7 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SRVHeap = nullptr;
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-	static Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[static_cast<int>(BlendMode::BlendCount)];
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
