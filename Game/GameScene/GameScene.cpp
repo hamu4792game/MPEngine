@@ -134,8 +134,10 @@ void GameScene::Draw()
 
 void GameScene::Finalize()
 {
-	//	線を作った時の解放処理
 	Line::Finalize();
+	Model::Finalize();
+	Texture2D::Finalize();
+	Particle::Finalize();
 }
 
 

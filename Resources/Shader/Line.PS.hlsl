@@ -12,9 +12,5 @@ float4 main(VertexOutput input) : SV_TARGET
 {
     float4 textureColor = color;
     
-    if(textureColor.a <= 0.5f) {
-        discard;
-    }
-    
     return textureColor;
 }

@@ -23,7 +23,7 @@ GraphicsPipeline* GraphicsPipeline::GetInstance() {
 	return &Instance;
 }
 
-ID3D12PipelineState* GraphicsPipeline::CreateGraphicsPipeline(ID3D12RootSignature* rootSignature, BlendMode blendType) {
+ID3D12PipelineState* GraphicsPipeline::CreateGraphicsPipeline(ID3D12RootSignature* rootSignature, IDxcBlob* vertexShader, IDxcBlob* pixelShader, BlendMode blendType) {
 
 	ID3D12PipelineState* graphicsPipelineState = nullptr;
 
@@ -215,23 +215,18 @@ ID3D12RootSignature* GraphicsPipeline::CreateRootSignature(D3D12_ROOT_PARAMETER*
 #pragma endregion
 }
 
-Microsoft::WRL::ComPtr<IDxcBlob> GraphicsPipeline::CreateVSShader(const std::string& vsFileName)
+IDxcBlob* GraphicsPipeline::CreateVSShader(const std::string& vsFileName)
 {
-	//	早期リターン
-	//if (GraphicsPipeline::GetInstance()->vertexShader) {
-	//	return GraphicsPipeline::GetInstance()->vertexShader;
-	//}
-	GraphicsPipeline::GetInstance()->vertexShader = ShaderManager::GetInstance()->CompileShader(ConvertString(vsFileName), L"vs_6_0");
-	return GraphicsPipeline::GetInstance()->vertexShader;
+	IDxcBlob* vertexShader;
+	vertexShader = ShaderManager::GetInstance()->CompileShader(ConvertString(vsFileName), L"vs_6_0");
+	return vertexShader;
 }
 
-Microsoft::WRL::ComPtr<IDxcBlob> GraphicsPipeline::CreatePSShader(const std::string& psFileName)
+IDxcBlob* GraphicsPipeline::CreatePSShader(const std::string& psFileName)
 {
-	//if (GraphicsPipeline::GetInstance()->pixelShader) {
-	//	return GraphicsPipeline::GetInstance()->pixelShader;
-	//}
-	GraphicsPipeline::GetInstance()->pixelShader = ShaderManager::GetInstance()->CompileShader(ConvertString(psFileName), L"vs_6_0");
-	return GraphicsPipeline::GetInstance()->pixelShader;
+	IDxcBlob* pixelShader;
+	pixelShader = ShaderManager::GetInstance()->CompileShader(ConvertString(psFileName), L"ps_6_0");
+	return pixelShader;
 }
 
 ID3D12PipelineState* GraphicsPipeline::CreateGraphicsPipelineLine(ID3D12RootSignature* rootSignature)
@@ -283,8 +278,8 @@ ID3D12PipelineState* GraphicsPipeline::CreateGraphicsPipelineLine(ID3D12RootSign
 
 #pragma region シェーダーの生成
 
-	vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader("./Resources/Shader/Line.VS.hlsl");
-	pixelShader = ShaderManager::GetInstance()->CompileShader(ConvertString("./Resources/Shader/Line.PS.hlsl"), L"ps_6_0");
+	IDxcBlob* vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader("./Resources/Shader/Line.VS.hlsl");
+	IDxcBlob* pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader("./Resources/Shader/Line.PS.hlsl");
 
 #pragma endregion
 

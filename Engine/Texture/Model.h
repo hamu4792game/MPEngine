@@ -22,6 +22,8 @@ public:
 	Model() = default;
 	~Model();
 
+	static void Finalize();
+
 public:
 	//	モデルデータ構造体
 	ModelData modelData;
@@ -40,8 +42,8 @@ protected:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShader = nullptr;
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShader = nullptr;
+	static Microsoft::WRL::ComPtr<IDxcBlob> vertexShader;
+	static Microsoft::WRL::ComPtr<IDxcBlob> pixelShader;
 
 
 	//	depthStencilResourceの生成

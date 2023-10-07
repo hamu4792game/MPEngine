@@ -11,16 +11,20 @@
 #include "Engine/Base/ConstantBuffer.h"
 #include "math/Matrix4x4.h"
 #include "Engine/WorldTransform/WorldTransform.h"
+#include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
 
 class Texture2D
 {
 public:
 	Texture2D() = default;
-	~Texture2D() = default;
+	~Texture2D();
 
-	void Finalize();
+	static void Finalize();
 
 private:
+	//	ブレンドモード用タイプ変数
+	BlendMode blendType = BlendMode::Normal;
+
 	ID3D12Resource* resource[1] = {};
 	ID3D12DescriptorHeap* SRVHeap = nullptr;
 
@@ -32,11 +36,11 @@ private:
 
 public:
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShader = nullptr;
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShader = nullptr;
+	static Microsoft::WRL::ComPtr<IDxcBlob> vertexShader;
+	static Microsoft::WRL::ComPtr<IDxcBlob> pixelShader;
 
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[static_cast<int>(BlendMode::BlendCount)];
 
 	uint32_t textureWidth = 0;
 	uint32_t textureHeight = 0;

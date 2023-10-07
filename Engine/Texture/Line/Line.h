@@ -11,7 +11,6 @@ public:
 	Line();
 	~Line();
 
-public:
 	static void Finalize();
 
 private:
