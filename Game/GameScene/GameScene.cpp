@@ -128,8 +128,6 @@ void GameScene::Draw()
 
 	Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence2.get());
 
-	//Texture2D::TextureDraw(hudTrans, viewProjectionMatrix2d, 0xffffffff, hud.get());
-
 }
 
 void GameScene::Finalize()
