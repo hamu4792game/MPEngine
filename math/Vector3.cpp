@@ -67,6 +67,14 @@ Vector3& Vector3::operator*=(const float& num)
 	return *this;
 }
 
+bool Vector3::operator!=(const Vector3& num) const
+{
+	if (this->x == num.x) { return false; }
+	if (this->y == num.y) { return false; }
+	if (this->z == num.z) { return false; }
+	return true;
+}
+
 float OuterProduct(const Vector3& vec)
 {
 	return sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));

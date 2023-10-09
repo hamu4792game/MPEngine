@@ -9,6 +9,10 @@
 #include "Engine/Texture/Particle/Particle.h"
 #include "Engine/Texture/Line/Line.h"
 
+#include "Game/GameScene/Battle/Battle.h"
+#include "Game/Ground/Ground.h"
+#include "Game/Skydome/Skydome.h"
+
 class GameScene
 {
 public:
@@ -38,18 +42,14 @@ private:
 	Matrix4x4 viewProjectionMatrix2d{};
 
 	//	シーン用インスタンス
+	std::unique_ptr<Battle> battle_;
 
-	//std::unique_ptr<Texture2D> hud;
-	//WorldTransform hudTrans;
+	//	モデル
+	std::shared_ptr<Model> player_;
+	Skydome skydome_;
+	Ground ground_;
 
-	//std::unique_ptr<Particle> fence1;
-	std::unique_ptr<Line> line[2];
-	std::unique_ptr<Model> fence2;
-	WorldTransform fenceTrans1[5];
-	//WorldTransform fenceTrans2;
-	Vector3 start[2];
-	Vector3 end[2];
-
+	
 public:
 
 	void Initialize();
