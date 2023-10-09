@@ -65,7 +65,7 @@ void CommandDirectX::PreDraw()
 	//	Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	//	バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResources[backBufferIndex];
+	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
 	//	遷移前（現在）のResourceState
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	//	遷移後のResourceState
@@ -126,7 +126,7 @@ void CommandDirectX::PostDraw()
 	//	Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	//	バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResources[backBufferIndex];
+	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
 	//	今回はRenderTargetからPresentにする
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -178,14 +178,18 @@ void CommandDirectX::Finalize()
 	dsvDescriptorHeap->Release();
 	srvDescriptorHeap->Release();
 	rtvDescriptorHeap->Release();
-	swapChainResources[1]->Release();
-	swapChainResources[0]->Release();
+	//swapChainResources[0]->Release();
+	//swapChainResources[1]->Release();
+	swapChainResources[0].Reset();
+	swapChainResources[1].Reset();
 	swapChain->Release();
 	commandList->Release();
 	commandAllocator->Release();
 	commandQueue->Release();
 	useAdapter->Release();
 	dxgiFactory->Release();
+	depthStencilResource->Release();
+
 }
 
 void CommandDirectX::CreateFactry()
@@ -322,11 +326,11 @@ void CommandDirectX::CreateRenderTargetView()
 	//	RTVを2つ作るのでディスクリプタを2つ用意
 	//	まず1つ目を作る。一つ目は最初のところに作る。作る場所をこちらで指定してあげる必要がある
 	rtvHandle[0] = rtvStartHandle;
-	device->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandle[0]);
+	device->CreateRenderTargetView(swapChainResources[0].Get(), &rtvDesc, rtvHandle[0]);
 	//	2つ目のディスクリプタハンドルを得る（自力で）
 	rtvHandle[1].ptr = rtvHandle[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	//	2つ目を作る
-	device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandle[1]);
+	device->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandle[1]);
 
 	//	swapChaine\のbufferCountの取得
 	DXGI_SWAP_CHAIN_DESC1 SCD;

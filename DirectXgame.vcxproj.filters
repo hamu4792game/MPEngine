@@ -24,10 +24,10 @@
       <Filter>Engine\Manager\TextureManager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Texture\Model.cpp">
-      <Filter>Engine\Model</Filter>
+      <Filter>Engine\Resources\Model</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Texture\Texture2D.cpp">
-      <Filter>Engine\Texture</Filter>
+      <Filter>Engine\Resources\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\WinApp.cpp">
       <Filter>Engine\WinApp</Filter>
@@ -92,6 +92,12 @@
     <ClCompile Include="Engine\TimeBaseLoopExecuter\TimeBaseLoopExecuter.cpp">
       <Filter>Engine\TimeBaseLoopExecuter</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Texture\Particle\Particle.cpp">
+      <Filter>Engine\Resources\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture\Line\Line.cpp">
+      <Filter>Engine\Resources\Line</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -119,10 +125,10 @@
       <Filter>Engine\Manager\TextureManager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture\Model.h">
-      <Filter>Engine\Model</Filter>
+      <Filter>Engine\Resources\Model</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture\Texture2D.h">
-      <Filter>Engine\Texture</Filter>
+      <Filter>Engine\Resources\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\WinApp.h">
       <Filter>Engine\WinApp</Filter>
@@ -197,6 +203,12 @@
       <Filter>Engine\TimeBaseLoopExecuter</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Engine\Texture\Particle\Particle.h">
+      <Filter>Engine\Resources\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture\Line\Line.h">
+      <Filter>Engine\Resources\Line</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -232,12 +244,6 @@
     <Filter Include="Engine\Manager\TextureManager">
       <UniqueIdentifier>{15d90bdf-5fc6-48a7-8ca8-fd7ebc4b7346}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Model">
-      <UniqueIdentifier>{e96bed89-f1fc-4f25-b651-dda88c242102}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Texture">
-      <UniqueIdentifier>{6383f2ed-4d38-4943-b887-e51f86a2de9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\WinApp">
       <UniqueIdentifier>{d479967e-da47-4259-aafc-7f4c20691499}</UniqueIdentifier>
     </Filter>
@@ -270,6 +276,21 @@
     </Filter>
     <Filter Include="Engine\TimeBaseLoopExecuter">
       <UniqueIdentifier>{c6624870-76a9-40a9-98f5-f85f997b9828}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources">
+      <UniqueIdentifier>{f31b068b-8fed-4399-9565-35a6eb25a2a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources\Texture">
+      <UniqueIdentifier>{6383f2ed-4d38-4943-b887-e51f86a2de9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources\Model">
+      <UniqueIdentifier>{e96bed89-f1fc-4f25-b651-dda88c242102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources\Particle">
+      <UniqueIdentifier>{4ec27334-300d-4eba-8d57-e9dd5e7ef4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Resources\Line">
+      <UniqueIdentifier>{acbb81e0-2d73-4126-8c42-35333bb2f708}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

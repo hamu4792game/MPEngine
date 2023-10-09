@@ -11,29 +11,20 @@
 #include "Engine/Base/ConstantBuffer.h"
 #include "math/Matrix4x4.h"
 #include "Engine/WorldTransform/WorldTransform.h"
-
-
-// ブレンドモード
-enum BlendMode {
-	None,   //!< ブレンドなし
-	Normal, //!< 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
-	Add,    //!< 加算。Src * SrcA + Dest * 1
-	Subtract, //!< 減算。Dest * 1 - Src * SrcA
-	Multily,  //!< 乗算。Src * 0 + Dest * Src
-	Screen,   //!< スクリーン。Src * (1 - Dest) + Dest * 1
-	Dark,	//	比較暗
-	Light,	//	比較明
-};
+#include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
 
 class Texture2D
 {
 public:
 	Texture2D() = default;
-	~Texture2D() = default;
+	~Texture2D();
 
-	void Finalize();
+	static void Finalize();
 
 private:
+	//	ブレンドモード用タイプ変数
+	BlendMode blendType = BlendMode::Normal;
+
 	ID3D12Resource* resource[1] = {};
 	ID3D12DescriptorHeap* SRVHeap = nullptr;
 
@@ -45,11 +36,11 @@ private:
 
 public:
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShader = nullptr;
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShader = nullptr;
+	static Microsoft::WRL::ComPtr<IDxcBlob> vertexShader;
+	static Microsoft::WRL::ComPtr<IDxcBlob> pixelShader;
 
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[static_cast<int>(BlendMode::BlendCount)];
 
 	uint32_t textureWidth = 0;
 	uint32_t textureHeight = 0;
@@ -87,8 +78,8 @@ public:
 
 	static void TextureDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Texture2D* texture);
 
-	BlendMode blend = BlendMode::Normal;
-	void SetBlend(BlendMode blend_);
+	//BlendMode blend = BlendMode::Normal;
+	//void SetBlend(BlendMode blend_);
 	
 
 

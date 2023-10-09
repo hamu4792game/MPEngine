@@ -4,8 +4,6 @@
 
 Matrix4x4::Matrix4x4() : m({ 0.0f }) {}
 
-Matrix4x4::~Matrix4x4() {}
-
 //	加算
 Matrix4x4 Matrix4x4::operator+(const Matrix4x4& mat) const
 {

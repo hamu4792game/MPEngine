@@ -131,7 +131,7 @@ private:
 	//	DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので、ShaderVisibleはfalse
 	ID3D12DescriptorHeap* dsvDescriptorHeap;
 	//	SwapChainからResourceを引っ張ってくる
-	ID3D12Resource* swapChainResources[2];
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources[2]{ nullptr };
 	//	フェンスの生成
 	ID3D12Fence* fence;
 	uint64_t fenceValue = 0;

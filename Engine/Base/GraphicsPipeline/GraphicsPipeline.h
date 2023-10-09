@@ -18,34 +18,41 @@ struct PSD {
 
 };
 
+// ブレンドモード
+enum class BlendMode {
+	None,   // ブレンドなし
+	Normal, // 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
+	Add,    // 加算。Src * SrcA + Dest * 1
+	Subtract, // 減算。Dest * 1 - Src * SrcA
+	Multily,  // 乗算。Src * 0 + Dest * Src
+	Screen,   // スクリーン。Src * (1 - Dest) + Dest * 1
+	Dark,	// 比較暗
+	Light,	// 比較明
+
+	BlendCount,
+};
+
 class GraphicsPipeline
 {
 public:
-	GraphicsPipeline() = default;
+	GraphicsPipeline();
 	~GraphicsPipeline() = default;
 
 	//	シングルトンインスタンス
 	static GraphicsPipeline* GetInstance();
 
 public:
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
-
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShader = nullptr;
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShader = nullptr;
-
-	static ID3D12DescriptorHeap* SRVHeap;
-
-public:
 	//	GraphicsPipelineの生成とget
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateGraphicsPipeline();
-
+	ID3D12PipelineState* CreateGraphicsPipeline(ID3D12RootSignature* rootSignature, IDxcBlob* vertexShader, IDxcBlob* pixelShader, BlendMode blendType = BlendMode::Normal);
 	//	RootSignatureの生成とget
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateRootSignature(D3D12_ROOT_PARAMETER* rootParameter, UINT num);
+	ID3D12RootSignature* CreateRootSignature(D3D12_ROOT_PARAMETER* rootParameter, UINT num);
 	//	vertexshaderの生成とget
-	Microsoft::WRL::ComPtr<IDxcBlob> CreateVSShader(const std::string& vsFileName);
+	IDxcBlob* CreateVSShader(const std::string& vsFileName);
 	//	pixelshaderの生成とget
-	Microsoft::WRL::ComPtr<IDxcBlob> CreatePSShader(const std::string& vsFileName);
+	IDxcBlob* CreatePSShader(const std::string& vsFileName);
+
+	//	線用の生成
+	ID3D12PipelineState* CreateGraphicsPipelineLine(ID3D12RootSignature* rootSignature);
 
 };
 

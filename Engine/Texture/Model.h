@@ -12,40 +12,44 @@
 #include "math/Matrix4x4.h"
 #include "Engine/Manager/TextureManager.h"
 #include <wrl.h>
-#include <Engine/WorldTransform/WorldTransform.h>
+#include "Engine/WorldTransform/WorldTransform.h"
+#include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
+
 
 class Model
 {
 public:
 	Model() = default;
-	~Model() = default;
+	~Model();
+
+	static void Finalize();
 
 public:
-
+	//	モデルデータ構造体
 	ModelData modelData;
+	//	ブレンドモード用タイプ変数
+	BlendMode blendType = BlendMode::Normal;
 
-	ID3D12DescriptorHeap* SRVHeap = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SRVHeap = nullptr;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[static_cast<int>(BlendMode::BlendCount)];
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-private:
+protected:
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource[1] = {};
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
 
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShader = nullptr;
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShader = nullptr;
+	static Microsoft::WRL::ComPtr<IDxcBlob> vertexShader;
+	static Microsoft::WRL::ComPtr<IDxcBlob> pixelShader;
 
 
 	//	depthStencilResourceの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
 	//	DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので、ShaderVisibleはfalse
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = nullptr;
-
-private:
 
 public:
 	

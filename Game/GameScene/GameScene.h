@@ -6,6 +6,8 @@
 #include "Engine/Input/AudioInput/AudioInput.h"
 
 #include "Engine/WorldTransform/WorldTransform.h"
+#include "Engine/Texture/Particle/Particle.h"
+#include "Engine/Texture/Line/Line.h"
 
 class GameScene
 {
@@ -37,22 +39,26 @@ private:
 
 	//	シーン用インスタンス
 
-	std::unique_ptr<Texture2D> hud;
-	WorldTransform hudTrans;
+	//std::unique_ptr<Texture2D> hud;
+	//WorldTransform hudTrans;
 
-	std::unique_ptr<Model> fence1;
+	//std::unique_ptr<Particle> fence1;
+	std::unique_ptr<Line> line[2];
 	std::unique_ptr<Model> fence2;
-	WorldTransform fenceTrans1;
-	WorldTransform fenceTrans2;
+	WorldTransform fenceTrans1[5];
+	//WorldTransform fenceTrans2;
+	Vector3 start[2];
+	Vector3 end[2];
 
 public:
 
 	void Initialize();
 
-
 	void Update();
 	
 	void Draw();
+
+	void Finalize();
 
 private: // メンバ関数
 	//	モデルのロード
