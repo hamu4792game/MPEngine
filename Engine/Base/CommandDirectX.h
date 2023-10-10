@@ -90,6 +90,16 @@ private:
 	void CreateRenderTargetView();
 
 	/// <summary>
+	/// マルチパスレンダリングリソースの作成
+	/// </summary>
+	void CreateMultipathRendering();
+
+	/// <summary>
+	/// ペラポリゴン用のビューの作成
+	/// </summary>
+	void CreatePeraView();
+
+	/// <summary>
 	/// フェンスの作成
 	/// </summary>
 	void CreateFence();
@@ -142,7 +152,12 @@ private:
 	//	depthStencilResourceの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
 	
-
+	//	ぺらポリゴン用のリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> peraResource = nullptr;
+	//	レンダーターゲット用
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraRTVHeap = nullptr;
+	//	テクスチャ用
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraSRVHeap = nullptr;
 
 public:
 	/// <summary>
