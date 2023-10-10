@@ -20,7 +20,11 @@ void GameScene::Initialize()
 
 	//	モデルのロード
 	player_ = std::make_shared<Model>();
-	player_->Texture("Resources/player/body.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	floor_ = std::make_shared<Model>();
+
+	player_->Texture("Resources/player/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	floor_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	
 	skydome_.Initialize();
 	skydome_.ModelLoad();
 	ground_.Initialize();
@@ -37,6 +41,7 @@ void GameScene::Initialize()
 
 	//	モデルの引き渡し
 	battle_->SetPlayerModel(player_.get());
+	battle_->SetFloorModel(floor_.get());
 
 }
 
@@ -87,7 +92,7 @@ void GameScene::Update()
 void GameScene::Draw()
 {
 	skydome_.Draw(viewProjectionMatrix);
-	ground_.Draw(viewProjectionMatrix);
+	//ground_.Draw(viewProjectionMatrix);
 
 	//	3D描画
 	switch (scene)

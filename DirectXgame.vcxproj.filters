@@ -104,6 +104,18 @@
     <ClCompile Include="Game\Player\Player.cpp">
       <Filter>Game\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Floor\Floor.cpp">
+      <Filter>Game\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="math\AABB\AABB.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Floor\MoveFloor\MoveFloor.cpp">
+      <Filter>Game\Floor\MoveFloor</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\Stage.cpp">
+      <Filter>Game\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -221,6 +233,18 @@
     <ClInclude Include="Game\Player\Player.h">
       <Filter>Game\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Floor\Floor.h">
+      <Filter>Game\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="math\AABB\AABB.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Floor\MoveFloor\MoveFloor.h">
+      <Filter>Game\Floor\MoveFloor</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Stage.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -309,6 +333,15 @@
     </Filter>
     <Filter Include="Game\Player">
       <UniqueIdentifier>{10fe8c34-f147-4783-9f94-4d2f5006ff29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Floor">
+      <UniqueIdentifier>{0a4ea470-989d-41f8-990a-d2e5de32fbd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Floor\MoveFloor">
+      <UniqueIdentifier>{6fd714e1-2ea9-46df-8e8a-db20cd1db698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Stage">
+      <UniqueIdentifier>{37156821-b3a3-452c-9aee-9b02c56d1334}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

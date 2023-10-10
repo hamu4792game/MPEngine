@@ -5,11 +5,17 @@
 Player::Player(Camera* camera)
 {
 	camera_ = camera;
+	camera_->transform.rotation_.x = AngleToRadian(20.0f);
 }
 
 void Player::Initialize()
 {
+	playerTrans_.translation_ = Vector3(0.0f, 1.0f, 0.0f);
+	isFloating_ = false;
+	isJamp_ = false;
 
+	//	座標 - scale * size
+	aabb_.Update(playerTrans_);
 }
 
 void Player::Update()
@@ -32,6 +38,10 @@ void Player::Update()
 	
 	//	座標更新
 	playerTrans_.UpdateMatrix();
+
+	//	座標 - scale * size
+	aabb_.Update(playerTrans_);
+
 	//	カメラの移動と更新
 	CameraMove();
 
@@ -41,6 +51,7 @@ void Player::Update()
 void Player::Draw(const Matrix4x4& viewProjection)
 {
 	Model::ModelDraw(playerTrans_, viewProjection, 0xffffffff, model_);
+	aabb_.DrawAABB(viewProjection, 0xff0000ff);
 }
 
 
@@ -109,7 +120,7 @@ void Player::Jamp() {
 		if (KeyInput::PushKey(DIK_SPACE)) {
 			isJamp_ = true;
 			//	初速度を与える
-			velocity_ = 2.0f;
+			velocity_ = 1.0f;
 		}
 		else {
 			velocity_ = 0.0f;
@@ -132,17 +143,55 @@ void Player::Collision() {
 		動く床はisJampがfalseなら親子関係
 	*/
 	
+	//	座標 - scale * size
+	aabb_.Update(playerTrans_);
+
+	//	ゴールとの判定
+	if (aabb_.IsCollision(stage_->goalAABB.get())) {
+		Initialize();
+		return;
+	}
+
+	//	動く床との処理
+	if (aabb_.IsCollision(stage_->moveFloor_.aabb.get())) {
+		isFloating_ = false;
+		playerTrans_.translation_ += stage_->moveFloor_.move;
+		playerTrans_.UpdateMatrix();
+		return;
+	}
+	else {
+		isFloating_ = true;
+	}
+
+	//	止まっている床との処理
+	for (uint8_t i = 0; i < 2; i++)	{
+		if (aabb_.IsCollision(stage_->floor_[i].aabb.get())) {
+			isFloating_ = false;
+			return;
+		}
+		else {
+			isFloating_ = true;
+		}
+	}
+
+	
 }
 
 void Player::MoveLimit() {
+	//	リスタート
+	if (playerTrans_.translation_.y <= -20.0f) {
+		Initialize();
+		return;
+	}
+
 	//	宙に浮いている場合
 	if (isFloating_) {
 		return;
 	}
 
 	//	移動制御
-	if (isJamp_ && (playerTrans_.translation_.y <= 0.0f)) {
-		playerTrans_.translation_.y = 0.0f;
+	if (isJamp_ && (playerTrans_.translation_.y <= 1.0f)) {
+		playerTrans_.translation_.y = 1.0f;
 		isJamp_ = false;
 	}
 
@@ -150,7 +199,7 @@ void Player::MoveLimit() {
 
 void Player::CameraMove()
 {
-	Vector3 offset(0.0f, 2.0f, -20.0f);
+	Vector3 offset(0.0f, 2.0f, -50.0f);
 
 	Matrix4x4 rotate = MakeRotateMatrix(camera_->transform.rotation_);
 	offset = TransformNormal(offset, rotate);

@@ -1,7 +1,9 @@
 #pragma once
 #include "Engine/WorldTransform/WorldTransform.h"
-#include "Engine/Camera/Camera.h"
 #include "Engine/Texture/Model.h"
+#include "Engine/Camera/Camera.h"
+#include "Game/Stage/Stage.h"
+#include "math/AABB/AABB.h"
 
 class Player
 {
@@ -28,8 +30,13 @@ private: // メンバ変数
 
 	float velocity_;
 
+	//	aabb
+	AABB aabb_;
+
 	//	カメラのポインタ
 	Camera* camera_;
+	//	床のポインタ
+	Stage* stage_;
 
 private: // メンバ関数
 	//	プレイヤーの移動
@@ -46,6 +53,6 @@ private: // メンバ関数
 
 public: // セッター
 	void SetPlayerModel(Model* player) { model_ = player; };
-
+	void SetStagePtr(Stage* stage) { stage_ = stage; };
 
 };

@@ -46,6 +46,7 @@ private:
 
 	//	モデル
 	std::shared_ptr<Model> player_;
+	std::shared_ptr<Model> floor_;
 	Skydome skydome_;
 	Ground ground_;
 
