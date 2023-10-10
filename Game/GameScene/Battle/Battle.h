@@ -5,6 +5,7 @@
 #include "Engine/Camera/Camera.h"
 #include "Game/Player/Player.h"
 #include "Game/Stage/Stage.h"
+#include "Game/Enemy/Enemy.h"
 
 class Battle
 {
@@ -25,6 +26,7 @@ private: // モデル
 private: // メンバ変数
 	std::unique_ptr<Player> player_;
 	std::shared_ptr<Stage> stage_;
+	std::shared_ptr<Enemy> enemy_;
 
 	//	カメラのポインタ
 	Camera* camera_;

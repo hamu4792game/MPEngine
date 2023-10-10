@@ -116,6 +116,9 @@
     <ClCompile Include="Game\Stage\Stage.cpp">
       <Filter>Game\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Enemy\Enemy.cpp">
+      <Filter>Game\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -245,6 +248,9 @@
     <ClInclude Include="Game\Stage\Stage.h">
       <Filter>Game\Stage</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Enemy\Enemy.h">
+      <Filter>Game\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -342,6 +348,9 @@
     </Filter>
     <Filter Include="Game\Stage">
       <UniqueIdentifier>{37156821-b3a3-452c-9aee-9b02c56d1334}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Enemy">
+      <UniqueIdentifier>{5b5bd62a-2203-4d3f-850d-cd59f8e902ab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
