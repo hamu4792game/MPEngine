@@ -26,17 +26,17 @@ private: // メンバ変数
 	//	ジャンプしているか
 	bool isJamp_ = false;
 	//	playerのモデル
-	Model* model_;
+	Model* model_ = nullptr;
 
-	float velocity_;
+	float velocity_ = 0.0f;
 
 	//	aabb
 	AABB aabb_;
 
 	//	カメラのポインタ
-	Camera* camera_;
+	Camera* camera_ = nullptr;
 	//	床のポインタ
-	Stage* stage_;
+	Stage* stage_ = nullptr;
 
 private: // メンバ関数
 	//	プレイヤーの移動
