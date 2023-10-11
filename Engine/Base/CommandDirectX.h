@@ -95,9 +95,9 @@ private:
 	void CreateMultipathRendering();
 
 	/// <summary>
-	/// ペラポリゴン用のビューの作成
+	/// ペラポリゴンの頂点データの作成
 	/// </summary>
-	void CreatePeraView();
+	void CreatePeraVertex();
 
 	/// <summary>
 	/// フェンスの作成
@@ -107,7 +107,7 @@ private:
 	/// <summary>
 	/// 画面を指定色でクリアする
 	/// </summary>
-	void ClearRenderTarget();
+	void ClearRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapPointer);
 
 	/// <summary>
 	/// 
@@ -158,6 +158,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraRTVHeap = nullptr;
 	//	テクスチャ用
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraSRVHeap = nullptr;
+
+	//ペラポリ用頂点バッファ(N字の4点)
+	Microsoft::WRL::ComPtr<ID3D12Resource> peraVB;
+	D3D12_VERTEX_BUFFER_VIEW peraVBV;
+	
 
 public:
 	/// <summary>

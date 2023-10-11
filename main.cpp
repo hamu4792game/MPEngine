@@ -28,7 +28,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 
 		GameScene::GetInstance()->Update();
 
-		//GameScene::GetInstance()->Draw();
+		GameScene::GetInstance()->Draw();
 
 		//	フレームの終了
 		Engine::EndFrame();

@@ -3,6 +3,12 @@
 #include <cassert>
 #include "Engine/Input/KeyInput/KeyInput.h"
 #include "Engine/Manager/AudioManager/AudioManager.h"
+#include "math/Vector2.h"
+#include "math/Vector3.h"
+
+
+#include "Engine/Base/ConstantBuffer.h"
+
 
 //	imguiのinclude
 #include "externals/imgui/imgui.h"
@@ -35,6 +41,7 @@ void CommandDirectX::Initialize(WinApp* winApp, int32_t bufferWidth, int32_t buf
 	CreateFence();
 	CreateDepthStencilResource();
 	CreateMultipathRendering();
+	CreatePeraVertex();
 
 	//	Inputの初期化処理
 	KeyInput::InputInitialize();
@@ -57,8 +64,9 @@ void CommandDirectX::PreDraw()
 	KeyInput::Update();
 
 	//	ここから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
+	/*
 	//	TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
 	//	今回のバリアはTransition
@@ -74,23 +82,28 @@ void CommandDirectX::PreDraw()
 	//	TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
 
-	//	描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	commandList->OMSetRenderTargets(1, &rtvHandle[backBufferIndex], false, &dsvHandle);
-	//	指定した深度で画面全体をクリアする
-	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	
-	// 1パス目
-	auto rtvHeapPointer = peraRTVHeap->GetCPUDescriptorHandleForHeapStart();
-	commandList->OMSetRenderTargets(1, &rtvHeapPointer, false, &dsvHandle);
+	*/
 
 	//	バリア
-	CD3DX12_RESOURCE_BARRIER preBarrier = CD3DX12_RESOURCE_BARRIER::Transition(peraResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	CD3DX12_RESOURCE_BARRIER preBarrier = 
+		CD3DX12_RESOURCE_BARRIER::Transition(peraResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	commandList->ResourceBarrier(1, &preBarrier);
 
 
+	//	描画先のRTVとDSVを設定する
+	// 1パス目
+	auto rtvHeapPointer = peraRTVHeap->GetCPUDescriptorHandleForHeapStart();
+	
+	auto dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
+	commandList->OMSetRenderTargets(1, &rtvHeapPointer, false, &dsvHandle);
 	//	画面クリア
-	ClearRenderTarget();
+	//	指定した色で画面全体をクリアする
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
+	commandList->ClearRenderTargetView(rtvHeapPointer, clearColor, 0, nullptr);
+	//	指定した深度で画面全体をクリアする
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
 	
 	//	ビューポート
 	D3D12_VIEWPORT viewport{};
@@ -127,7 +140,7 @@ void CommandDirectX::PostDraw()
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 
 	//	ここから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
 	//	画面に映すので、状態を遷移
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -136,10 +149,10 @@ void CommandDirectX::PostDraw()
 	//	Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	//	バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
+	barrier.Transition.pResource = peraResource.Get();
 	//	今回はRenderTargetからPresentにする
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	//	TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
 
@@ -427,9 +440,34 @@ void CommandDirectX::CreateMultipathRendering()
 
 }
 
-void CommandDirectX::CreatePeraView()
+void CommandDirectX::CreatePeraVertex()
 {
-	
+	//	頂点データの作成
+	struct PeraVertex {
+		Vector3 pos;
+		Vector2 uv;
+	};
+
+	PeraVertex pv[4] = {
+		{{-1.0f,-1.0f,0.1f},{0.0f,1.0f}}, // 左下
+		{{-1.0f, 1.0f,0.1f},{0.0f,0.0f}}, // 左上
+		{{ 1.0f,-1.0f,0.1f},{1.0f,1.0f}}, // 右下
+		{{ 1.0f, 1.0f,0.1f},{1.0f,0.0f}}, // 右上
+	};
+
+	// ペラポリゴンの頂点バッファの作成
+	peraVB = Engine::CreateBufferResource(device.Get(), sizeof(PeraVertex) * sizeof(pv));
+
+	// バッファービューの設定
+	peraVBV.BufferLocation = peraVB->GetGPUVirtualAddress();
+	peraVBV.SizeInBytes = sizeof(pv);
+	peraVBV.StrideInBytes = sizeof(PeraVertex);
+
+	// マップでコピー
+	PeraVertex* peramap = nullptr;
+	peraVB->Map(0, nullptr, (void**)&peramap);
+	std::copy(std::begin(pv), std::end(pv), peramap);
+	peraVB->Unmap(0, nullptr);
 }
 
 void CommandDirectX::CreateFence()
@@ -445,14 +483,14 @@ void CommandDirectX::CreateFence()
 	assert(fenceEvent != nullptr);
 }
 
-void CommandDirectX::ClearRenderTarget()
+void CommandDirectX::ClearRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapPointer)
 {
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	/*UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();*/
 
 	//	指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
 	//float clearColor[] = { 0.0f,0.0f,0.0f,0.0f };	//	青っぽい色、RGBA
-	commandList->ClearRenderTargetView(rtvHandle[backBufferIndex], clearColor, 0, nullptr);
+	commandList->ClearRenderTargetView(rtvHeapPointer, clearColor, 0, nullptr);
 }
 
 void CommandDirectX::CreateDepthStencilResource()
