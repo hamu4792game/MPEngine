@@ -12,6 +12,7 @@ public:
 	Vector3 min;	// 最小点
 	Vector3 max;	// 最大点
 	Line line[12];
+	Vector3 size{ 1.0f,1.0f,1.0f };
 
 public:
 	void Update(WorldTransform& transform);

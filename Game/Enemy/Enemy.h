@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Texture/Model.h"
 #include "Engine/WorldTransform/WorldTransform.h"
+#include "math/AABB/AABB.h"
 
 class Enemy
 {
@@ -26,5 +27,7 @@ private: // モデル
 
 private:
 	std::vector<WorldTransform> parts_;
+public:
+	AABB aabb_;
 
 };

@@ -17,6 +17,7 @@ public:
 
 	void Draw(const Matrix4x4& viewProjection);
 
+	void EnemyColl(AABB* enemy);
 
 private: // メンバ変数
 	// player関連
