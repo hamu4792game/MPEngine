@@ -25,6 +25,7 @@ void Battle::Initialize()
 void Battle::Update()
 {
 
+	//	カメラの移動
 
 	if (KeyInput::GetKey(DIK_RIGHTARROW)) {
 		camera_->transform.rotation_.y += AngleToRadian(1.0f);
@@ -33,9 +34,27 @@ void Battle::Update()
 		camera_->transform.rotation_.y -= AngleToRadian(1.0f);
 	}
 
+	//	padが接続されているなら
+	if (KeyInput::GetInstance()->GetPadConnect()) {
+		Vector2 pMove(0.0f, 0.0f);
+		pMove = KeyInput::GetInstance()->GetPadRStick();
+		//	移動があれば代入する
+		if (pMove.x < -0.5f)	{
+			camera_->transform.rotation_.y -= AngleToRadian(1.0f);
+		}else if (pMove.x > 0.5f)	{
+			camera_->transform.rotation_.y += AngleToRadian(1.0f);
+		}
+		if (pMove.y < -0.5f)	{
+			camera_->transform.rotation_.x -= AngleToRadian(1.0f);
+		}else if (pMove.y > 0.5f)	{
+			camera_->transform.rotation_.x += AngleToRadian(1.0f);
+		}
+	}
+
 	stage_->Update();
 	player_->Update();
 	enemy_->Update();
+	player_->EnemyColl(&enemy_->aabb_);
 
 }
 

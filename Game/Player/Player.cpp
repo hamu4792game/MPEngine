@@ -54,6 +54,13 @@ void Player::Draw(const Matrix4x4& viewProjection)
 	aabb_.DrawAABB(viewProjection, 0xff0000ff);
 }
 
+void Player::EnemyColl(AABB* enemy)
+{
+	if (aabb_.IsCollision(enemy)) {
+		Initialize();
+	}
+}
+
 
 void Player::Move() {
 	//	移動フラグ
