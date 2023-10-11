@@ -99,7 +99,8 @@ void CommandDirectX::PreDraw()
 	commandList->OMSetRenderTargets(1, &rtvHeapPointer, false, &dsvHandle);
 	//	画面クリア
 	//	指定した色で画面全体をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
+	//float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
+	float clearColor[] = { 0.0f,0.0f,0.0f,1.0f };	//	黒色、RGBA
 	commandList->ClearRenderTargetView(rtvHeapPointer, clearColor, 0, nullptr);
 	//	指定した深度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -377,9 +378,6 @@ void CommandDirectX::CreateMultipathRendering()
 {
 	// 書き込み先リソースの作成
 
-	// 作成済みのヒープ情報を使ってもう一枚作る
-	auto heapDesc = rtvDescriptorHeap->GetDesc();
-
 	// 使っているバックバッファーの情報を利用する
 	auto& backbuffer = swapChainResources[0];
 	auto resDesc = backbuffer->GetDesc();
@@ -401,6 +399,9 @@ void CommandDirectX::CreateMultipathRendering()
 
 	// ビューを作る
 
+	// 作成済みのヒープ情報を使ってもう一枚作る
+	auto heapDesc = rtvDescriptorHeap->GetDesc();
+
 	// RTV用ヒープを作る
 	heapDesc.NumDescriptors = 1;
 	result = device->CreateDescriptorHeap(
@@ -413,20 +414,24 @@ void CommandDirectX::CreateMultipathRendering()
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	// レンダーターゲットビュー(RTV)を作る
+	auto handle = peraRTVHeap->GetCPUDescriptorHandleForHeapStart();
+
 	device->CreateRenderTargetView(
 		peraResource.Get(),
 		&rtvDesc,
-		peraRTVHeap->GetCPUDescriptorHandleForHeapStart());
+		handle);
 
 	// SRV用ヒープを作る
 	heapDesc.NumDescriptors = 1;
 	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	heapDesc.NodeMask = 0;
 
 	result = device->CreateDescriptorHeap(
 		&heapDesc,
 		IID_PPV_ARGS(peraSRVHeap.ReleaseAndGetAddressOf()));
 	assert(SUCCEEDED(result));
+
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Format = rtvDesc.Format;
@@ -436,7 +441,7 @@ void CommandDirectX::CreateMultipathRendering()
 	device->CreateShaderResourceView(
 		peraResource.Get(),
 		&srvDesc,
-		peraSRVHeap->GetCPUDescriptorHandleForHeapStart());
+		handle);
 
 }
 
@@ -456,7 +461,7 @@ void CommandDirectX::CreatePeraVertex()
 	};
 
 	// ペラポリゴンの頂点バッファの作成
-	peraVB = Engine::CreateBufferResource(device.Get(), sizeof(PeraVertex) * sizeof(pv));
+	peraVB = Engine::CreateBufferResource(device.Get(), sizeof(PeraVertex) * 4);
 
 	// バッファービューの設定
 	peraVBV.BufferLocation = peraVB->GetGPUVirtualAddress();
