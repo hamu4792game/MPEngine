@@ -178,11 +178,15 @@ void CommandDirectX::PostDraw()
 	//	ペラポリゴンの描画
 	commandList->SetGraphicsRootSignature(peraRootSignature.Get());
 	commandList->SetPipelineState(peraPipeline.Get());
+	commandList->SetDescriptorHeaps(1, peraSRVHeap.GetAddressOf());
+	auto handle = peraSRVHeap->GetGPUDescriptorHandleForHeapStart();
+	commandList->SetGraphicsRootDescriptorTable(0, handle);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	commandList->IASetVertexBuffers(0, 1, &peraVBV);
 	commandList->DrawInstanced(4, 1, 0, 0);
 
 	//	ImGuiの内部コマンドを生成
+	commandList->SetDescriptorHeaps(1, &srvDescriptorHeap);
 	ImGui::Render();
 #ifdef _DEBUG
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
@@ -434,8 +438,8 @@ void CommandDirectX::CreateMultipathRendering()
 	auto resDesc = backbuffer->GetDesc();
 	D3D12_HEAP_PROPERTIES heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	//	レンダリング時のクリア値と同じ値
-	float clsClr[4] = { 0.0f,0.0f,0.0f,1.0f };
-	D3D12_CLEAR_VALUE clearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clsClr);
+	float clearColor[4] = { 0.0f,0.0f,0.0f,1.0f };
+	D3D12_CLEAR_VALUE clearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clearColor);
 
 	HRESULT result = device->CreateCommittedResource(
 		&heapProp,
@@ -452,12 +456,12 @@ void CommandDirectX::CreateMultipathRendering()
 
 	// 作成済みのヒープ情報を使ってもう一枚作る
 	auto heapDesc = rtvDescriptorHeap->GetDesc();
-
+	
 	// RTV用ヒープを作る
 	heapDesc.NumDescriptors = 1;
 	result = device->CreateDescriptorHeap(
 		&heapDesc,
-		IID_PPV_ARGS(peraRTVHeap.ReleaseAndGetAddressOf()));
+		IID_PPV_ARGS(peraRTVHeap.GetAddressOf()));
 	assert(SUCCEEDED(result));
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
@@ -472,17 +476,17 @@ void CommandDirectX::CreateMultipathRendering()
 		&rtvDesc,
 		handle);
 
-	//// SRV用ヒープを作る
-	//heapDesc = {};
-	//heapDesc.NumDescriptors = 1;
-	//heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	//heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	//heapDesc.NodeMask = 0;
-	//
-	//result = device->CreateDescriptorHeap(
-	//	&heapDesc,
-	//	IID_PPV_ARGS(peraSRVHeap.ReleaseAndGetAddressOf()));
-	//assert(SUCCEEDED(result));
+	// SRV用ヒープを作る
+	heapDesc = {};
+	heapDesc.NumDescriptors = 1;
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	heapDesc.NodeMask = 0;
+	
+	result = device->CreateDescriptorHeap(
+		&heapDesc,
+		IID_PPV_ARGS(peraSRVHeap.GetAddressOf()));
+	assert(SUCCEEDED(result));
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -490,8 +494,8 @@ void CommandDirectX::CreateMultipathRendering()
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
-	auto peraHandle = srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	peraHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	auto peraHandle = peraSRVHeap->GetCPUDescriptorHandleForHeapStart();
+	//peraHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	//	シェーダーリソースビューを作る
 	device->CreateShaderResourceView(
@@ -539,9 +543,25 @@ void CommandDirectX::CreatePeraPipeline()
 {
 #pragma region ルートシグネチャの作成
 
+	D3D12_DESCRIPTOR_RANGE range{};
+	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // t
+	range.BaseShaderRegister = 0; // 0
+	range.NumDescriptors = 1;
+	range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	D3D12_ROOT_PARAMETER rp{};
+	rp.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rp.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rp.DescriptorTable.pDescriptorRanges = &range;
+	rp.DescriptorTable.NumDescriptorRanges = 1;
+
+	D3D12_STATIC_SAMPLER_DESC sampler = CD3DX12_STATIC_SAMPLER_DESC(0);
+
 	D3D12_ROOT_SIGNATURE_DESC rootSigDesc = {};
-	rootSigDesc.NumParameters = 0;
-	rootSigDesc.NumStaticSamplers = 0;
+	rootSigDesc.NumParameters = 1;
+	rootSigDesc.NumStaticSamplers = 1;
+	rootSigDesc.pParameters = &rp;
+	rootSigDesc.pStaticSamplers = &sampler;
 	rootSigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//	シリアライズしてバイナリにする
