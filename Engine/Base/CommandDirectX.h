@@ -100,6 +100,11 @@ private:
 	void CreatePeraVertex();
 
 	/// <summary>
+	/// ペラポリゴン用のパイプラインの作成
+	/// </summary>
+	void CreatePeraPipeline();
+
+	/// <summary>
 	/// フェンスの作成
 	/// </summary>
 	void CreateFence();
@@ -159,10 +164,14 @@ private:
 	//	テクスチャ用
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraSRVHeap = nullptr;
 
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> peraRootSignature = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> peraPipeline = nullptr;
+
 	//ペラポリ用頂点バッファ(N字の4点)
-	Microsoft::WRL::ComPtr<ID3D12Resource> peraVB;
+	Microsoft::WRL::ComPtr<ID3D12Resource> peraVB = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW peraVBV;
-	
+
 
 public:
 	/// <summary>

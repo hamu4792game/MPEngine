@@ -5,15 +5,18 @@
 #include "Engine/Manager/AudioManager/AudioManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 
 
 #include "Engine/Base/ConstantBuffer.h"
+#include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
 
 
 //	imguiのinclude
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
+#include "GraphicsPipeline/GraphicsPipeline.h"
 //	関数の外部宣言
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -38,10 +41,11 @@ void CommandDirectX::Initialize(WinApp* winApp, int32_t bufferWidth, int32_t buf
 	CreateCommandList();
 	CreateSwapChain();
 	CreateRenderTargetView();
-	CreateFence();
 	CreateDepthStencilResource();
 	CreateMultipathRendering();
 	CreatePeraVertex();
+	CreatePeraPipeline();
+	CreateFence();
 
 	//	Inputの初期化処理
 	KeyInput::InputInitialize();
@@ -85,7 +89,7 @@ void CommandDirectX::PreDraw()
 	*/
 
 	//	バリア
-	CD3DX12_RESOURCE_BARRIER preBarrier = 
+	CD3DX12_RESOURCE_BARRIER preBarrier =
 		CD3DX12_RESOURCE_BARRIER::Transition(peraResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	commandList->ResourceBarrier(1, &preBarrier);
 
@@ -93,19 +97,16 @@ void CommandDirectX::PreDraw()
 	//	描画先のRTVとDSVを設定する
 	// 1パス目
 	auto rtvHeapPointer = peraRTVHeap->GetCPUDescriptorHandleForHeapStart();
-	
+
 	auto dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	commandList->OMSetRenderTargets(1, &rtvHeapPointer, false, &dsvHandle);
 	//	画面クリア
-	//	指定した色で画面全体をクリアする
-	//float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
-	float clearColor[] = { 0.0f,0.0f,0.0f,1.0f };	//	黒色、RGBA
-	commandList->ClearRenderTargetView(rtvHeapPointer, clearColor, 0, nullptr);
+	ClearRenderTarget(rtvHeapPointer);
 	//	指定した深度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	
+
 	//	ビューポート
 	D3D12_VIEWPORT viewport{};
 	//	クライアント領域のサイズと一緒にして画面全体に表示
@@ -127,7 +128,7 @@ void CommandDirectX::PreDraw()
 	scissorRect.bottom = bufferHeight_;
 	//	Scirssorを設定
 	commandList->RSSetScissorRects(1, &scissorRect);
-	
+
 }
 
 void CommandDirectX::PostDraw()
@@ -135,27 +136,75 @@ void CommandDirectX::PostDraw()
 	//	描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeap[] = { srvDescriptorHeap };
 	commandList->SetDescriptorHeaps(1, descriptorHeap);
-	
-	//	ImGuiの内部コマンドを生成
-	ImGui::Render();
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+
+	//	peraResourceを反転させる
+	D3D12_RESOURCE_BARRIER peraBarrier{};
+	//	今回のバリアはTransition
+	peraBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//	Noneにしておく
+	peraBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//	バリアを張る対象のリソース。現在のバックバッファに対して行う
+	peraBarrier.Transition.pResource = peraResource.Get();
+	//	今回はRenderTargetからPresentにする
+	peraBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	peraBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	//	TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &peraBarrier);
+
 
 	//	ここから書き込むバックバッファのインデックスを取得
-	//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
-	//	画面に映すので、状態を遷移
-	D3D12_RESOURCE_BARRIER barrier{};
+	D3D12_RESOURCE_BARRIER barrier = {};
 	//	今回のバリアはTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	//	Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	//	バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = peraResource.Get();
+	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
 	//	今回はRenderTargetからPresentにする
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//	TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &barrier);
+
+	auto rtvHeapPointer = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	rtvHeapPointer.ptr += backBufferIndex * device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	commandList->OMSetRenderTargets(1, &rtvHeapPointer, false, nullptr);
+	ClearRenderTarget(rtvHeapPointer);
+
+
+	//	ペラポリゴンの描画
+	commandList->SetGraphicsRootSignature(peraRootSignature.Get());
+	commandList->SetPipelineState(peraPipeline.Get());
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	commandList->IASetVertexBuffers(0, 1, &peraVBV);
+	commandList->DrawInstanced(4, 1, 0, 0);
+
+	//	ImGuiの内部コマンドを生成
+	ImGui::Render();
+#ifdef _DEBUG
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+#endif // DEBUG
+
+
+	//	取得
+	/*backBufferIndex = 0;
+	backBufferIndex = swapChain->GetCurrentBackBufferIndex();*/
+
+	D3D12_RESOURCE_BARRIER postBarrier = {};
+	//	今回のバリアはTransition
+	postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//	Noneにしておく
+	postBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//	バリアを張る対象のリソース。現在のバックバッファに対して行う
+	postBarrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
+	//	今回はRenderTargetからPresentにする
+	postBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	postBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	//	TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &postBarrier);
 
 	//	コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseする
 	HRESULT hr = commandList->Close();
@@ -175,7 +224,7 @@ void CommandDirectX::PostDraw()
 	//	GetCompletedValueの初期値はFence作成時に渡した初期値
 	if (fence->GetCompletedValue() < fenceValue)
 	{
-			
+
 		//	指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
 		fence->SetEventOnCompletion(fenceValue, fenceEvent);
 		//	イベント待つ
@@ -202,10 +251,12 @@ void CommandDirectX::Finalize()
 	dsvDescriptorHeap->Release();
 	srvDescriptorHeap->Release();
 	rtvDescriptorHeap->Release();
-	//swapChainResources[0]->Release();
-	//swapChainResources[1]->Release();
-	swapChainResources[0].Reset();
-	swapChainResources[1].Reset();
+
+	peraVB->Release();
+	peraResource->Release();
+	peraRTVHeap->Release();
+	//peraSRVHeap->Release();
+
 	swapChain->Release();
 	commandList->Release();
 	commandAllocator->Release();
@@ -371,7 +422,7 @@ void CommandDirectX::CreateRenderTargetView()
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
 	);
-	
+
 }
 
 void CommandDirectX::CreateMultipathRendering()
@@ -379,12 +430,12 @@ void CommandDirectX::CreateMultipathRendering()
 	// 書き込み先リソースの作成
 
 	// 使っているバックバッファーの情報を利用する
-	auto& backbuffer = swapChainResources[0];
+	auto& backbuffer = swapChainResources[1];
 	auto resDesc = backbuffer->GetDesc();
 	D3D12_HEAP_PROPERTIES heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	//	レンダリング時のクリア値と同じ値
-	float clsClr[4] = { 0.5f,0.5f,0.5f,1.0f };
-	D3D12_CLEAR_VALUE clearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM, clsClr);
+	float clsClr[4] = { 0.0f,0.0f,0.0f,1.0f };
+	D3D12_CLEAR_VALUE clearValue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, clsClr);
 
 	HRESULT result = device->CreateCommittedResource(
 		&heapProp,
@@ -397,7 +448,7 @@ void CommandDirectX::CreateMultipathRendering()
 	);
 	assert(SUCCEEDED(result));
 
-	// ビューを作る
+	// ↓ビューを作る
 
 	// 作成済みのヒープ情報を使ってもう一枚作る
 	auto heapDesc = rtvDescriptorHeap->GetDesc();
@@ -411,7 +462,7 @@ void CommandDirectX::CreateMultipathRendering()
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 	// レンダーターゲットビュー(RTV)を作る
 	auto handle = peraRTVHeap->GetCPUDescriptorHandleForHeapStart();
@@ -421,27 +472,32 @@ void CommandDirectX::CreateMultipathRendering()
 		&rtvDesc,
 		handle);
 
-	// SRV用ヒープを作る
-	heapDesc.NumDescriptors = 1;
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	heapDesc.NodeMask = 0;
-
-	result = device->CreateDescriptorHeap(
-		&heapDesc,
-		IID_PPV_ARGS(peraSRVHeap.ReleaseAndGetAddressOf()));
-	assert(SUCCEEDED(result));
+	//// SRV用ヒープを作る
+	//heapDesc = {};
+	//heapDesc.NumDescriptors = 1;
+	//heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	//heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	//heapDesc.NodeMask = 0;
+	//
+	//result = device->CreateDescriptorHeap(
+	//	&heapDesc,
+	//	IID_PPV_ARGS(peraSRVHeap.ReleaseAndGetAddressOf()));
+	//assert(SUCCEEDED(result));
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Format = rtvDesc.Format;
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+	auto peraHandle = srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	peraHandle.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
 	//	シェーダーリソースビューを作る
 	device->CreateShaderResourceView(
 		peraResource.Get(),
 		&srvDesc,
-		handle);
+		peraHandle);
 
 }
 
@@ -449,19 +505,19 @@ void CommandDirectX::CreatePeraVertex()
 {
 	//	頂点データの作成
 	struct PeraVertex {
-		Vector3 pos;
+		Vector4 pos;
 		Vector2 uv;
 	};
 
 	PeraVertex pv[4] = {
-		{{-1.0f,-1.0f,0.1f},{0.0f,1.0f}}, // 左下
-		{{-1.0f, 1.0f,0.1f},{0.0f,0.0f}}, // 左上
-		{{ 1.0f,-1.0f,0.1f},{1.0f,1.0f}}, // 右下
-		{{ 1.0f, 1.0f,0.1f},{1.0f,0.0f}}, // 右上
+		{{-1.0f,-1.0f,0.1f,1.0f},{0.0f,1.0f}}, // 左下
+		{{-1.0f, 1.0f,0.1f,1.0f},{0.0f,0.0f}}, // 左上
+		{{ 1.0f,-1.0f,0.1f,1.0f},{1.0f,1.0f}}, // 右下
+		{{ 1.0f, 1.0f,0.1f,1.0f},{1.0f,0.0f}}, // 右上
 	};
 
 	// ペラポリゴンの頂点バッファの作成
-	peraVB = Engine::CreateBufferResource(device.Get(), sizeof(PeraVertex) * 4);
+	peraVB = Engine::CreateBufferResource(device.Get(), sizeof(pv));
 
 	// バッファービューの設定
 	peraVBV.BufferLocation = peraVB->GetGPUVirtualAddress();
@@ -470,9 +526,114 @@ void CommandDirectX::CreatePeraVertex()
 
 	// マップでコピー
 	PeraVertex* peramap = nullptr;
-	peraVB->Map(0, nullptr, (void**)&peramap);
+	peraVB->Map(0, nullptr, reinterpret_cast<void**>(&peramap));
 	std::copy(std::begin(pv), std::end(pv), peramap);
+	//for (auto i = 0; i < _countof(pv); i++) {
+	//	peramap[i] = pv[i];
+	//}
 	peraVB->Unmap(0, nullptr);
+
+}
+
+void CommandDirectX::CreatePeraPipeline()
+{
+#pragma region ルートシグネチャの作成
+
+	D3D12_ROOT_SIGNATURE_DESC rootSigDesc = {};
+	rootSigDesc.NumParameters = 0;
+	rootSigDesc.NumStaticSamplers = 0;
+	rootSigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	//	シリアライズしてバイナリにする
+	ID3DBlob* signatureBlob = nullptr;
+	ID3DBlob* errorBlob = nullptr;
+	HRESULT result = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	if (FAILED(result)) {
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+	//	バイナリを元に生成
+	result = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&peraRootSignature));
+	assert(SUCCEEDED(result));
+	if (errorBlob)
+	{
+		errorBlob->Release();
+	}
+	signatureBlob->Release();
+
+#pragma endregion
+
+#pragma region インプットレイアウトの作成
+	D3D12_INPUT_ELEMENT_DESC layout[2] = {
+		{
+			"POSITION",
+			0,
+			DXGI_FORMAT_R32G32B32A32_FLOAT,
+			0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		},
+		{
+			"TEXCOORD",
+			0,
+			DXGI_FORMAT_R32G32_FLOAT,
+			0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		},
+	};
+#pragma endregion
+
+#pragma region BlendState
+
+	//	ブレンドモードの設定
+	D3D12_BLEND_DESC blendDesc{};
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+
+	blendDesc.RenderTarget[0].BlendEnable = false;
+
+#pragma endregion
+
+#pragma region シェーダーの生成
+
+	IDxcBlob* vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader("./Resources/Shader/PeraPoly.VS.hlsl");
+	//IDxcBlob* vertexShader = ShaderManager::GetInstance()->CompileShader(ConvertString("./Resources/Shader/PeraPoly.VS.hlsl"), L"vs_6_0");
+	IDxcBlob* pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader("./Resources/Shader/PeraPoly.PS.hlsl");
+
+#pragma endregion
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpsDesc = {};
+	gpsDesc.pRootSignature = peraRootSignature.Get();
+	gpsDesc.InputLayout.NumElements = _countof(layout);
+	gpsDesc.InputLayout.pInputElementDescs = layout;
+	gpsDesc.BlendState = blendDesc;
+	gpsDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	gpsDesc.NumRenderTargets = 1;
+	gpsDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	gpsDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	gpsDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	gpsDesc.SampleDesc.Count = 1;
+	gpsDesc.SampleDesc.Quality = 0;
+	gpsDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+	gpsDesc.VS = {
+		vertexShader->GetBufferPointer(),
+		vertexShader->GetBufferSize()
+	};
+	gpsDesc.PS = {
+		pixelShader->GetBufferPointer(),
+		pixelShader->GetBufferSize()
+	};
+
+	//	実際に生成
+	result = device->CreateGraphicsPipelineState(&gpsDesc, IID_PPV_ARGS(peraPipeline.ReleaseAndGetAddressOf()));
+	assert(SUCCEEDED(result));
+
+
 }
 
 void CommandDirectX::CreateFence()
@@ -493,8 +654,8 @@ void CommandDirectX::ClearRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapPointe
 	/*UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();*/
 
 	//	指定した色で画面全体をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
-	//float clearColor[] = { 0.0f,0.0f,0.0f,0.0f };	//	青っぽい色、RGBA
+	//float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//	青っぽい色、RGBA
+	float clearColor[] = { 0.0f,0.0f,0.0f,1.0f };	//	青っぽい色、RGBA
 	commandList->ClearRenderTargetView(rtvHeapPointer, clearColor, 0, nullptr);
 }
 
