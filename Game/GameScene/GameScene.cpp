@@ -23,7 +23,7 @@ void GameScene::Initialize()
 	floor_ = std::make_shared<Model>();
 
 	player_->Texture("Resources/player/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
-	floor_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	floor_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
 	
 	skydome_.Initialize();
 	skydome_.ModelLoad();

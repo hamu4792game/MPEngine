@@ -259,7 +259,7 @@ void CommandDirectX::Finalize()
 	peraVB->Release();
 	peraResource->Release();
 	peraRTVHeap->Release();
-	//peraSRVHeap->Release();
+	peraSRVHeap->Release();
 
 	swapChain->Release();
 	commandList->Release();

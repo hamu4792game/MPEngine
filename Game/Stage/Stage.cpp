@@ -3,7 +3,7 @@
 Stage::Stage()
 {
 	goal = std::make_unique<Model>();
-	goal->Texture("Resources/box/box.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "uvChecker.png");
+	goal->Texture("Resources/box/box.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
 	goalAABB = std::make_unique<AABB>();
 }
 

@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 TextureManager* TextureManager::GetInstance() {
 	static TextureManager instance;
@@ -55,6 +56,10 @@ ModelData TextureManager::LoadObjFile(const std::string& filename)
 	//	ファイルを開く
 	std::ifstream file(filename);
 	assert(file.is_open());
+
+	//	ディレクトリパスの取得
+	std::filesystem::path ps = std::filesystem::path(filename);
+	std::string directryPath = ps.parent_path().string();
 
 	//	ファイルを読み込み、メタデータを構築
 	while (std::getline(file, line)) {
@@ -113,6 +118,10 @@ ModelData TextureManager::LoadObjFile(const std::string& filename)
 		else if (identifier == "mtllib") {
 			std::string materialFilename;
 			s >> materialFilename;
+
+			//	ディレクトリパスとmtlパスの結合
+			materialFilename = directryPath + "/" + materialFilename;
+
 			//	基本的に
 			modelData.material = LoadMaterialTemplateFile(materialFilename);
 		}
@@ -141,8 +150,12 @@ MaterialData TextureManager::LoadMaterialTemplateFile(const std::string& filenam
 	
 	MaterialData materialData; // 構築するデータ
 	std::string line;	// ファイルから読んだ1行を格納するもの
-	std::ifstream file("./Resources/" + filename);	//ファイルを開く
+	std::ifstream file(filename);	//ファイルを開く
 	assert(file.is_open());
+
+	//	ディレクトリパスの取得
+	std::filesystem::path ps = std::filesystem::path(filename);
+	std::string directryPath = ps.parent_path().string();
 
 	while (std::getline(file, line)) {
 		std::string identifier;
@@ -154,7 +167,7 @@ MaterialData TextureManager::LoadMaterialTemplateFile(const std::string& filenam
 			std::string textureFilename;
 			s >> textureFilename;
 			//	連結してファイルパスにする
-			materialData.textureFilePath = textureFilename;
+			materialData.textureFilePath = directryPath + "/" + textureFilename;
 		}
 	}
 

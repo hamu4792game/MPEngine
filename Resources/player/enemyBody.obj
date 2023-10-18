@@ -1,6 +1,6 @@
 # Blender v3.5.0 OBJ File: 'player.blend'
 # www.blender.org
-mtllib player/enemyBody.mtl
+mtllib enemyBody.mtl
 o 体_立方体.005
 v 0.459887 -0.616320 -0.000127
 v 0.459887 -0.616320 0.000127

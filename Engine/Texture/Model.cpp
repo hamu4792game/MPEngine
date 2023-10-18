@@ -31,6 +31,17 @@ Model::~Model() {
 
 }
 
+Model& Model::operator=(const Model& model)
+{
+	this->modelData = model.modelData;
+	this->SRVHeap = model.SRVHeap;
+	this->textureSrvHandleGPU = model.textureSrvHandleGPU;
+	this->vertexBufferView = model.vertexBufferView;
+	this->blendType = model.blendType;
+
+	return *this;
+}
+
 void Model::Finalize()
 {
 	if (rootSignature) {
@@ -58,42 +69,47 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 	//	モデルのロードとデスクリプタヒープの生成
 	CreateDescriptor(filePath);
 	
-	//	ピクセルシェーダーのコンパイルがなぜかできないため、緊急措置を行っている
-	//pixelShader = ShaderManager::GetInstance()->CompileShader(ConvertString(psFileName), L"ps_6_0");
-	vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader(vsFileName);
-	pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
+	if (!vertexShader) {
+		vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader(vsFileName);
+	}
+	if (!pixelShader) {
+		pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
+	}
 
 	//	頂点データの生成
 	CreateVertexResource();
 
-	D3D12_DESCRIPTOR_RANGE range[1] = {};
-	range[0].BaseShaderRegister = 0;
-	range[0].NumDescriptors = 1;	//	必要な数
-	range[0].RegisterSpace = 0;
-	range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	D3D12_ROOT_PARAMETER rootParameter[4] = {};
-	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameter[0].DescriptorTable.pDescriptorRanges = range;
-	rootParameter[0].DescriptorTable.NumDescriptorRanges = _countof(range);
-
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 0;
-
-	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[2].Descriptor.ShaderRegister = 1;
-
-	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[3].Descriptor.ShaderRegister = 2;
-
 
 	if (!rootSignature) {
+
+		//	パラメーターの設定
+		D3D12_DESCRIPTOR_RANGE range[1] = {};
+		range[0].BaseShaderRegister = 0;
+		range[0].NumDescriptors = 1;	//	必要な数
+		range[0].RegisterSpace = 0;
+		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+		D3D12_ROOT_PARAMETER rootParameter[4] = {};
+		rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
+		rootParameter[0].DescriptorTable.pDescriptorRanges = range;
+		rootParameter[0].DescriptorTable.NumDescriptorRanges = _countof(range);
+
+		rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+		rootParameter[1].Descriptor.ShaderRegister = 0;
+
+		rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameter[2].Descriptor.ShaderRegister = 1;
+
+		rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameter[3].Descriptor.ShaderRegister = 2;
+
+		//	ルートシグネチャの作成
 		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
 	}
 	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
@@ -106,45 +122,50 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 void Model::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& texturePath)
 {
 	//	モデルのロードとデスクリプタヒープの生成
+
 	CreateDescriptor(filePath, texturePath);
 
-	vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader(vsFileName);
-	//	ピクセルシェーダーのコンパイルがなぜかできないため、緊急措置を行っている
-	//pixelShader = ShaderManager::GetInstance()->CompileShader(ConvertString(psFileName), L"ps_6_0");
-	//pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
-	pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
+	if (!vertexShader) {
+		vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader(vsFileName);
+	}
+	if (!pixelShader) {
+		pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
+	}
+	
 
 	//	頂点データの生成
 	CreateVertexResource();
 
-	D3D12_DESCRIPTOR_RANGE range[1] = {};
-	range[0].BaseShaderRegister = 0;
-	range[0].NumDescriptors = 1;	//	必要な数
-	range[0].RegisterSpace = 0;
-	range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	D3D12_ROOT_PARAMETER rootParameter[4] = {};
-	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameter[0].DescriptorTable.pDescriptorRanges = range;
-	rootParameter[0].DescriptorTable.NumDescriptorRanges = _countof(range);
-
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 0;
-
-	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[2].Descriptor.ShaderRegister = 1;
-
-	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[3].Descriptor.ShaderRegister = 2;
-
-
 	if (!rootSignature) {
+
+		//	パラメーターの設定
+		D3D12_DESCRIPTOR_RANGE range[1] = {};
+		range[0].BaseShaderRegister = 0;
+		range[0].NumDescriptors = 1;	//	必要な数
+		range[0].RegisterSpace = 0;
+		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+		D3D12_ROOT_PARAMETER rootParameter[4] = {};
+		rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
+		rootParameter[0].DescriptorTable.pDescriptorRanges = range;
+		rootParameter[0].DescriptorTable.NumDescriptorRanges = _countof(range);
+
+		rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+		rootParameter[1].Descriptor.ShaderRegister = 0;
+
+		rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameter[2].Descriptor.ShaderRegister = 1;
+
+		rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameter[3].Descriptor.ShaderRegister = 2;
+
+		//	ルートシグネチャの作成
 		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
 	}
 	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
@@ -160,7 +181,7 @@ void Model::CreateDescriptor(const std::string& filePath)
 	//	モデル読み込み
 	modelData = TextureManager::LoadObjFile(filePath);
 
-	DirectX::ScratchImage mipImages = TextureManager::LoadTexture("./Resources/" + modelData.material.textureFilePath);
+	DirectX::ScratchImage mipImages = TextureManager::LoadTexture(modelData.material.textureFilePath);
 	//DirectX::ScratchImage mipImages = TextureManager::LoadTexture("./Resources/uvChecker.png");
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	resource[0] = Engine::CreateTextureResource(Engine::GetDevice(), metaData);
@@ -188,7 +209,7 @@ void Model::CreateDescriptor(const std::string& filePath, const std::string& tex
 	//	モデル読み込み
 	modelData = TextureManager::LoadObjFile(filePath);
 
-	DirectX::ScratchImage mipImages = TextureManager::LoadTexture("./Resources/" + texturePath);
+	DirectX::ScratchImage mipImages = TextureManager::LoadTexture(texturePath);
 	//DirectX::ScratchImage mipImages = TextureManager::LoadTexture("./Resources/uvChecker.png");
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	resource[0] = Engine::CreateTextureResource(Engine::GetDevice(), metaData);
