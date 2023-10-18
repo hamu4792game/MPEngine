@@ -18,12 +18,12 @@ void Skydome::NullParent()
 void Skydome::Initialize()
 {
 	transform.scale_ = Vector3(400.0f, 400.0f, 400.0f);
-	transform.translation_ = Vector3(0.0f, 0.0f, 300.0f);
+	transform.translation_ = Vector3(0.0f, 0.0f, 0.0f);
 }
 
 void Skydome::ModelLoad()
 {
-	skydome->Texture("Resources/skydome/skydome.obj", "./Shader/Texture2D.VS.hlsl", "./Shader/Texture2D.PS.hlsl", "skydome/skydome.png");
+	skydome->Texture("Resources/boxSky/boxSky.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 }
 
 void Skydome::Draw(const Matrix4x4& viewProjection)

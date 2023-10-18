@@ -22,6 +22,9 @@ public:
 	Model() = default;
 	~Model();
 
+	//	モデルデータの代入が可能
+	Model& operator=(const Model& model);
+
 	static void Finalize();
 
 public:

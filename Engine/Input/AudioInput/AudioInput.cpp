@@ -43,8 +43,16 @@ void AudioInput::SoundLoadWave(const std::string fileName)
 		//	再読み込み
 		file.read((char*)&data, sizeof(data));
 	}
-	if (strncmp(data.id.data(), "data", 4) != 0) {
-		assert(0);
+	//	dataの読み込み
+	while (strncmp(data.id.data(), "data", 4) != 0)	{
+		//	読み取り位置をdataまで進める
+		file.seekg(data.size, std::ios_base::cur);
+		//	読み込み
+		file.read((char*)&data, sizeof(data));
+		//	読み込めなかったら
+		if (file.eof())	{
+			assert(0);
+		}
 	}
 	//	Dataチャンクのデータ部（波形データ）の読み込み
 	char* pBuffer = new char[data.size];

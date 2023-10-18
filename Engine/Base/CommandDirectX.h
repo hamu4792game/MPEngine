@@ -90,6 +90,21 @@ private:
 	void CreateRenderTargetView();
 
 	/// <summary>
+	/// マルチパスレンダリングリソースの作成
+	/// </summary>
+	void CreateMultipathRendering();
+
+	/// <summary>
+	/// ペラポリゴンの頂点データの作成
+	/// </summary>
+	void CreatePeraVertex();
+
+	/// <summary>
+	/// ペラポリゴン用のパイプラインの作成
+	/// </summary>
+	void CreatePeraPipeline();
+
+	/// <summary>
 	/// フェンスの作成
 	/// </summary>
 	void CreateFence();
@@ -97,7 +112,7 @@ private:
 	/// <summary>
 	/// 画面を指定色でクリアする
 	/// </summary>
-	void ClearRenderTarget();
+	void ClearRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapPointer);
 
 	/// <summary>
 	/// 
@@ -142,6 +157,20 @@ private:
 	//	depthStencilResourceの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
 	
+	//	ぺらポリゴン用のリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> peraResource = nullptr;
+	//	レンダーターゲット用
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraRTVHeap = nullptr;
+	//	テクスチャ用
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> peraSRVHeap = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> peraRootSignature = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> peraPipeline = nullptr;
+
+	//ペラポリ用頂点バッファ(N字の4点)
+	Microsoft::WRL::ComPtr<ID3D12Resource> peraVB = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW peraVBV;
 
 
 public:

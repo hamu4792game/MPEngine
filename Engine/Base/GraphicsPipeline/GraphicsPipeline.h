@@ -49,7 +49,7 @@ public:
 	//	vertexshaderの生成とget
 	IDxcBlob* CreateVSShader(const std::string& vsFileName);
 	//	pixelshaderの生成とget
-	IDxcBlob* CreatePSShader(const std::string& vsFileName);
+	IDxcBlob* CreatePSShader(const std::string& psFileName);
 
 	//	線用の生成
 	ID3D12PipelineState* CreateGraphicsPipelineLine(ID3D12RootSignature* rootSignature);

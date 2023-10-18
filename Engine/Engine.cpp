@@ -45,12 +45,12 @@ void Engine::Initialize(const char* title, int width, int height)
 	//	ゲームウィンドウを表示する
 	ShowWindow(winApp->GetHwnd(), SW_SHOW);
 
+	sManager = ShaderManager::GetInstance();
+	sManager->DXcInitialize();
 	//	DirectXの初期化
 	comDirect = CommandDirectX::GetInstance();
 	comDirect->Initialize(winApp, Engine::GetInstance()->WindowWidth, Engine::GetInstance()->WindowHeight);
 
-	sManager = ShaderManager::GetInstance();
-	sManager->DXcInitialize();
 #ifdef _DEBUG
 	//	ここまででエラーがあれば止める
 	ErrorStop(comDirect->GetDevice());
