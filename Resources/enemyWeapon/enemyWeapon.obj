@@ -1,6 +1,6 @@
 # Blender v3.5.0 OBJ File: 'ALEnemy.blend'
 # www.blender.org
-mtllib enemyWeapon/enemyWeapon.mtl
+mtllib enemyWeapon.mtl
 o 円錐
 v 0.000000 1.581734 0.373496
 v -0.072865 1.581734 0.366319

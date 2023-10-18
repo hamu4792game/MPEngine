@@ -1,6 +1,6 @@
 # Blender v3.5.0 OBJ File: ''
 # www.blender.org
-mtllib enemyBody/enemyBody.mtl
+mtllib enemyBody.mtl
 o Cube.001
 v -0.500000 0.897076 -0.880876
 v -1.000000 1.000000 -0.006536
