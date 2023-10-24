@@ -35,7 +35,7 @@ private: //	メンバ関数
 
 
 public: // ゲッター
-	void SetPlayerModel(Model* model) { playerModel_ = model; };
+	void SetPlayerModel(std::vector<std::shared_ptr<Model>> model) { player_->SetPlayerModel(model); }
 	void SetFloorModel(Model* model) { floorModel_ = model; };
 
 

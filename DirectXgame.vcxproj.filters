@@ -119,6 +119,12 @@
     <ClCompile Include="Game\Enemy\Enemy.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Base\MultipathRendering\MultipathRendering.cpp">
+      <Filter>Engine\MultipathRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalVariables\GlobalVariables.cpp">
+      <Filter>GlobalVariables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -251,6 +257,12 @@
     <ClInclude Include="Game\Enemy\Enemy.h">
       <Filter>Game\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Base\MultipathRendering\MultipathRendering.h">
+      <Filter>Engine\MultipathRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalVariables\GlobalVariables.h">
+      <Filter>GlobalVariables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -351,6 +363,12 @@
     </Filter>
     <Filter Include="Game\Enemy">
       <UniqueIdentifier>{5b5bd62a-2203-4d3f-850d-cd59f8e902ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\MultipathRendering">
+      <UniqueIdentifier>{e0bd185b-9beb-45c7-93b0-a1c48ac02ad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GlobalVariables">
+      <UniqueIdentifier>{4dab006a-08af-43d5-8cd7-d2caa45b2f43}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

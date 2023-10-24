@@ -38,7 +38,10 @@ public:
 	// 親となるワールド変換へのポインタ
 	const WorldTransform* parent_ = nullptr;
 
+	//	更新
 	Matrix4x4 UpdateMatrix();
+	//	リセット
+	void Reset();
 
 	//	平行移動行列の平行移動の取得
 	Vector3 GetTranslate() const { return Vector3(worldMatrix.m[3][0], worldMatrix.m[3][1], worldMatrix.m[3][2]); };

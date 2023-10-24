@@ -2,20 +2,89 @@
 Texture2D<float4> gTexture : register(t0); // 通常テクスチャ
 SamplerState gSampler : register(s0); // サンプラー
 
+cbuffer EffectParameters : register(b0) {
+    float2 centerPosition;
+    float parameterRate;
+    int type;
+}
+
+// ハッシュ関数
+float hash( float n )
+{
+    return frac(sin(n)*43758.5453);
+}
+
+// 3次元ベクトルからシンプレックスノイズを生成する関数
+float SimplexNoise(float3 x)
+{
+    // The noise function returns a value in the range -1.0f -> 1.0f
+    float3 p = floor(x);
+    float3 f = frac(x);
+
+    f = f * f * (3.0 - 2.0 * f);
+    float n = p.x + p.y * 57.0 + 113.0 * p.z;
+
+    return lerp(lerp(lerp(hash(n + 0.0), hash(n + 1.0), f.x),
+                     lerp(hash(n + 57.0), hash(n + 58.0), f.x), f.y),
+                lerp(lerp(hash(n + 113.0), hash(n + 114.0), f.x),
+                     lerp(hash(n + 170.0), hash(n + 171.0), f.x), f.y), f.z);
+}
 
 //  ピクセルシェーダー
 float4 main(Output input) : SV_Target{
     float4 textureColor = gTexture.Sample(gSampler, input.uv);
-
-    // 平均化した値
-    float Y = (textureColor.x + textureColor.y + textureColor.z) / 3.0f;
-    // グレースケール変換
-    float4 gray = float4(Y,Y,Y,textureColor.a);
-    // レトロビット調
-    float4 retoro = float4(textureColor.rgb - fmod(textureColor.rgb, 0.25f),textureColor.a);
-    // セピア調 高輝度変換が苦手なフィルタ値 (107.0f,74.0f,43.0f)
-    float4 sepia = float4(clamp(Y * (107.0f/107.0f),0.0f,255.0f),clamp(Y * ( 74.0f/107.0f),0.0f,255.0f),
-    clamp(Y * ( 43.0f/107.0f),0.0f,255.0f),textureColor.a);
+    float4 result;
+    float Y;
+    int levels = 8;
     
-    return sepia;
+    switch(type) {
+    case 1: // グレースケール
+        Y = (textureColor.x + textureColor.y + textureColor.z) / 3.0f;
+        result = float4(Y,Y,Y,textureColor.a);
+        break;
+    case 2: // レトロ調
+        result = float4(textureColor.rgb - fmod(textureColor.rgb, 0.25f),textureColor.a);
+        break;
+    case 3: // セピア調
+        Y = (textureColor.x + textureColor.y + textureColor.z) / 3.0f;
+        result = float4(Y * 0.9f,Y * 0.7f,Y * 0.4f,textureColor.a);
+        break;
+    case 4: // ネガポジ反転
+        result.rgb = float3(1.0f - textureColor.r,1.0f - textureColor.g,1.0f - textureColor.b);
+        break;
+    case 5: // ノイズフィルター
+        Y = SimplexNoise(input.position.xyz);
+        Y = (Y - 0.5f) * 2.0f;
+        result = gTexture.Sample(gSampler,input.uv + Y * 0.01f);
+        break;
+    case 6: // ポスタライズフィルター
+        result.rgb = round(textureColor.rgb * levels) / levels;
+        result.a = textureColor.a;
+        break;
+    case 7: 
+        result.r = textureColor.g;
+        result.g = textureColor.b;
+        result.b = textureColor.r;
+        break;
+    default:
+        result = textureColor;
+        break;
+    }
+
+    // 円の衝突判定
+    float v = pow(input.position.x - centerPosition.x,2) + 
+    pow(input.position.y - centerPosition.y,2);
+    if (v <= pow(parameterRate,2)) {
+        return result;
+    }
+
+    // ひし形の衝突判定
+    /*float v = abs(input.position.x - centerPosition.x)
+     + abs(input.position.y - centerPosition.y);
+    if (v <= parameterRate) {
+        return result;
+    }*/
+
+    return textureColor;
 }
+

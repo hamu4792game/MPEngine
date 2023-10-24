@@ -41,10 +41,16 @@ Matrix4x4 WorldTransform::UpdateMatrix()
 	//	親があれば親のワールド行列を掛ける
 	if (parent_)
 	{
-		Matrix4x4 notScale = MakeAffineMatrix(Vector3(1.0f, 1.0f, 1.0f), parent_->rotation_, parent_->translation_);
-		this->worldMatrix = this->worldMatrix * notScale;
-		//this->worldMatrix = this->worldMatrix * parent_->worldMatrix;
+		this->worldMatrix = this->worldMatrix * parent_->worldMatrix;
 	}
 
 	return this->worldMatrix;
+}
+
+void WorldTransform::Reset() {
+	scale_ = Vector3(1.0f, 1.0f, 1.0f);
+	rotation_ = Vector3(0.0f, 0.0f, 0.0f);
+	translation_ = Vector3(0.0f, 0.0f, 0.0f);
+	parent_ = nullptr;
+	worldMatrix = MakeIdentity4x4();
 }

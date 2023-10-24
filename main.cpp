@@ -5,12 +5,14 @@
 #include "externals/imgui/imgui.h"
 
 #include "Game/GameScene/GameScene.h"
+#include "GlobalVariables/GlobalVariables.h"
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) {
 	static D3DResourceLeakChecker leak;
 	int32_t windowWidth = 1280; int32_t windowHeight = 720;
 	Engine::Initialize("えとせとら", windowWidth, windowHeight);
 	
+	GlobalVariables::GetInstance()->LoadFiles();
 	GameScene::GetInstance()->Initialize();
 
 	//	ウィンドウの×ボタンが押されるまでループ
@@ -25,6 +27,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 		ImGui::End();
 #endif FrameRate
+		GlobalVariables::GetInstance()->Update();
 
 		GameScene::GetInstance()->Update();
 

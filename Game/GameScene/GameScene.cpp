@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "externals/imgui/imgui.h"
 #include "Engine/Input/KeyInput/KeyInput.h"
+#include "Engine/Base/MultipathRendering/MultipathRendering.h"
 
 GameScene* GameScene::GetInstance()
 {
@@ -18,11 +19,21 @@ void GameScene::Initialize()
 	viewProjectionMatrix = camera->GetViewProMat();
 	viewProjectionMatrix2d = camera2d->GetViewProMat();
 
+	//	シーンの生成
+	battle_ = std::make_unique<Battle>(camera.get());
+
 	//	モデルのロード
-	player_ = std::make_shared<Model>();
+	for (uint8_t i = 0u; i < 5u; i++) {
+		player_.push_back(std::make_shared<Model>());
+	}
+	
 	floor_ = std::make_shared<Model>();
 
-	player_->Texture("Resources/player/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	player_[0]->Texture("Resources/player/body/body.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	player_[1]->Texture("Resources/player/head/head.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	player_[2]->Texture("Resources/player/RArm/RArm.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	player_[3]->Texture("Resources/player/LArm/LArm.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	player_[4]->Texture("Resources/player/weapon/weapon.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 	floor_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
 	
 	skydome_.Initialize();
@@ -30,18 +41,17 @@ void GameScene::Initialize()
 	ground_.Initialize();
 	ground_.ModelLoad();
 	
-	//	シーンの生成と初期化
-	battle_ = std::make_unique<Battle>(camera.get());
-	battle_->Initialize();
+	//	モデルの引き渡し
+	battle_->SetPlayerModel(player_);
+	battle_->SetFloorModel(floor_.get());
 
+	//	シーンの初期化
+	battle_->Initialize();
+	
 	//	変数の初期化
 	scene = Scene::BATTLE;
 	oldscene = Scene::RESULT;
 
-
-	//	モデルの引き渡し
-	battle_->SetPlayerModel(player_.get());
-	battle_->SetFloorModel(floor_.get());
 
 }
 
@@ -52,6 +62,12 @@ void GameScene::Update()
 	ImGui::DragFloat3("scale", &camera->transform.scale_.x, 0.1f);
 	ImGui::DragFloat3("translate", &camera->transform.translation_.x, 1.0f);
 	ImGui::DragFloat3("rotate", &camera->transform.rotation_.x, AngleToRadian(1.0f));
+	ImGui::End();
+
+	ImGui::Begin("aaaaa");
+	ImGui::DragFloat2("pos", &MultipathRendering::GetInstance()->cEffectParameters->centerPosition.x);
+	ImGui::DragFloat("rate", &MultipathRendering::GetInstance()->cEffectParameters->parameterRate);
+	ImGui::SliderInt("type", &MultipathRendering::GetInstance()->cEffectParameters->type, 0, 10);
 	ImGui::End();
 #endif DEBUG
 

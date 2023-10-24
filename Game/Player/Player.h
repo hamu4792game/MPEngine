@@ -4,6 +4,8 @@
 #include "Engine/Camera/Camera.h"
 #include "Game/Stage/Stage.h"
 #include "math/AABB/AABB.h"
+#include <vector>
+#include <optional>
 
 class Player
 {
@@ -27,7 +29,9 @@ private: // メンバ変数
 	//	ジャンプしているか
 	bool isJamp_ = false;
 	//	playerのモデル
-	Model* model_ = nullptr;
+	std::vector<std::shared_ptr<Model>> model_;
+	//	parts
+	std::vector<WorldTransform> parts_;
 
 	float velocity_ = 0.0f;
 
@@ -38,6 +42,17 @@ private: // メンバ変数
 	Camera* camera_ = nullptr;
 	//	床のポインタ
 	Stage* stage_ = nullptr;
+
+	//	振る舞い
+	enum class Behavior {
+		kRoot,	// 通常攻撃
+		kAttack,// 攻撃中
+	};
+	Behavior behavior_ = Behavior::kRoot;
+	//	次の振る舞いリクエスト
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	uint16_t attackFrame = 0u;
 
 private: // メンバ関数
 	//	プレイヤーの移動
@@ -51,9 +66,18 @@ private: // メンバ関数
 	//	カメラの移動
 	void CameraMove();
 
+	void InitializeRoot();
+	void InitializeAttack();
+
+	//	通常行動更新
+	void BehaviorRootUpdate();
+	//	攻撃行動更新
+	void BehaviorAttackUpdate();
+
+	void ApplyGlobalVariables();
 
 public: // セッター
-	void SetPlayerModel(Model* player) { model_ = player; };
+	void SetPlayerModel(std::vector<std::shared_ptr<Model>> player) { model_ = player; };
 	void SetStagePtr(Stage* stage) { stage_ = stage; };
 
 };

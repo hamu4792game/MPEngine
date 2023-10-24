@@ -17,7 +17,6 @@ void Battle::Initialize()
 	stage_->Initialize();
 	stage_->SetFloorModel(floorModel_);
 	player_->Initialize();
-	player_->SetPlayerModel(playerModel_);
 	player_->SetStagePtr(stage_.get());
 	enemy_->Initialize();
 }

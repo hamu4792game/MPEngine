@@ -29,7 +29,7 @@ float4 main(VertexOutput input) : SV_TARGET
     len = clamp(len, 0.0f, 1.0f);
     textureColor.xyz = lerp(textureColor.xyz, monochrome, len);
     */
-    
+
     float2 posCenter = input.potision.xy - monochromePibot;
     clip(monochromeRate - length(posCenter));
     

@@ -45,7 +45,7 @@ private:
 	std::unique_ptr<Battle> battle_;
 
 	//	モデル
-	std::shared_ptr<Model> player_;
+	std::vector<std::shared_ptr<Model>> player_;
 	std::shared_ptr<Model> floor_;
 	Skydome skydome_;
 	Ground ground_;

@@ -2,6 +2,7 @@
 #include "externals/nlohmann/json.hpp"
 #include "externals/imgui/imgui.h"
 #include <fstream>
+//#include <WinUser.h>
 
 GlobalVariables* GlobalVariables::GetInstance() {
 	static GlobalVariables globalVariables;
@@ -60,6 +61,11 @@ void GlobalVariables::Update() {
 		if (ImGui::Button("Save")) {
 			SaveFile(groupName);
 			std::string message = std::format("{}.json saved", groupName);
+			//MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		}
+		if (ImGui::Button("Load")) {
+			LoadFile(groupName);
+			std::string message = std::format("{}.json load", groupName);
 			//MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 		}
 

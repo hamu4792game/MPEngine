@@ -1,6 +1,8 @@
 #include "Player.h"
 #include <externals/imgui/imgui.h>
 #include "Engine/Input/KeyInput/KeyInput.h"
+#include "GlobalVariables/GlobalVariables.h"
+
 
 Player::Player(Camera* camera)
 {
@@ -13,6 +15,30 @@ void Player::Initialize()
 	playerTrans_.translation_ = Vector3(0.0f, 1.0f, 0.0f);
 	isFloating_ = false;
 	isJamp_ = false;
+
+	parts_.resize(model_.size());
+	for (auto& i : parts_) {
+		i.parent_ = &parts_[0];
+	}
+	parts_[0].parent_ = &playerTrans_;
+	//	パーツ毎の設定
+	//parts_[0].translation_ = Vector3{ 0.0f,-1.3f,0.0f };
+	//parts_[1].translation_ = Vector3{ 0.0f,1.5f,0.0f };
+	//parts_[2].translation_ = Vector3{ -0.2f,1.7f,0.0f };
+	//parts_[3].translation_ = Vector3{ 0.2f,1.7f,0.0f };
+	parts_[4].translation_ = Vector3{ 0.0f,2.0f,0.0f };
+	parts_[4].scale_ = Vector3{ 0.4f,0.4f,0.4f };
+
+	const char* groupName = "Player";
+	//	グループを追加
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+
+	GlobalVariables::GetInstance()->AddItem(groupName, "Body Translation", parts_[0].translation_);
+	GlobalVariables::GetInstance()->AddItem(groupName, "Head Translation", parts_[1].translation_);
+	GlobalVariables::GetInstance()->AddItem(groupName, "Rarm Translation", parts_[2].translation_);
+	GlobalVariables::GetInstance()->AddItem(groupName, "Larm Translation", parts_[3].translation_);
+
+	
 
 	//	座標 - scale * size
 	aabb_.Update(playerTrans_);
@@ -28,16 +54,48 @@ void Player::Update()
 	ImGui::End();
 #endif DEBUG
 
+	ApplyGlobalVariables();
+	
+	//	std::nullopt以外の時通る
+	if (behaviorRequest_)
+	{
+		// 振る舞いを変更する
+		behavior_ = behaviorRequest_.value();
+		//　振る舞いごとの初期化を実行
+		switch (behavior_)
+		{
+		case Behavior::kRoot:
+			InitializeRoot();
+			break;
+		case Behavior::kAttack:
+			InitializeAttack();
+			break;
+		}
+		//	振る舞いリクエストをリセット
+		behaviorRequest_ = std::nullopt;
+	}
 
+	switch (behavior_)
+	{
+	case Behavior::kRoot:
+	default:
+		//	通常行動
+		BehaviorRootUpdate();
+		break;
+	case Behavior::kAttack:
+		//	攻撃処理
+		BehaviorAttackUpdate();
+		break;
+	}
 
-	//	移動
-	Move();
-	Jamp();
 	Collision();
 	MoveLimit();
 	
 	//	座標更新
 	playerTrans_.UpdateMatrix();
+	for (auto& i : parts_) {
+		i.UpdateMatrix();
+	}
 
 	//	座標 - scale * size
 	aabb_.Update(playerTrans_);
@@ -48,14 +106,18 @@ void Player::Update()
 }
 
 
-void Player::Draw(const Matrix4x4& viewProjection)
-{
-	Model::ModelDraw(playerTrans_, viewProjection, 0xffffffff, model_);
+void Player::Draw(const Matrix4x4& viewProjection) {
+	for (uint8_t i = 0; i < parts_.size() - 1u; i++) {
+		Model::ModelDraw(parts_[i], viewProjection, 0xffffffff, model_[i].get());
+	}
+	if (behavior_ == Behavior::kAttack) {
+		Model::ModelDraw(parts_[4], viewProjection, 0xffffffff, model_[4].get());
+	}
+
 	aabb_.DrawAABB(viewProjection, 0xff0000ff);
 }
 
-void Player::EnemyColl(AABB* enemy)
-{
+void Player::EnemyColl(AABB* enemy) {
 	if (aabb_.IsCollision(enemy)) {
 		Initialize();
 	}
@@ -215,3 +277,49 @@ void Player::CameraMove()
 	camera_->transform.UpdateMatrix();
 }
 
+void Player::InitializeAttack() {
+	attackFrame = 0;
+	parts_[2].rotation_.x = -3.5f;
+	parts_[3].rotation_.x = -3.5f;
+	parts_[4].rotation_.x = 0.0f;
+
+}
+
+void Player::InitializeRoot() {
+	parts_[2].rotation_.x = 0.0f;
+	parts_[3].rotation_.x = 0.0f;
+}
+
+void Player::BehaviorRootUpdate() {
+	Move();
+	Jamp();
+	if (KeyInput::PushKey(DIK_V)) {
+		behaviorRequest_ = Behavior::kAttack;
+	}
+}
+
+void Player::BehaviorAttackUpdate() {
+	if (attackFrame != 0) {
+		if (attackFrame < 20) {
+			parts_[2].rotation_.x += 0.1f;
+			parts_[3].rotation_.x += 0.1f;
+			parts_[4].rotation_.x += 0.1f;
+		}
+		else if (attackFrame > 30) {
+			behaviorRequest_ = Behavior::kRoot;
+			return;
+		}
+	}
+	attackFrame++;
+}
+
+
+void Player::ApplyGlobalVariables() {
+	GlobalVariables* globalManagement = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	parts_[0].translation_ = globalManagement->GetVector3Value(groupName, "Body Translation");
+	parts_[1].translation_ = globalManagement->GetVector3Value(groupName, "Head Translation");
+	parts_[2].translation_ = globalManagement->GetVector3Value(groupName, "Rarm Translation");
+	parts_[3].translation_ = globalManagement->GetVector3Value(groupName, "Larm Translation");
+
+}

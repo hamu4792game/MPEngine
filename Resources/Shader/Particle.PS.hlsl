@@ -33,9 +33,9 @@ float4 main(VertexOutput input) : SV_TARGET
     float2 posCenter = input.potision.xy - monochromePibot;
     clip(length(posCenter) - monochromeRate);
 
-    if(textureColor.a <= 0.5f) {
+    /*if(textureColor.a <= 0.5f) {
         discard;
-    }
+    }*/
     
     return textureColor;
 }
