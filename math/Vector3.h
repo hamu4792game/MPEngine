@@ -25,8 +25,12 @@ public:
 	Vector3& operator*=(const float& num);
 };
 
-//	外積を求める
+//	外積を求める (長さ)
 float OuterProduct(const Vector3& vec);
+//	内積を求める
+float Dot(const Vector3& vec1, const Vector3& vec2);
+//	2点間の距離を求める
+float Distance(const Vector3& vec1, const Vector3& vec2);
 //	正規化
 Vector3 Normalize(Vector3 vec3);
 //	絶対値を求める
@@ -47,3 +51,7 @@ float RadianToAngle(float radian);
 /// <param name="vec2">引かれるベクトル</param>
 /// <returns>正規化されていないベクトル</returns>
 Vector3 FindVector(const Vector3& vec1, const Vector3& vec2);
+
+//	ランダム関数
+int RandNum(int min, int max);
+float RandNum(float min, float max);

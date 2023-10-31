@@ -117,6 +117,10 @@ void GameScene::Draw()
 		break;
 	}
 
+	//fenceTrans1->worldMatrix*= camera->billboardMatrix;
+	for (auto& i : fenceTrans1) {
+		i.worldMatrix *= camera->billboardMatrix;
+	}
 	//Model::ModelDraw(fenceTrans1[0], viewProjectionMatrix, 0xffffffff, fence1.get());
 	Particle::ParticleDraw(fenceTrans1, viewProjectionMatrix, 0xffffffff, fence1.get());
 
