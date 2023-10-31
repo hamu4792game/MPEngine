@@ -107,9 +107,6 @@
     <ClCompile Include="Game\Floor\Floor.cpp">
       <Filter>Game\Floor</Filter>
     </ClCompile>
-    <ClCompile Include="math\AABB\AABB.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Floor\MoveFloor\MoveFloor.cpp">
       <Filter>Game\Floor\MoveFloor</Filter>
     </ClCompile>
@@ -124,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="GlobalVariables\GlobalVariables.cpp">
       <Filter>GlobalVariables</Filter>
+    </ClCompile>
+    <ClCompile Include="math\AABB\AABB.cpp">
+      <Filter>math\AABB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,9 +245,6 @@
     <ClInclude Include="Game\Floor\Floor.h">
       <Filter>Game\Floor</Filter>
     </ClInclude>
-    <ClInclude Include="math\AABB\AABB.h">
-      <Filter>math</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Floor\MoveFloor\MoveFloor.h">
       <Filter>Game\Floor\MoveFloor</Filter>
     </ClInclude>
@@ -262,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="GlobalVariables\GlobalVariables.h">
       <Filter>GlobalVariables</Filter>
+    </ClInclude>
+    <ClInclude Include="math\AABB\AABB.h">
+      <Filter>math\AABB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -369,6 +369,9 @@
     </Filter>
     <Filter Include="GlobalVariables">
       <UniqueIdentifier>{4dab006a-08af-43d5-8cd7-d2caa45b2f43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\AABB">
+      <UniqueIdentifier>{6977205b-aa40-44c8-a158-6262d528e654}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

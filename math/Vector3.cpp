@@ -51,13 +51,8 @@ Vector3& Vector3::operator=(const Vector3& num)
 	return *this;
 }
 
-Vector3 Vector3::operator*(const Vector3& num) const
-{
-	Vector3 result;
-	result.x = this->x * num.x;
-	result.y = this->y * num.y;
-	result.z = this->z * num.z;
-	return result;
+float Vector3::operator*(const Vector3& num) const {
+	return (this->x * num.x) + (this->y * num.y) + (this->z * num.z);
 }
 
 Vector3 Vector3::operator*(const float& num) const
@@ -87,6 +82,15 @@ bool Vector3::operator!=(const Vector3& num) const
 float OuterProduct(const Vector3& vec)
 {
 	return sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
+}
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2)
+{
+	Vector3 resultVec = { 0.0f,0.0f,0.0f };
+	resultVec.x = (v1.y * v2.z) - (v1.z * v2.y);
+	resultVec.y = (v1.z * v2.x) - (v1.x * v2.z);
+	resultVec.z = (v1.x * v2.y) - (v1.y * v2.x);
+	return resultVec;
 }
 
 Vector3 Normalize(Vector3 vec3)
@@ -135,6 +139,10 @@ float RadianToAngle(float radian)
 Vector3 FindVector(const Vector3& vec1, const Vector3& vec2)
 {
 	return vec2 - vec1;
+}
+
+float Length(const Vector3& vec) {
+	return sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
 }
 
 

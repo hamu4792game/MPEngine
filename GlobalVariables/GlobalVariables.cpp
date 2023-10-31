@@ -3,6 +3,9 @@
 #include "externals/imgui/imgui.h"
 #include <fstream>
 //#include <WinUser.h>
+#include <Windows.h>
+#undef max
+#undef min
 
 GlobalVariables* GlobalVariables::GetInstance() {
 	static GlobalVariables globalVariables;
@@ -61,12 +64,12 @@ void GlobalVariables::Update() {
 		if (ImGui::Button("Save")) {
 			SaveFile(groupName);
 			std::string message = std::format("{}.json saved", groupName);
-			//MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 		}
 		if (ImGui::Button("Load")) {
 			LoadFile(groupName);
 			std::string message = std::format("{}.json load", groupName);
-			//MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 		}
 
 		ImGui::EndMenu();

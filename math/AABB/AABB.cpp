@@ -4,8 +4,8 @@
 void AABB::Update(WorldTransform& transform)
 {
 	//	座標 - scale * size
-	this->min = Vector3(transform.GetTranslate() - (transform.scale_ * size));
-	this->max = Vector3(transform.GetTranslate() + (transform.scale_ * size));
+	this->min = Vector3(transform.GetTranslate() - Vector3(transform.scale_.x * size.x, transform.scale_.y * size.y, transform.scale_.z * size.z));
+	this->max = Vector3(transform.GetTranslate() + Vector3(transform.scale_.x * size.x, transform.scale_.y * size.y, transform.scale_.z * size.z));
 }
 
 bool AABB::IsCollision(AABB* aabb2) {

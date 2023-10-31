@@ -168,7 +168,7 @@ void Player::Move() {
 	//	移動があれば更新
 	if (isMove) {
 		//	移動量の正規化
-		move = Normalize(move) * speed;
+		move = Normalize(move) /** speed*/;
 		//	移動ベクトルをカメラの角度だけ回転させる
 		move = TransformNormal(move, MakeRotateMatrix(camera_->transform.rotation_));
 		//	移動方向に見た目を合わせる
@@ -290,6 +290,11 @@ void Player::InitializeRoot() {
 	parts_[3].rotation_.x = 0.0f;
 }
 
+void Player::InitializeDash() {
+	workDash_.dashParameter_ = 0u;
+	//playerTrans_.rotation_.y = destinationAngleY_;
+}
+
 void Player::BehaviorRootUpdate() {
 	Move();
 	Jamp();
@@ -313,6 +318,13 @@ void Player::BehaviorAttackUpdate() {
 	attackFrame++;
 }
 
+void Player::BehaviorDashUpdate() {
+	// ダッシュボタンを押したら
+	if (KeyInput::PushKey(DIK_B)) {
+		// ダッシュリクエスト
+		behaviorRequest_ = Behavior::kDash;
+	}
+}
 
 void Player::ApplyGlobalVariables() {
 	GlobalVariables* globalManagement = GlobalVariables::GetInstance();
