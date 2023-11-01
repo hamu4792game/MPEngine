@@ -2,6 +2,7 @@
 #include <externals/imgui/imgui.h>
 #include "Engine/Input/KeyInput/KeyInput.h"
 #include "GlobalVariables/GlobalVariables.h"
+#include <algorithm>
 
 
 Player::Player(Camera* camera)
@@ -12,9 +13,11 @@ Player::Player(Camera* camera)
 
 void Player::Initialize()
 {
+	//	メンバ変数の初期化
 	playerTrans_.translation_ = Vector3(0.0f, 1.0f, 0.0f);
 	isFloating_ = false;
 	isJamp_ = false;
+	destinationAngleY_ = 0.0f;
 
 	parts_.resize(model_.size());
 	for (auto& i : parts_) {
@@ -70,6 +73,9 @@ void Player::Update()
 		case Behavior::kAttack:
 			InitializeAttack();
 			break;
+		case Behavior::kDash:
+			InitializeDash();
+			break;
 		}
 		//	振る舞いリクエストをリセット
 		behaviorRequest_ = std::nullopt;
@@ -85,6 +91,10 @@ void Player::Update()
 	case Behavior::kAttack:
 		//	攻撃処理
 		BehaviorAttackUpdate();
+		break;
+	case Behavior::kDash:
+		//	ダッシュ処理
+		BehaviorDashUpdate();
 		break;
 	}
 
@@ -168,10 +178,12 @@ void Player::Move() {
 	//	移動があれば更新
 	if (isMove) {
 		//	移動量の正規化
-		move = Normalize(move) /** speed*/;
+		move = Normalize(move) * speed;
 		//	移動ベクトルをカメラの角度だけ回転させる
-		move = TransformNormal(move, MakeRotateMatrix(camera_->transform.rotation_));
+		//move = TransformNormal(move, MakeRotateMatrix(camera_->transform.rotation_));
+		move = TargetOffset(move, camera_->transform.rotation_);
 		//	移動方向に見た目を合わせる
+		destinationAngleY_ = std::atan2f(move.x, move.z);
 		playerTrans_.rotation_.y = std::atan2f(move.x, move.z);
 		//	ジャンプを加味していないため
 		move.y = 0.0f;
@@ -266,16 +278,35 @@ void Player::MoveLimit() {
 
 }
 
-void Player::CameraMove()
-{
+void Player::CameraMove() {
 	Vector3 offset(0.0f, 2.0f, -50.0f);
+	offset = TargetOffset(offset, camera_->transform.rotation_);
 
-	Matrix4x4 rotate = MakeRotateMatrix(camera_->transform.rotation_);
-	offset = TransformNormal(offset, rotate);
+	//	追従座標の補間
+	//	ダッシュの時間<frame>
+	const uint32_t behaviorDashTime = 30u;
+	cameraT_ += 1.0f / behaviorDashTime;
+	cameraT_ = std::clamp(cameraT_, 0.0f, 1.0f);
+	interTarget_ = Lerp(interTarget_, playerTrans_.translation_, cameraT_);
 
+	camera_->transform.translation_ = interTarget_ + offset;
+	camera_->transform.UpdateMatrix();
+}
+
+void Player::CameraReset() {
+	//	追従座標、角度の初期化
+	interTarget_ = playerTrans_.translation_;
+	camera_->transform.rotation_.y = playerTrans_.rotation_.y;
+
+	destinationAngleY_ = camera_->transform.rotation_.y;
+
+	//	追従対象からのオフセット
+	Vector3 offset(0.0f, 2.0f, -50.0f);
+	offset = TargetOffset(offset, camera_->transform.rotation_);
 	camera_->transform.translation_ = playerTrans_.translation_ + offset;
 	camera_->transform.UpdateMatrix();
 }
+
 
 void Player::InitializeAttack() {
 	attackFrame = 0;
@@ -292,7 +323,8 @@ void Player::InitializeRoot() {
 
 void Player::InitializeDash() {
 	workDash_.dashParameter_ = 0u;
-	//playerTrans_.rotation_.y = destinationAngleY_;
+	playerTrans_.rotation_.y = destinationAngleY_;
+	cameraT_ = 0.0f;
 }
 
 void Player::BehaviorRootUpdate() {
@@ -300,6 +332,11 @@ void Player::BehaviorRootUpdate() {
 	Jamp();
 	if (KeyInput::PushKey(DIK_V)) {
 		behaviorRequest_ = Behavior::kAttack;
+	}
+	// ダッシュボタンを押したら
+	else if (KeyInput::PushKey(DIK_B)) {
+		// ダッシュリクエスト
+		behaviorRequest_ = Behavior::kDash;
 	}
 }
 
@@ -319,11 +356,27 @@ void Player::BehaviorAttackUpdate() {
 }
 
 void Player::BehaviorDashUpdate() {
-	// ダッシュボタンを押したら
-	if (KeyInput::PushKey(DIK_B)) {
-		// ダッシュリクエスト
-		behaviorRequest_ = Behavior::kDash;
+	//	自キャラの向いている方向に移動する処理
+	//	移動量の正規化
+	const float speed = 1.0f;
+	Vector3 move = Vector3(0.0f, 0.0f, speed);
+	move = Normalize(move) * speed;
+	//	移動ベクトルをカメラの角度だけ回転させる
+	move = TransformNormal(move, MakeRotateYMatrix(destinationAngleY_));
+	//	ジャンプを加味していないため
+	move.y = 0.0f;
+
+	playerTrans_.translation_ += move;
+	playerTrans_.UpdateMatrix();
+
+	//	ダッシュの時間<frame>
+	const uint32_t behaviorDashTime = 30u;
+
+	//	規定の時間経過で通常行動に戻る
+	if (++workDash_.dashParameter_ >= behaviorDashTime) {
+		behaviorRequest_ = Behavior::kRoot;
 	}
+
 }
 
 void Player::ApplyGlobalVariables() {

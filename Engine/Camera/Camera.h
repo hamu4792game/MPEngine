@@ -13,6 +13,9 @@ public:
 	Camera(float farClip_ = 1000.0f, bool proType = false);
 	~Camera() = default;
 
+	//ワールドトランスフォームの親ポインタのセット
+	void SetParent(WorldTransform* parent) { transform.parent_ = parent; }
+
 private:
 	//	深度値
 	float farZ;
@@ -24,6 +27,7 @@ private:
 	Matrix4x4 projectionMatrix{};
 	Matrix4x4 viewProjectionMatrix{};
 
+	void CreateBillboard();
 
 public:
 	WorldTransform transform;
@@ -31,8 +35,10 @@ public:
 	Matrix4x4 GetViewProMat();
 
 	Vector3 position;	//カメラの座標
+	Matrix4x4 billboardMatrix;
 
-	//送信確認
+public:
+	
 
 };
 

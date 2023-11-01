@@ -67,6 +67,8 @@ public:
 
 	void SetAnchorPoint(AnchorPoint anchor);
 
+	void SetBlend(BlendMode blend) { blendType = blend; }
+
 private:
 	void CreateDescriptor(const std::string& filePath);
 

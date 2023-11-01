@@ -125,6 +125,12 @@
     <ClCompile Include="math\AABB\AABB.cpp">
       <Filter>math\AABB</Filter>
     </ClCompile>
+    <ClCompile Include="math\OBB\OBB.cpp">
+      <Filter>math\OBB</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Sphere\Sphere.cpp">
+      <Filter>math\Sphere</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -263,6 +269,12 @@
     <ClInclude Include="math\AABB\AABB.h">
       <Filter>math\AABB</Filter>
     </ClInclude>
+    <ClInclude Include="math\OBB\OBB.h">
+      <Filter>math\OBB</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Sphere\Sphere.h">
+      <Filter>math\Sphere</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -372,6 +384,12 @@
     </Filter>
     <Filter Include="math\AABB">
       <UniqueIdentifier>{6977205b-aa40-44c8-a158-6262d528e654}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\OBB">
+      <UniqueIdentifier>{0d33e5dd-bda3-4f93-9d3e-e6cf158bc28f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\Sphere">
+      <UniqueIdentifier>{a76c42cf-206f-4a4d-b7c2-5f779b2b6eca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -34,7 +34,7 @@ void GameScene::Initialize()
 	player_[2]->Texture("Resources/player/RArm/RArm.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 	player_[3]->Texture("Resources/player/LArm/LArm.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 	player_[4]->Texture("Resources/player/weapon/weapon.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
-	floor_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
+	floor_->Texture("Resources/floor/floor.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
 	
 	skydome_.Initialize();
 	skydome_.ModelLoad();

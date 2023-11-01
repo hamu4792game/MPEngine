@@ -1,7 +1,6 @@
 #include "Engine/Camera/Camera.h"
 #include "Engine/Engine.h"
-//#include "externals/imgui/imgui.h"
-#include "Engine/Input/KeyInput/KeyInput.h"
+#include <numbers>
 
 Camera::Camera(float farClip_, bool proType) {
 	farZ = farClip_;
@@ -12,7 +11,6 @@ Camera::Camera(float farClip_, bool proType) {
 	else {
 		projectionMatrix = MakeOrthographicMatrix(-float(Engine::GetInstance()->WindowWidth / 2), float(Engine::GetInstance()->WindowHeight / 2),
 			float(Engine::GetInstance()->WindowWidth / 2), -float(Engine::GetInstance()->WindowHeight / 2), 0.01f, farZ);
-		transform.translation_.z = -0.1f;
 	}
 	
 
@@ -33,10 +31,23 @@ Camera::Camera(float farClip_, bool proType) {
 
 }
 
+void Camera::CreateBillboard() {
+	//	180度回転させる
+	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+	//	行列の生成
+	billboardMatrix = backToFrontMatrix * cameraMatrix;
+	billboardMatrix.m[3][0] = 0.0f;
+	billboardMatrix.m[3][1] = 0.0f;
+	billboardMatrix.m[3][2] = 0.0f;
+}
+
 Matrix4x4 Camera::GetViewProMat() {
 	//	行列の計算
 	cameraMatrix = transform.UpdateMatrix();
 	viewMatrix = Inverse(cameraMatrix);
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
+	//	ビルボードも作る
+	CreateBillboard();
+
 	return viewProjectionMatrix;
 }

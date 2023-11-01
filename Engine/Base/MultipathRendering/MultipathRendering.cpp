@@ -8,5 +8,5 @@ MultipathRendering* MultipathRendering::GetInstance() {
 void MultipathRendering::Initialize() {
 	cEffectParameters->centerPosition = Vector2(0.0f, 0.0f);
 	cEffectParameters->parameterRate = 0.0f;
-	cEffectParameters->type = 1;
+	cEffectParameters->type = 0;
 }

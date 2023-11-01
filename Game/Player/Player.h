@@ -35,6 +35,13 @@ private: // メンバ変数
 
 	float velocity_ = 0.0f;
 
+	//	
+	float destinationAngleY_ = 0.0f;
+	//	追従対象の残像座標
+	Vector3 interTarget_;
+	//	補間レートT
+	float cameraT_ = 0.0f;
+
 	//	aabb
 	AABB aabb_;
 
@@ -74,7 +81,9 @@ private: // メンバ関数
 	void MoveLimit();
 	//	カメラの移動
 	void CameraMove();
-	
+
+	//	カメラリセット
+	void CameraReset();
 	
 	//	通常行動初期化
 	void InitializeRoot();

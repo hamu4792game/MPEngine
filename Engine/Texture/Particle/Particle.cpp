@@ -1,11 +1,12 @@
 #include "Particle.h"
 #include "Engine/Base/GraphicsPipeline/GraphicsPipeline.h"
+#include "Engine/Manager/TextureManager.h"
 
 //	便利なtmpみたいなやつ
-//decltype(Particle::rootSignature) Particle::rootSignature;
-//decltype(Particle::graphicsPipelineState) Particle::graphicsPipelineState;
-//decltype(Particle::vertexShader) Particle::vertexShader;
-//decltype(Particle::pixelShader) Particle::pixelShader;
+decltype(Particle::rootSignature) Particle::rootSignature;
+decltype(Particle::graphicsPipelineState) Particle::graphicsPipelineState;
+decltype(Particle::vertexShader) Particle::vertexShader;
+decltype(Particle::pixelShader) Particle::pixelShader;
 
 Particle::~Particle()
 {
@@ -13,7 +14,42 @@ Particle::~Particle()
 		instancingResource->Release();
 		instancingResource.Reset();
 	}
+
+	if (SRVHeap) {
+		SRVHeap->Release();
+		SRVHeap.Reset();
+	}
+	if (depthStencilResource) {
+		depthStencilResource->Release();
+		depthStencilResource.Reset();
+	}
+	if (vertexResource) {
+		vertexResource->Release();
+		vertexResource.Reset();
+	}
+	if (resource[0]) {
+		resource[0]->Release();
+		resource[0].Reset();
+	}
 	
+	if (rootSignature) {
+		rootSignature->Release();
+		rootSignature.Reset();
+	}
+	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
+		if (graphicsPipelineState[i]) {
+			graphicsPipelineState[i]->Release();
+			graphicsPipelineState[i].Reset();
+		}
+	}
+	if (vertexShader) {
+		vertexShader->Release();
+		vertexShader.Reset();
+	}
+	if (pixelShader) {
+		pixelShader->Release();
+		pixelShader.Reset();
+	}
 }
 
 void Particle::Finalize() {
@@ -37,7 +73,7 @@ void Particle::Finalize() {
 	}
 }
 
-void Particle::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, uint16_t num)
+void Particle::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& textureFilePath, uint16_t num)
 {
 	//	個数の設定
 	kNumInstance = num;
@@ -45,7 +81,7 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 	CreateInstancingResource();
 
 	//	モデルのロードとデスクリプタヒープの生成
-	CreateDescriptor(filePath);
+	CreateDescriptor(filePath, textureFilePath);
 
 	vertexShader = GraphicsPipeline::GetInstance()->CreateVSShader(vsFileName);
 	pixelShader = GraphicsPipeline::GetInstance()->CreatePSShader(psFileName);
@@ -76,7 +112,7 @@ void Particle::Texture(const std::string& filePath, const std::string& vsFileNam
 
 
 	if (!rootSignature) {
-		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
+		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 3);
 	}
 	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
 		if (!graphicsPipelineState[i]) {
@@ -99,19 +135,19 @@ void Particle::CreateInstancingResource()
 	instancingResource->Unmap(0, nullptr);
 }
 
-void Particle::CreateDescriptor(const std::string& filePath)
+void Particle::CreateDescriptor(const std::string& filePath,const std::string& textureFilePath)
 {
 	//	モデル読み込み
 	modelData = TextureManager::LoadObjFile(filePath);
 
-	DirectX::ScratchImage mipImages = TextureManager::LoadTexture("./Resources/" + modelData.material.textureFilePath);
+	DirectX::ScratchImage mipImages = TextureManager::LoadTexture(textureFilePath);
 	//DirectX::ScratchImage mipImages = TextureManager::LoadTexture("./Resources/uvChecker.png");
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	resource[0] = Engine::CreateTextureResource(Engine::GetDevice(), metaData);
 	TextureManager::UploadTextureData(resource[0].Get(), mipImages);
 
 	//	デスクリプタヒープを生成
-	SRVHeap = CreateDescriptorHeap(Engine::GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 10, true);
+	SRVHeap = CreateDescriptorHeap(Engine::GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kNumInstance, true);
 
 	//	設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};

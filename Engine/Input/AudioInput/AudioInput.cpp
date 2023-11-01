@@ -27,8 +27,15 @@ void AudioInput::SoundLoadWave(const std::string fileName)
 	FormatChunk format{};
 	//	チャンクヘッダーの確認
 	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id.data(), "fmt ", 4) != 0) {
-		assert(0);
+	while (strncmp(format.chunk.id.data(), "fmt ", 4) != 0) {
+		//	読み取り位置をdataまで進める
+		file.seekg(format.chunk.size, std::ios_base::cur);
+		//	読み込み
+		file.read((char*)&format.chunk, sizeof(format.chunk));
+		//	読み込めなかったら
+		if (file.eof()) {
+			assert(0);
+		}
 	}
 	//	チャンク本体の読み込み
 	assert(format.chunk.size <= sizeof(format.fmt));

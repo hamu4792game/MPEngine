@@ -139,6 +139,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\AABB\AABB.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
+    <ClCompile Include="math\OBB\OBB.cpp" />
+    <ClCompile Include="math\Sphere\Sphere.cpp" />
     <ClCompile Include="math\Vector2.cpp" />
     <ClCompile Include="math\Vector3.cpp" />
     <ClCompile Include="math\Vector4.cpp" />
@@ -186,6 +188,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="GlobalVariables\GlobalVariables.h" />
     <ClInclude Include="math\AABB\AABB.h" />
     <ClInclude Include="math\Matrix4x4.h" />
+    <ClInclude Include="math\OBB\OBB.h" />
+    <ClInclude Include="math\Sphere\Sphere.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
