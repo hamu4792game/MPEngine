@@ -11,9 +11,6 @@
     <ClCompile Include="Engine\Input\AudioInput\AudioInput.cpp">
       <Filter>Engine\Input\AudioInput</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Input\KeyInput\KeyInput.cpp">
-      <Filter>Engine\Input\KeyInput</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Manager\AudioManager\AudioManager.cpp">
       <Filter>Engine\Manager\AudioManager</Filter>
     </ClCompile>
@@ -119,6 +116,12 @@
     <ClCompile Include="Game\Enemy\Enemy.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Input\KeyInput\KeyInput.cpp">
+      <Filter>Engine\Input\KeyInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Input\PadInput\PadInput.cpp">
+      <Filter>Engine\Input\PadInput</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -132,9 +135,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Input\AudioInput\AudioInput.h">
       <Filter>Engine\Input\AudioInput</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Input\KeyInput\KeyInput.h">
-      <Filter>Engine\Input\KeyInput</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Manager\AudioManager\AudioManager.h">
       <Filter>Engine\Manager\AudioManager</Filter>
@@ -251,6 +251,12 @@
     <ClInclude Include="Game\Enemy\Enemy.h">
       <Filter>Game\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Input\KeyInput\KeyInput.h">
+      <Filter>Engine\Input\KeyInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Input\PadInput\PadInput.h">
+      <Filter>Engine\Input\PadInput</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -351,6 +357,9 @@
     </Filter>
     <Filter Include="Game\Enemy">
       <UniqueIdentifier>{5b5bd62a-2203-4d3f-850d-cd59f8e902ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input\PadInput">
+      <UniqueIdentifier>{7c1cfe74-a1ba-47fc-8035-755f07a9f35a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

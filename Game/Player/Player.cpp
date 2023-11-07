@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <externals/imgui/imgui.h>
 #include "Engine/Input/KeyInput/KeyInput.h"
+#include "Engine/Input/PadInput/PadInput.h"
 
 Player::Player(Camera* camera)
 {
@@ -70,30 +71,30 @@ void Player::Move() {
 	const float speed = 0.5f;
 
 	//	キーの取得
-	if (KeyInput::GetKey(DIK_W) /*&& distance >= 15.0f*/)
+	if (KeyInput::GetInstance()->PressKey(DIK_W) /*&& distance >= 15.0f*/)
 	{
 		move.z += speed;
 		isMove = true;
 	}
-	if (KeyInput::GetKey(DIK_S))
+	if (KeyInput::GetInstance()->PressKey(DIK_S))
 	{
 		move.z -= speed;
 		isMove = true;
 	}
-	if (KeyInput::GetKey(DIK_D))
+	if (KeyInput::GetInstance()->PressKey(DIK_D))
 	{
 		move.x += speed;
 		isMove = true;
 	}
-	if (KeyInput::GetKey(DIK_A))
+	if (KeyInput::GetInstance()->PressKey(DIK_A))
 	{
 		move.x -= speed;
 		isMove = true;
 	}
 	//	padが接続されているなら
-	if (KeyInput::GetInstance()->GetPadConnect()) {
+	if (PadInput::GetInstance()->GetPadConnect()) {
 		Vector2 pMove(0.0f, 0.0f);
-		pMove = KeyInput::GetInstance()->GetPadLStick();
+		pMove = PadInput::GetInstance()->GetPadLStick();
 		//	移動があれば代入する
 		if (pMove.x != 0.0f || pMove.y != 0.0f)
 		{
@@ -124,7 +125,7 @@ void Player::Move() {
 void Player::Jamp() {
 
 	if (!isJamp_ && !isFloating_) {
-		if (KeyInput::PushKey(DIK_SPACE)) {
+		if (KeyInput::GetInstance()->PressKey(DIK_SPACE)) {
 			isJamp_ = true;
 			//	初速度を与える
 			velocity_ = 1.0f;

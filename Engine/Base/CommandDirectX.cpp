@@ -2,6 +2,7 @@
 #include "Engine/Log.h"
 #include <cassert>
 #include "Engine/Input/KeyInput/KeyInput.h"
+#include "Engine/Input/PadInput/PadInput.h"
 #include "Engine/Manager/AudioManager/AudioManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
@@ -48,7 +49,8 @@ void CommandDirectX::Initialize(WinApp* winApp, int32_t bufferWidth, int32_t buf
 	CreateFence();
 
 	//	Inputの初期化処理
-	KeyInput::InputInitialize();
+	KeyInput::GetInstance()->Initialize();
+	PadInput::GetInstance()->Initialize();
 
 	//	Audioの初期化処理
 	AudioManager::Initialize();
@@ -65,7 +67,8 @@ void CommandDirectX::PreDraw()
 	//ImGui::ShowDemoWindow();
 
 	//	Input初期の更新
-	KeyInput::Update();
+	KeyInput::GetInstance()->Update();
+	PadInput::GetInstance()->Update();
 
 	//	ここから書き込むバックバッファのインデックスを取得
 	//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
@@ -226,8 +229,7 @@ void CommandDirectX::PostDraw()
 	commandQueue->Signal(fence, fenceValue);
 	//	Fenceの値が指定したSignal値にたどり着いているか確認する
 	//	GetCompletedValueの初期値はFence作成時に渡した初期値
-	if (fence->GetCompletedValue() < fenceValue)
-	{
+	if (fence->GetCompletedValue() < fenceValue) {
 
 		//	指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
 		fence->SetEventOnCompletion(fenceValue, fenceEvent);

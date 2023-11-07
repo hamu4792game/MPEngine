@@ -33,7 +33,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 		//	フレームの終了
 		Engine::EndFrame();
 		fpsManager.TimeAdjustment();
-		if (KeyInput::PushKey(DIK_ESCAPE)) {
+		if (KeyInput::GetInstance()->PressKey(DIK_ESCAPE)) {
 			break;
 		}
 	}

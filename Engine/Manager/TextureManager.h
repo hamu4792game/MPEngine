@@ -3,6 +3,7 @@
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 #include <string>
+#include <array>
 #include "math/Vector4.h"
 #include "math/Vector3.h"
 #include "math/Vector2.h"
@@ -49,8 +50,11 @@ private:
 	ID3D12PipelineState* graphicsPipelineState = nullptr;
 	//	デスクリプタヒープの生成
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
+
+	//static const size_t kMaxSRVCount = 2056;
+
 	// テクスチャコンテナ
-	//std::array<Texture2D> textures_;
+	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>,kMaxSRVCount> textureBuffers_;
 
 
 

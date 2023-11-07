@@ -1,6 +1,7 @@
 #include "Battle.h"
 #include <externals/imgui/imgui.h>
 #include "Engine/Input/KeyInput/KeyInput.h"
+#include "Engine/Input/PadInput/PadInput.h"
 #include <cmath>
 
 Battle::Battle(Camera* camera)
@@ -27,17 +28,17 @@ void Battle::Update()
 
 	//	カメラの移動
 
-	if (KeyInput::GetKey(DIK_RIGHTARROW)) {
+	if (KeyInput::GetInstance()->PressKey(DIK_RIGHTARROW)) {
 		camera_->transform.rotation_.y += AngleToRadian(1.0f);
 	}
-	if (KeyInput::GetKey(DIK_LEFTARROW)) {
+	if (KeyInput::GetInstance()->PressKey(DIK_LEFTARROW)) {
 		camera_->transform.rotation_.y -= AngleToRadian(1.0f);
 	}
 
 	//	padが接続されているなら
-	if (KeyInput::GetInstance()->GetPadConnect()) {
+	if (PadInput::GetInstance()->GetPadConnect()) {
 		Vector2 pMove(0.0f, 0.0f);
-		pMove = KeyInput::GetInstance()->GetPadRStick();
+		pMove = PadInput::GetInstance()->GetPadRStick();
 		//	移動があれば代入する
 		if (pMove.x < -0.5f)	{
 			camera_->transform.rotation_.y -= AngleToRadian(1.0f);
