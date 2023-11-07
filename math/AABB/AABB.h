@@ -1,6 +1,7 @@
 #pragma once
 #include "math/Vector3.h"
 #include "Engine/Texture/Line/Line.h"
+#include "math/Sphere/Sphere.h"
 
 //	AABB
 class AABB
@@ -16,6 +17,8 @@ public:
 
 public:
 	void Update(WorldTransform& transform);
+	//	AABBと球の衝突判定
+	bool IsCollision(Sphere* sphere);
 	//	AABB同士の衝突判定
 	bool IsCollision(AABB* aabb2);
 	//	AABBの描画

@@ -1,19 +1,18 @@
 #pragma once
 #include "math/Vector3.h"
-#include <array>
-
-class Line;
+#include "Engine/Texture/Line/Line.h"
 
 class Sphere {
 public:
 	Sphere() = default;
 	~Sphere() = default;
 
-private:
+public:
 	Vector3 center;
 	Vector3 rotate;
 	float radius;
-	//Line *line;
-	std::array<Line,16>line;
+
+public:
+	void Update(WorldTransform& transform);
 
 };

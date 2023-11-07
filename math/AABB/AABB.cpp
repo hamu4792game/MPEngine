@@ -1,11 +1,36 @@
 #include "AABB.h"
 #include <cmath>
+#include <algorithm>
 
 void AABB::Update(WorldTransform& transform)
 {
 	//	座標 - scale * size
 	this->min = Vector3(transform.GetTranslate() - Vector3(transform.scale_.x * size.x, transform.scale_.y * size.y, transform.scale_.z * size.z));
 	this->max = Vector3(transform.GetTranslate() + Vector3(transform.scale_.x * size.x, transform.scale_.y * size.y, transform.scale_.z * size.z));
+}
+
+bool AABB::IsCollision(Sphere* sphere) {
+	Vector3 min;
+	min.x = (std::min)(this->min.x, this->max.x);
+	min.y = (std::min)(this->min.y, this->max.y);
+	min.z = (std::min)(this->min.z, this->max.z);
+	Vector3 max;
+	max.x = (std::max)(this->min.x, this->max.x);
+	max.y = (std::max)(this->min.y, this->max.y);
+	max.z = (std::max)(this->min.z, this->max.z);
+
+	//	最近接点を求める
+	Vector3 closestPoint{ std::clamp(sphere->center.x,min.x,max.x),
+		std::clamp(sphere->center.y,min.y,max.y),
+		std::clamp(sphere->center.z,min.z,max.z) };
+	//	最近接点と球の中心との距離を求める
+	float distance = Length(closestPoint - sphere->center);
+	//	距離が半径よりも小さければ衝突
+	if (distance <= std::fabs(sphere->radius))
+	{
+		return true;
+	}
+	return false;
 }
 
 bool AABB::IsCollision(AABB* aabb2) {

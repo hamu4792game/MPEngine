@@ -45,6 +45,8 @@ void Player::Initialize()
 
 	//	座標 - scale * size
 	aabb_.Update(playerTrans_);
+	//obb_.Update(playerTrans_);
+	sphere_.Update(parts_[4]);
 }
 
 void Player::Update()
@@ -109,6 +111,8 @@ void Player::Update()
 
 	//	座標 - scale * size
 	aabb_.Update(playerTrans_);
+	//obb_.Update(playerTrans_);
+	sphere_.Update(parts_[4]);
 
 	//	カメラの移動と更新
 	CameraMove();
@@ -125,10 +129,14 @@ void Player::Draw(const Matrix4x4& viewProjection) {
 	}
 
 	aabb_.DrawAABB(viewProjection, 0xff0000ff);
+	//obb_.DrawOBB(viewProjection, 0xff0000ff);
 }
 
 void Player::EnemyColl(AABB* enemy) {
 	if (aabb_.IsCollision(enemy)) {
+		Initialize();
+	}
+	if (enemy->IsCollision(&sphere_)) {
 		Initialize();
 	}
 }
@@ -178,7 +186,7 @@ void Player::Move() {
 	//	移動があれば更新
 	if (isMove) {
 		//	移動量の正規化
-		move = Normalize(move) * speed;
+		move = Normalize(move);
 		//	移動ベクトルをカメラの角度だけ回転させる
 		//move = TransformNormal(move, MakeRotateMatrix(camera_->transform.rotation_));
 		move = TargetOffset(move, camera_->transform.rotation_);
@@ -187,6 +195,7 @@ void Player::Move() {
 		playerTrans_.rotation_.y = std::atan2f(move.x, move.z);
 		//	ジャンプを加味していないため
 		move.y = 0.0f;
+		move*= speed;
 
 		//	座標更新
 		playerTrans_.translation_ += move;

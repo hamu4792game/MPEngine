@@ -4,6 +4,8 @@
 #include "Engine/Camera/Camera.h"
 #include "Game/Stage/Stage.h"
 #include "math/AABB/AABB.h"
+//#include "math/OBB/OBB.h"
+#include "math/Sphere/Sphere.h"
 #include <vector>
 #include <optional>
 
@@ -33,6 +35,9 @@ private: // メンバ変数
 	//	parts
 	std::vector<WorldTransform> parts_;
 
+	//	武器の座標
+	WorldTransform weaponTrans_;
+
 	float velocity_ = 0.0f;
 
 	//	
@@ -44,6 +49,8 @@ private: // メンバ変数
 
 	//	aabb
 	AABB aabb_;
+	//OBB obb_;
+	Sphere sphere_;
 
 	//	カメラのポインタ
 	Camera* camera_ = nullptr;
