@@ -12,7 +12,6 @@ double TimeBaseLoopExecuter::TimeAdjustment()
 	{
 		//Sleepの時間を計算
 		DWORD sleepTime = static_cast<DWORD>((FRAME_TIME - frameTime) * 1000.0);
-		timeBeginPeriod(1);
 		//寝る
 		Sleep(sleepTime);
 		timeEndPeriod(1);

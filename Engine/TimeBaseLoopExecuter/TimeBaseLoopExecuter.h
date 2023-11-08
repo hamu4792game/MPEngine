@@ -15,6 +15,7 @@ public:
 		//計測開始時間の初期化
 		QueryPerformanceCounter(&mTimeStart);
 		QueryPerformanceCounter(&mTimeEnd);
+		timeBeginPeriod(1);
 	}
 	//FPSを固定するため処理時間に余裕がある場合その分待つ
 	double TimeAdjustment();

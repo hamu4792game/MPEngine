@@ -200,19 +200,16 @@ void Player::Move() {
 		move = Normalize(move);
 
 		//	移動ベクトルをカメラの角度だけ回転させる
-		//Matrix4x4 rot = DirectionToDirection(Vector3(0.0f,0.0f,1.0f), move);
 		move = TargetOffset(move, camera_->transform.rotation_);
+		//	ジャンプを加味していないため
+		move.y = 0.0f;
+		move*= speed;
+		
+		//Matrix4x4 rot = DirectionToDirection(Vector3(0.0f,0.0f,1.0f), move);
 		//	移動方向に見た目を合わせる
 		destinationAngleY_ = std::atan2f(move.x, move.z);
 		playerTrans_.rotation_.y = std::atan2f(move.x, move.z);
 
-		/*Vector3 vec = TransformNormal(move, rot);
-		playerTrans_.rotation_.y = Normalize(vec).y;*/
-
-
-		//	ジャンプを加味していないため
-		move.y = 0.0f;
-		move*= speed;
 
 		//	座標更新
 		playerTrans_.translation_ += move;
