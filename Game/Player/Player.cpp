@@ -33,7 +33,7 @@ void Player::Initialize() {
 	parts_[4].translation_ = Vector3{ 0.0f,2.0f,0.0f };
 	parts_[4].scale_ = Vector3{ 0.4f,0.4f,0.4f };
 
-	weaponTrans_.parent_ = &parts_[4];
+	weaponTrans_.parent_ = nullptr;
 	weaponTrans_.translation_.y = 15.0f;
 
 	const char* groupName = "Player";
@@ -64,11 +64,11 @@ void Player::Update() {
 	ImGui::DragFloat3("rotate", &playerTrans_.rotation_.x, AngleToRadian(1.0f));
 
 	int dash = static_cast<int>(workDash_.behaviorDashTime_);
-	ImGui::DragInt("dash", &dash, 1, 0, 100);
+	ImGui::DragInt("dash", &dash, 1, 0, 500);
 	workDash_.behaviorDashTime_ = dash;
 
 	dash = static_cast<int>(workDash_.delayTime_);
-	ImGui::DragInt("delay", &dash, 1, 0, 100);
+	ImGui::DragInt("delay", &dash, 1, 0, 500);
 	workDash_.delayTime_ = dash;
 
 	ImGui::End();
@@ -132,10 +132,10 @@ void Player::Draw(const Matrix4x4& viewProjection) {
 	}
 	if (behavior_ == Behavior::kAttack) {
 		Model::ModelDraw(parts_[4], viewProjection, 0xffffffff, model_[4].get());
+		sphere_.Draw(viewProjection, 0xff0000ff);
 	}
 
 	aabb_.DrawAABB(viewProjection, 0xff0000ff);
-	sphere_.Draw(viewProjection, 0xff0000ff);
 	//obb_.DrawOBB(viewProjection, 0xff0000ff);
 }
 
@@ -311,7 +311,7 @@ void Player::PlayerReset() {
 }
 
 void Player::CameraMove() {
-	Vector3 offset(0.0f, 2.0f, -50.0f);
+	Vector3 offset;
 	offset = TargetOffset(offset_, camera_->transform.rotation_);
 
 	//	追従座標の補間
@@ -319,8 +319,8 @@ void Player::CameraMove() {
 	//workDash_.behaviorDashTime_ = 30u;
 	cameraT_ += 1.0f / workDash_.behaviorDashTime_;
 	cameraT_ = std::clamp(cameraT_, 0.0f, 1.0f);
-	float T = Easing::EaseInSine(cameraT_);
-	interTarget_ = Lerp(interTarget_, playerTrans_.translation_, T);
+	//float T = Easing::EaseInSine(cameraT_);
+	interTarget_ = Lerp(interTarget_, playerTrans_.translation_, cameraT_);
 
 	camera_->transform.translation_ = interTarget_ + offset;
 	camera_->transform.UpdateMatrix();
@@ -332,11 +332,14 @@ void Player::InitializeAttack() {
 	parts_[3].rotation_.x = -3.5f;
 	parts_[4].rotation_.x = 0.0f;
 
+	weaponTrans_.parent_ = &parts_[4];
 }
 
 void Player::InitializeRoot() {
 	parts_[2].rotation_.x = 0.0f;
 	parts_[3].rotation_.x = 0.0f;
+
+	weaponTrans_.parent_ = nullptr;
 }
 
 void Player::InitializeDash() {
@@ -354,7 +357,7 @@ void Player::BehaviorRootUpdate() {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 	// ダッシュボタンを押したら
-	else if (KeyInput::PushKey(DIK_B)) {
+	else if (KeyInput::PushKey(DIK_B) && !isFloating_) {
 		// ダッシュリクエスト
 		behaviorRequest_ = Behavior::kDash;
 	}
