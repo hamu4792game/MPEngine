@@ -20,13 +20,13 @@ bool AABB::IsCollision(Sphere* sphere) {
 	max.z = (std::max)(this->min.z, this->max.z);
 
 	//	最近接点を求める
-	Vector3 closestPoint{ std::clamp(sphere->center.x,min.x,max.x),
-		std::clamp(sphere->center.y,min.y,max.y),
-		std::clamp(sphere->center.z,min.z,max.z) };
+	Vector3 closestPoint{ std::clamp(sphere->center_.x,min.x,max.x),
+		std::clamp(sphere->center_.y,min.y,max.y),
+		std::clamp(sphere->center_.z,min.z,max.z) };
 	//	最近接点と球の中心との距離を求める
-	float distance = Length(closestPoint - sphere->center);
+	float distance = Length(closestPoint - sphere->center_);
 	//	距離が半径よりも小さければ衝突
-	if (distance <= std::fabs(sphere->radius))
+	if (distance <= std::fabs(sphere->radius_))
 	{
 		return true;
 	}

@@ -131,6 +131,9 @@
     <ClCompile Include="math\Sphere\Sphere.cpp">
       <Filter>math\Sphere</Filter>
     </ClCompile>
+    <ClCompile Include="Game\FollowCamera\FollowCamera.cpp">
+      <Filter>Game\FollowCamera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -275,6 +278,9 @@
     <ClInclude Include="math\Sphere\Sphere.h">
       <Filter>math\Sphere</Filter>
     </ClInclude>
+    <ClInclude Include="Game\FollowCamera\FollowCamera.h">
+      <Filter>Game\FollowCamera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -390,6 +396,9 @@
     </Filter>
     <Filter Include="math\Sphere">
       <UniqueIdentifier>{a76c42cf-206f-4a4d-b7c2-5f779b2b6eca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\FollowCamera">
+      <UniqueIdentifier>{581d9e45-6d99-4e0c-810b-f9862db22495}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

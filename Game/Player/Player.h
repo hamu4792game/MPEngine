@@ -21,7 +21,7 @@ public:
 
 	void Draw(const Matrix4x4& viewProjection);
 
-	void EnemyColl(AABB* enemy);
+	bool EnemyColl(AABB* enemy);
 
 private: // メンバ変数
 	// player関連
@@ -72,9 +72,13 @@ private: // メンバ変数
 	//	ダッシュ用ワーク : ダッシュ用のメンバ変数
 	struct WorkDash	{
 		// ダッシュ用の媒介変数
-		uint32_t dashParameter_ = 0u;
+		uint32_t dashParameter_ = 0u; // 現在のフレーム
+		float velocity_ = 1.0f; // ダッシュ速度
+		uint32_t behaviorDashTime_ = 30u; // ダッシュ時間
+		uint32_t delayTime_ = 15u;
 	};
 	WorkDash workDash_;
+	Vector3 offset_ = Vector3(0.0f, 2.0f, -30.0f);
 
 
 private: // メンバ関数
@@ -89,8 +93,8 @@ private: // メンバ関数
 	//	カメラの移動
 	void CameraMove();
 
-	//	カメラリセット
-	void CameraReset();
+	//	プレイヤーリセット
+	void PlayerReset();
 	
 	//	通常行動初期化
 	void InitializeRoot();
@@ -107,6 +111,8 @@ private: // メンバ関数
 	//	ダッシュ行動更新
 	void BehaviorDashUpdate();
 
+	//	更新
+	void UpdateTransform();
 
 	void ApplyGlobalVariables();
 

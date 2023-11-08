@@ -129,6 +129,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Enemy\Enemy.cpp" />
     <ClCompile Include="Game\Floor\Floor.cpp" />
     <ClCompile Include="Game\Floor\MoveFloor\MoveFloor.cpp" />
+    <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="Game\GameScene\Battle\Battle.cpp" />
     <ClCompile Include="Game\GameScene\GameScene.cpp" />
     <ClCompile Include="Game\Ground\Ground.cpp" />
@@ -179,6 +180,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Enemy\Enemy.h" />
     <ClInclude Include="Game\Floor\Floor.h" />
     <ClInclude Include="Game\Floor\MoveFloor\MoveFloor.h" />
+    <ClInclude Include="Game\FollowCamera\FollowCamera.h" />
     <ClInclude Include="Game\GameScene\Battle\Battle.h" />
     <ClInclude Include="Game\GameScene\GameScene.h" />
     <ClInclude Include="Game\Ground\Ground.h" />

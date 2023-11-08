@@ -17,6 +17,10 @@ public:
 
 	void ModelLoad();
 
+	bool IsDead() { return isAlive_; }
+
+	void SetDead(bool flag) { isAlive_ = flag; }
+
 private: // モデル
 	enum PARTS {
 		body,
@@ -27,6 +31,7 @@ private: // モデル
 
 private:
 	std::vector<WorldTransform> parts_;
+	bool isAlive_ = false;
 public:
 	AABB aabb_;
 

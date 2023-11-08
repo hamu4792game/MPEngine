@@ -3,6 +3,7 @@
 #include "Engine/Input/KeyInput/KeyInput.h"
 #include "GlobalVariables/GlobalVariables.h"
 #include <algorithm>
+#include "Engine/Easing/Easing.h"
 
 
 Player::Player(Camera* camera)
@@ -11,10 +12,10 @@ Player::Player(Camera* camera)
 	camera_->transform.rotation_.x = AngleToRadian(20.0f);
 }
 
-void Player::Initialize()
-{
+void Player::Initialize() {
 	//	メンバ変数の初期化
 	playerTrans_.translation_ = Vector3(0.0f, 1.0f, 0.0f);
+	playerTrans_.rotation_ = Vector3::zero;
 	isFloating_ = false;
 	isJamp_ = false;
 	destinationAngleY_ = 0.0f;
@@ -32,6 +33,9 @@ void Player::Initialize()
 	parts_[4].translation_ = Vector3{ 0.0f,2.0f,0.0f };
 	parts_[4].scale_ = Vector3{ 0.4f,0.4f,0.4f };
 
+	weaponTrans_.parent_ = &parts_[4];
+	weaponTrans_.translation_.y = 15.0f;
+
 	const char* groupName = "Player";
 	//	グループを追加
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
@@ -46,18 +50,29 @@ void Player::Initialize()
 	//	座標 - scale * size
 	aabb_.Update(playerTrans_);
 	//obb_.Update(playerTrans_);
-	sphere_.Update(parts_[4]);
+	sphere_.Initialize(3.0f);
+	sphere_.Update(weaponTrans_);
+
+
 }
 
-void Player::Update()
-{
+void Player::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("player");
 	ImGui::DragFloat3("scale", &playerTrans_.scale_.x, 0.1f);
-	ImGui::DragFloat3("translate", &playerTrans_.translation_.x, 1.0f);
+	ImGui::DragFloat3("translate", &weaponTrans_.translation_.x, 1.0f);
 	ImGui::DragFloat3("rotate", &playerTrans_.rotation_.x, AngleToRadian(1.0f));
+
+	int dash = static_cast<int>(workDash_.behaviorDashTime_);
+	ImGui::DragInt("dash", &dash, 1, 0, 100);
+	workDash_.behaviorDashTime_ = dash;
+
+	dash = static_cast<int>(workDash_.delayTime_);
+	ImGui::DragInt("delay", &dash, 1, 0, 100);
+	workDash_.delayTime_ = dash;
+
 	ImGui::End();
-#endif DEBUG
+#endif //DEBUG
 
 	ApplyGlobalVariables();
 	
@@ -103,16 +118,7 @@ void Player::Update()
 	Collision();
 	MoveLimit();
 	
-	//	座標更新
-	playerTrans_.UpdateMatrix();
-	for (auto& i : parts_) {
-		i.UpdateMatrix();
-	}
-
-	//	座標 - scale * size
-	aabb_.Update(playerTrans_);
-	//obb_.Update(playerTrans_);
-	sphere_.Update(parts_[4]);
+	UpdateTransform();
 
 	//	カメラの移動と更新
 	CameraMove();
@@ -129,16 +135,21 @@ void Player::Draw(const Matrix4x4& viewProjection) {
 	}
 
 	aabb_.DrawAABB(viewProjection, 0xff0000ff);
+	sphere_.Draw(viewProjection, 0xff0000ff);
 	//obb_.DrawOBB(viewProjection, 0xff0000ff);
 }
 
-void Player::EnemyColl(AABB* enemy) {
+bool Player::EnemyColl(AABB* enemy) {
 	if (aabb_.IsCollision(enemy)) {
-		Initialize();
+		PlayerReset();
 	}
 	if (enemy->IsCollision(&sphere_)) {
-		Initialize();
+		isJamp_ = true;
+		//	初速度を与える
+		velocity_ = 1.0f;
+		return true;
 	}
+	return false;
 }
 
 
@@ -187,12 +198,18 @@ void Player::Move() {
 	if (isMove) {
 		//	移動量の正規化
 		move = Normalize(move);
+
 		//	移動ベクトルをカメラの角度だけ回転させる
-		//move = TransformNormal(move, MakeRotateMatrix(camera_->transform.rotation_));
+		//Matrix4x4 rot = DirectionToDirection(Vector3(0.0f,0.0f,1.0f), move);
 		move = TargetOffset(move, camera_->transform.rotation_);
 		//	移動方向に見た目を合わせる
 		destinationAngleY_ = std::atan2f(move.x, move.z);
 		playerTrans_.rotation_.y = std::atan2f(move.x, move.z);
+
+		/*Vector3 vec = TransformNormal(move, rot);
+		playerTrans_.rotation_.y = Normalize(vec).y;*/
+
+
 		//	ジャンプを加味していないため
 		move.y = 0.0f;
 		move*= speed;
@@ -201,7 +218,6 @@ void Player::Move() {
 		playerTrans_.translation_ += move;
 		playerTrans_.UpdateMatrix();
 	}
-
 }
 
 void Player::Jamp() {
@@ -238,7 +254,7 @@ void Player::Collision() {
 
 	//	ゴールとの判定
 	if (aabb_.IsCollision(stage_->goalAABB.get())) {
-		Initialize();
+		PlayerReset();
 		return;
 	}
 
@@ -262,15 +278,13 @@ void Player::Collision() {
 		else {
 			isFloating_ = true;
 		}
-	}
-
-	
+	}	
 }
 
 void Player::MoveLimit() {
 	//	リスタート
 	if (playerTrans_.translation_.y <= -20.0f) {
-		Initialize();
+		PlayerReset();
 		return;
 	}
 
@@ -287,35 +301,30 @@ void Player::MoveLimit() {
 
 }
 
+void Player::PlayerReset() {
+	//	メンバ変数の初期化
+	playerTrans_.translation_ = Vector3(0.0f, 1.0f, 0.0f);
+	isFloating_ = false;
+	isJamp_ = false;
+	destinationAngleY_ = 0.0f;
+	behaviorRequest_ = Behavior::kRoot;
+}
+
 void Player::CameraMove() {
 	Vector3 offset(0.0f, 2.0f, -50.0f);
-	offset = TargetOffset(offset, camera_->transform.rotation_);
+	offset = TargetOffset(offset_, camera_->transform.rotation_);
 
 	//	追従座標の補間
 	//	ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 30u;
-	cameraT_ += 1.0f / behaviorDashTime;
+	//workDash_.behaviorDashTime_ = 30u;
+	cameraT_ += 1.0f / workDash_.behaviorDashTime_;
 	cameraT_ = std::clamp(cameraT_, 0.0f, 1.0f);
-	interTarget_ = Lerp(interTarget_, playerTrans_.translation_, cameraT_);
+	float T = Easing::EaseInSine(cameraT_);
+	interTarget_ = Lerp(interTarget_, playerTrans_.translation_, T);
 
 	camera_->transform.translation_ = interTarget_ + offset;
 	camera_->transform.UpdateMatrix();
 }
-
-void Player::CameraReset() {
-	//	追従座標、角度の初期化
-	interTarget_ = playerTrans_.translation_;
-	camera_->transform.rotation_.y = playerTrans_.rotation_.y;
-
-	destinationAngleY_ = camera_->transform.rotation_.y;
-
-	//	追従対象からのオフセット
-	Vector3 offset(0.0f, 2.0f, -50.0f);
-	offset = TargetOffset(offset, camera_->transform.rotation_);
-	camera_->transform.translation_ = playerTrans_.translation_ + offset;
-	camera_->transform.UpdateMatrix();
-}
-
 
 void Player::InitializeAttack() {
 	attackFrame = 0;
@@ -333,6 +342,8 @@ void Player::InitializeRoot() {
 void Player::InitializeDash() {
 	workDash_.dashParameter_ = 0u;
 	playerTrans_.rotation_.y = destinationAngleY_;
+	//	追従座標、角度の初期化
+	interTarget_ = playerTrans_.translation_;
 	cameraT_ = 0.0f;
 }
 
@@ -367,9 +378,8 @@ void Player::BehaviorAttackUpdate() {
 void Player::BehaviorDashUpdate() {
 	//	自キャラの向いている方向に移動する処理
 	//	移動量の正規化
-	const float speed = 1.0f;
-	Vector3 move = Vector3(0.0f, 0.0f, speed);
-	move = Normalize(move) * speed;
+	Vector3 move = Vector3(0.0f, 0.0f, workDash_.velocity_);
+	move = Normalize(move) * workDash_.velocity_;
 	//	移動ベクトルをカメラの角度だけ回転させる
 	move = TransformNormal(move, MakeRotateYMatrix(destinationAngleY_));
 	//	ジャンプを加味していないため
@@ -378,12 +388,13 @@ void Player::BehaviorDashUpdate() {
 	playerTrans_.translation_ += move;
 	playerTrans_.UpdateMatrix();
 
-	//	ダッシュの時間<frame>
-	const uint32_t behaviorDashTime = 30u;
-
+	workDash_.dashParameter_++;
 	//	規定の時間経過で通常行動に戻る
-	if (++workDash_.dashParameter_ >= behaviorDashTime) {
+	if (workDash_.dashParameter_ >= workDash_.behaviorDashTime_) {
 		behaviorRequest_ = Behavior::kRoot;
+	}
+	else if (workDash_.dashParameter_ <= workDash_.delayTime_) {
+		cameraT_ = 0u;
 	}
 
 }
@@ -396,4 +407,18 @@ void Player::ApplyGlobalVariables() {
 	parts_[2].translation_ = globalManagement->GetVector3Value(groupName, "Rarm Translation");
 	parts_[3].translation_ = globalManagement->GetVector3Value(groupName, "Larm Translation");
 
+}
+
+void Player::UpdateTransform() {
+	//	座標更新
+	playerTrans_.UpdateMatrix();
+	for (auto& i : parts_) {
+		i.UpdateMatrix();
+	}
+	weaponTrans_.UpdateMatrix();
+
+	//	座標 - scale * size
+	aabb_.Update(playerTrans_);
+	//obb_.Update(playerTrans_);
+	sphere_.Update(weaponTrans_);
 }

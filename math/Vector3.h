@@ -30,6 +30,11 @@ public:
 	Vector3& operator*=(const float& num);
 
 	bool operator!=(const Vector3& num) const;
+
+public: // 定数
+	static const Vector3 zero;
+	static const Vector3 one;
+	
 };
 
 //	長さ(外積)を求める

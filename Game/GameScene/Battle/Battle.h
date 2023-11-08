@@ -7,6 +7,8 @@
 #include "Game/Stage/Stage.h"
 #include "Game/Enemy/Enemy.h"
 
+#include <list>
+
 class Battle
 {
 public:
@@ -26,7 +28,7 @@ private: // モデル
 private: // メンバ変数
 	std::unique_ptr<Player> player_;
 	std::shared_ptr<Stage> stage_;
-	std::shared_ptr<Enemy> enemy_;
+	std::list<std::unique_ptr<Enemy>> enemys_;
 
 	//	カメラのポインタ
 	Camera* camera_;

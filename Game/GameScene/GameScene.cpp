@@ -55,8 +55,7 @@ void GameScene::Initialize()
 
 }
 
-void GameScene::Update()
-{
+void GameScene::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("scale", &camera->transform.scale_.x, 0.1f);
