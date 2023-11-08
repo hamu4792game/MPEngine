@@ -24,6 +24,10 @@ void Camera::CreateBillboard() {
 	billboardMatrix.m[3][2] = 0.0f;
 }
 
+void Camera::Update() {
+
+}
+
 Matrix4x4 Camera::GetViewProMat() {
 	//	行列の計算
 	cameraMatrix = transform.UpdateMatrix();
@@ -33,4 +37,9 @@ Matrix4x4 Camera::GetViewProMat() {
 	CreateBillboard();
 
 	return viewProjectionMatrix;
+}
+
+void Camera::SetPositionWork(Vector3 translate, Vector3 rotate) {
+	finishTranslate_ = translate;
+	finishRotate_ = rotate;
 }
