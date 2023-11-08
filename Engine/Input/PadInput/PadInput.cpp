@@ -1,5 +1,5 @@
 #include "PadInput.h"
-#include <wrl.h>
+#include <limits>
 
 PadInput* PadInput::GetInstance() {
 	static PadInput instance;
@@ -62,15 +62,17 @@ bool PadInput::GetPadButtonDown(UINT button) {
 Vector2 PadInput::GetPadLStick() {
 	SHORT x = xInputState.Gamepad.sThumbLX;
 	SHORT y = xInputState.Gamepad.sThumbLY;
+	static constexpr float kNormal = 1.0f / static_cast<float>(std::numeric_limits<short>::max());
 
-	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
+	return Vector2(static_cast<float>(x) * kNormal, static_cast<float>(y) * kNormal);
 }
 
 Vector2 PadInput::GetPadRStick() {
 	SHORT x = xInputState.Gamepad.sThumbRX;
 	SHORT y = xInputState.Gamepad.sThumbRY;
+	static constexpr float kNormal = 1.0f / static_cast<float>(std::numeric_limits<short>::max());
 
-	return Vector2(static_cast<float>(x) / 32767.0f, static_cast<float>(y) / 32767.0f);
+	return Vector2(static_cast<float>(x) * kNormal, static_cast<float>(y) * kNormal);
 }
 
 bool PadInput::GetLTriggerDown() {
