@@ -6,7 +6,7 @@ Floor::Floor() {
 }
 
 void Floor::Initialize(Vector3 translate) {
-	transform_.scale_ = Vector3(10.0f, 0.1f, 10.0f);
+	transform_.scale_ = Vector3(20.0f, 0.1f, 10.0f);
 	transform_.translation_ = translate;
 	//	座標 - scale * size
 	aabb->Update(transform_);

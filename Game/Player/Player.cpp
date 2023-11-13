@@ -45,7 +45,8 @@ void Player::Initialize() {
 	GlobalVariables::GetInstance()->AddItem(groupName, "Rarm Translation", parts_[2].translation_);
 	GlobalVariables::GetInstance()->AddItem(groupName, "Larm Translation", parts_[3].translation_);
 
-	
+	GlobalVariables::GetInstance()->AddItem(groupName, "Dash Time", static_cast<int>(workDash_.behaviorDashTime_));
+	GlobalVariables::GetInstance()->AddItem(groupName, "Deray Time", static_cast<int>(workDash_.delayTime_));
 
 	//	座標 - scale * size
 	aabb_.Update(playerTrans_);
@@ -424,6 +425,10 @@ void Player::ApplyGlobalVariables() {
 	parts_[1].translation_ = globalManagement->GetVector3Value(groupName, "Head Translation");
 	parts_[2].translation_ = globalManagement->GetVector3Value(groupName, "Rarm Translation");
 	parts_[3].translation_ = globalManagement->GetVector3Value(groupName, "Larm Translation");
+
+
+	workDash_.behaviorDashTime_ = globalManagement->GetIntValue(groupName, "Dash Time");
+	workDash_.delayTime_ = globalManagement->GetIntValue(groupName, "Deray Time");
 
 }
 
