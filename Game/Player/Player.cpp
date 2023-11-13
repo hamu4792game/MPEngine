@@ -207,6 +207,7 @@ void Player::Move() {
 		
 		//Matrix4x4 rot = DirectionToDirection(Vector3(0.0f,0.0f,1.0f), move);
 		//	移動方向に見た目を合わせる
+		// atan2fは消せませんでした(泣
 		destinationAngleY_ = std::atan2f(move.x, move.z);
 		playerTrans_.rotation_.y = std::atan2f(move.x, move.z);
 
@@ -224,6 +225,13 @@ void Player::Jamp() {
 			isJamp_ = true;
 			//	初速度を与える
 			velocity_ = 1.0f;
+		}
+		else if (KeyInput::GetInstance()->GetPadConnect()) {
+			if (KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A)) {
+				isJamp_ = true;
+				//	初速度を与える
+				velocity_ = 1.0f;
+			}
 		}
 		else {
 			velocity_ = 0.0f;
@@ -357,6 +365,16 @@ void Player::BehaviorRootUpdate() {
 	else if (KeyInput::PushKey(DIK_B) && !isFloating_) {
 		// ダッシュリクエスト
 		behaviorRequest_ = Behavior::kDash;
+	}
+
+	if (KeyInput::GetInstance()->GetPadConnect()) {
+		if (KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_B)) {
+			// ダッシュリクエスト
+			behaviorRequest_ = Behavior::kDash;
+		}
+		else if (KeyInput::GetInstance()->GetRTriggerDown()) {
+			behaviorRequest_ = Behavior::kAttack;
+		}
 	}
 }
 
