@@ -15,6 +15,8 @@ public:
 	float z;
 
 public:
+	Vector3 operator-();
+
 	Vector3 operator+(const Vector3& num) const;
 	Vector3 operator-(const Vector3& num) const;
 	Vector3& operator+=(const Vector3& num);
@@ -29,6 +31,7 @@ public:
 	Vector3 operator*(const float& num) const;
 	Vector3& operator*=(const float& num);
 
+	bool operator==(const Vector3& num) const;
 	bool operator!=(const Vector3& num) const;
 
 public: // 定数

@@ -415,8 +415,11 @@ Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	Matrix4x4 result;
 	Vector3 n = Normalize(Cross(from, to));
-	float rcos = Dot(Normalize(from), Normalize(to));
-	float rsin = Length(Cross(Normalize(from), Normalize(to)));
+	float rcos = Dot((from), (to));
+	float rsin = Length(Cross((from), (to)));
+	if (n == Vector3::zero && rcos == -1.0f) {
+		n = Vector3(from.y, -from.x,0.0f);
+	}
 
 	result.m[0][0] = n.x * n.x * (1 - rcos) + rcos;
 	result.m[0][1] = n.x * n.y * (1 - rcos) + n.z * rsin;
@@ -427,8 +430,8 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	result.m[1][2] = n.y * n.z * (1 - rcos) + n.x * rsin;
 
 	result.m[2][0] = n.x * n.z * (1 - rcos) + n.y * rsin;
-	result.m[2][2] = n.y * n.z * (1 - rcos) - n.x * rsin;
-	result.m[2][1] = n.z * n.z * (1 - rcos) + rcos;
+	result.m[2][1] = n.y * n.z * (1 - rcos) - n.x * rsin;
+	result.m[2][2] = n.z * n.z * (1 - rcos) + rcos;
 
 	result.m[3][3] = 1.0f;
 	return result;

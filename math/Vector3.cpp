@@ -20,6 +20,11 @@ Vector3::Vector3(const float& X, const float& Y, const float& Z) {
 	this->z = Z;
 }
 
+Vector3 Vector3::operator-() {
+	Vector3 result = Vector3::zero - *this;
+	return result;
+}
+
 Vector3 Vector3::operator+(const Vector3& num) const {
 	Vector3 result;
 	result.x = this->x + num.x;
@@ -80,6 +85,13 @@ Vector3& Vector3::operator*=(const float& num) {
 	*this = *this * num;
 
 	return *this;
+}
+
+bool Vector3::operator==(const Vector3& num) const {
+	if (this->x != num.x) { return false; }
+	if (this->y != num.y) { return false; }
+	if (this->z != num.z) { return false; }
+	return true;
 }
 
 bool Vector3::operator!=(const Vector3& num) const {
