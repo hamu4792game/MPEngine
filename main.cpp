@@ -11,9 +11,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 	static D3DResourceLeakChecker leak;
 	int32_t windowWidth = 1280; int32_t windowHeight = 720;
 	Engine::Initialize("えとせとら", windowWidth, windowHeight);
-	
-	GameScene::GetInstance()->Initialize();
 
+	auto game = GameScene::GetInstance();
+	game->Initialize();
+	
 	//	ウィンドウの×ボタンが押されるまでループ
 	while (!WinApp::ProcessMessage()) {
 		//	フレームの開始
@@ -27,9 +28,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 		ImGui::End();
 #endif FrameRate
 
-		GameScene::GetInstance()->Update();
-
-		GameScene::GetInstance()->Draw();
+		game->Update();
+		game->Draw();
 
 		//	フレームの終了
 		Engine::EndFrame();
@@ -38,8 +38,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 			break;
 		}
 	}
-
-	GameScene::GetInstance()->Finalize();
 
 	Engine::Finalize();
 

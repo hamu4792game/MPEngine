@@ -74,17 +74,8 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Game\GameScene\GameScene.cpp">
-      <Filter>Game\GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Ground\Ground.cpp">
-      <Filter>Game\Ground</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Easing\Ease.cpp">
       <Filter>Engine\Easing</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Skydome\Skydome.cpp">
-      <Filter>Game\Skydome</Filter>
     </ClCompile>
     <ClCompile Include="Engine\TimeBaseLoopExecuter\TimeBaseLoopExecuter.cpp">
       <Filter>Engine\TimeBaseLoopExecuter</Filter>
@@ -95,32 +86,17 @@
     <ClCompile Include="Engine\Texture\Line\Line.cpp">
       <Filter>Engine\Resources\Line</Filter>
     </ClCompile>
-    <ClCompile Include="Game\GameScene\Battle\Battle.cpp">
-      <Filter>Game\GameScene\Battle</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Player\Player.cpp">
-      <Filter>Game\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Floor\Floor.cpp">
-      <Filter>Game\Floor</Filter>
-    </ClCompile>
     <ClCompile Include="math\AABB\AABB.cpp">
       <Filter>math</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Floor\MoveFloor\MoveFloor.cpp">
-      <Filter>Game\Floor\MoveFloor</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Stage\Stage.cpp">
-      <Filter>Game\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Enemy\Enemy.cpp">
-      <Filter>Game\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Input\KeyInput\KeyInput.cpp">
       <Filter>Engine\Input\KeyInput</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Input\PadInput\PadInput.cpp">
       <Filter>Engine\Input\PadInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameScene\GameScene.cpp">
+      <Filter>Game\GameScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,17 +184,8 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GameScene\GameScene.h">
-      <Filter>Game\GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Ground\Ground.h">
-      <Filter>Game\Ground</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Easing\Ease.h">
       <Filter>Engine\Easing</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Skydome\Skydome.h">
-      <Filter>Game\Skydome</Filter>
     </ClInclude>
     <ClInclude Include="Engine\TimeBaseLoopExecuter\TimeBaseLoopExecuter.h">
       <Filter>Engine\TimeBaseLoopExecuter</Filter>
@@ -230,32 +197,17 @@
     <ClInclude Include="Engine\Texture\Line\Line.h">
       <Filter>Engine\Resources\Line</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GameScene\Battle\Battle.h">
-      <Filter>Game\GameScene\Battle</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Player\Player.h">
-      <Filter>Game\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Floor\Floor.h">
-      <Filter>Game\Floor</Filter>
-    </ClInclude>
     <ClInclude Include="math\AABB\AABB.h">
       <Filter>math</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Floor\MoveFloor\MoveFloor.h">
-      <Filter>Game\Floor\MoveFloor</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Stage\Stage.h">
-      <Filter>Game\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Enemy\Enemy.h">
-      <Filter>Game\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Input\KeyInput\KeyInput.h">
       <Filter>Engine\Input\KeyInput</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Input\PadInput\PadInput.h">
       <Filter>Engine\Input\PadInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameScene\GameScene.h">
+      <Filter>Game\GameScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -310,18 +262,6 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{1bc5df33-c290-41ee-b4db-b9f6b0d0758c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{3ba9cce2-d55c-4668-9f9d-4fd5d463027b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\GameScene">
-      <UniqueIdentifier>{f2714010-80f6-4a11-8576-2117702fd88e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Ground">
-      <UniqueIdentifier>{cc10d3d5-f517-46c1-8689-f9886c7bf5d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Skydome">
-      <UniqueIdentifier>{98e905e7-226c-42f7-8f4f-b6dfa157f94f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\TimeBaseLoopExecuter">
       <UniqueIdentifier>{c6624870-76a9-40a9-98f5-f85f997b9828}</UniqueIdentifier>
     </Filter>
@@ -340,26 +280,14 @@
     <Filter Include="Engine\Resources\Line">
       <UniqueIdentifier>{acbb81e0-2d73-4126-8c42-35333bb2f708}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GameScene\Battle">
-      <UniqueIdentifier>{3b4faf38-9aa8-4aa3-bb4e-273c6ae995b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Player">
-      <UniqueIdentifier>{10fe8c34-f147-4783-9f94-4d2f5006ff29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Floor">
-      <UniqueIdentifier>{0a4ea470-989d-41f8-990a-d2e5de32fbd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Floor\MoveFloor">
-      <UniqueIdentifier>{6fd714e1-2ea9-46df-8e8a-db20cd1db698}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Stage">
-      <UniqueIdentifier>{37156821-b3a3-452c-9aee-9b02c56d1334}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Enemy">
-      <UniqueIdentifier>{5b5bd62a-2203-4d3f-850d-cd59f8e902ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Input\PadInput">
       <UniqueIdentifier>{7c1cfe74-a1ba-47fc-8035-755f07a9f35a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{02276ace-9963-453d-aea8-a4aae3a61f1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GameScene">
+      <UniqueIdentifier>{ced454d2-7abf-4c4b-98de-b3feafdfada3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
