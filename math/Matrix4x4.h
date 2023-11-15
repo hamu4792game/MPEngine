@@ -12,8 +12,6 @@ public:
 	//	mの多重配列 固定長配列
 	std::array<std::array<float, 4>, 4> m;
 
-private:
-	
 public:
 	//	加算
 	Matrix4x4 operator+(const Matrix4x4& mat) const;
@@ -26,7 +24,7 @@ public:
 	Matrix4x4& operator*=(const Matrix4x4& mat);
 	//	行列の代入
 	Matrix4x4& operator=(const Matrix4x4& mat);
-	
+
 };
 
 
@@ -61,6 +59,7 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
 //	ビューポート変換行列
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
-
-//	クロス積
-Vector3 Cross(const Vector3& v1, const Vector3& v2);
+// 任意軸回転行列の作成
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+//
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);

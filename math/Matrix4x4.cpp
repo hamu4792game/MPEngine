@@ -389,11 +389,47 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 	return result;
 }
 
-Vector3 Cross(const Vector3& v1, const Vector3& v2)
-{
-	Vector3 resultVec = { 0.0f,0.0f,0.0f };
-	resultVec.x = (v1.y * v2.z) - (v1.z * v2.y);
-	resultVec.y = (v1.z * v2.x) - (v1.x * v2.z);
-	resultVec.z = (v1.x * v2.y) - (v1.y * v2.x);
-	return resultVec;
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
+	Matrix4x4 result;
+	Vector3 n = Normalize(axis);
+	float rcos = std::cosf(angle);
+	float rsin = std::sinf(angle);
+
+	result.m[0][0] = n.x * n.x * (1 - rcos) + rcos;
+	result.m[0][1] = n.x * n.y * (1 - rcos) + n.z * rsin;
+	result.m[0][2] = n.x * n.z * (1 - rcos) - n.y * rsin;
+
+	result.m[1][0] = n.x * n.y * (1 - rcos) - n.z * rsin;
+	result.m[1][1] = n.y * n.y * (1 - rcos) + rcos;
+	result.m[1][2] = n.y * n.z * (1 - rcos) + n.x * rsin;
+
+	result.m[2][0] = n.x * n.z * (1 - rcos) + n.y * rsin;
+	result.m[2][1] = n.y * n.z * (1 - rcos) - n.x * rsin;
+	result.m[2][2] = n.z * n.z * (1 - rcos) + rcos;
+
+	result.m[3][3] = 1.0f;
+
+	return result;
+}
+
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+	Matrix4x4 result;
+	Vector3 n = Normalize(Cross(from, to));
+	float rcos = Dot(Normalize(from), Normalize(to));
+	float rsin = Length(Cross(Normalize(from), Normalize(to)));
+
+	result.m[0][0] = n.x * n.x * (1 - rcos) + rcos;
+	result.m[0][1] = n.x * n.y * (1 - rcos) + n.z * rsin;
+	result.m[0][2] = n.x * n.z * (1 - rcos) - n.y * rsin;
+
+	result.m[1][0] = n.x * n.y * (1 - rcos) - n.z * rsin;
+	result.m[1][1] = n.y * n.y * (1 - rcos) + rcos;
+	result.m[1][2] = n.y * n.z * (1 - rcos) + n.x * rsin;
+
+	result.m[2][0] = n.x * n.z * (1 - rcos) + n.y * rsin;
+	result.m[2][2] = n.y * n.z * (1 - rcos) - n.x * rsin;
+	result.m[2][1] = n.z * n.z * (1 - rcos) + rcos;
+
+	result.m[3][3] = 1.0f;
+	return result;
 }
