@@ -5,6 +5,14 @@
 #include <algorithm>
 #include "Engine/Easing/Easing.h"
 
+// コンボ定数表
+const std::array<Player::ConstAttack, Player::kComboNum> Player::kConstAttacks_ = {
+	{
+		{0,0,20,0,0.0f,0.0f,0.0f},
+		{0,0,20,0,0.0f,0.0f,0.0f},
+		{0,0,20,0,0.0f,0.0f,0.0f},
+	}
+};
 
 Player::Player(Camera* camera)
 {
@@ -54,14 +62,13 @@ void Player::Initialize() {
 	sphere_.Initialize(3.0f);
 	sphere_.Update(weaponTrans_);
 
-
 }
 
 void Player::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("player");
 	ImGui::DragFloat3("scale", &playerTrans_.scale_.x, 0.1f);
-	ImGui::DragFloat3("translate", &weaponTrans_.translation_.x, 1.0f);
+	ImGui::DragFloat3("translate", &playerTrans_.translation_.x, 1.0f);
 	ImGui::DragFloat3("rotate", &playerTrans_.rotation_.x, AngleToRadian(1.0f));
 
 	int dash = static_cast<int>(workDash_.behaviorDashTime_);
@@ -75,8 +82,9 @@ void Player::Update() {
 	ImGui::End();
 #endif //DEBUG
 
+	resetFlag_ = false;
 	ApplyGlobalVariables();
-	
+
 	//	std::nullopt以外の時通る
 	if (behaviorRequest_)
 	{
@@ -145,9 +153,6 @@ bool Player::EnemyColl(AABB* enemy) {
 		PlayerReset();
 	}
 	if (enemy->IsCollision(&sphere_)) {
-		isJamp_ = true;
-		//	初速度を与える
-		velocity_ = 1.0f;
 		return true;
 	}
 	return false;
@@ -314,6 +319,7 @@ void Player::PlayerReset() {
 	isJamp_ = false;
 	destinationAngleY_ = 0.0f;
 	behaviorRequest_ = Behavior::kRoot;
+	resetFlag_ = true;
 }
 
 void Player::CameraMove() {

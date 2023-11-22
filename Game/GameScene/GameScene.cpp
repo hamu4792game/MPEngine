@@ -26,6 +26,9 @@ void GameScene::Initialize()
 	for (uint8_t i = 0u; i < 5u; i++) {
 		player_.push_back(std::make_shared<Model>());
 	}
+	for (uint8_t i = 0u; i < 2u; i++) {
+		enemy_.push_back(std::make_shared<Model>());
+	}
 	
 	floor_ = std::make_shared<Model>();
 
@@ -36,6 +39,10 @@ void GameScene::Initialize()
 	player_[4]->Texture("Resources/player/weapon/weapon.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 	floor_->Texture("Resources/floor/floor.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
 	
+	enemy_[0]->Texture("Resources/enemyBody/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+	enemy_[1]->Texture("Resources/enemyWeapon/enemyWeapon.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
+
+
 	skydome_.Initialize();
 	skydome_.ModelLoad();
 	ground_.Initialize();
@@ -43,6 +50,7 @@ void GameScene::Initialize()
 	
 	//	モデルの引き渡し
 	battle_->SetPlayerModel(player_);
+	battle_->SetEnemyModel(enemy_);
 	battle_->SetFloorModel(floor_.get());
 
 	//	シーンの初期化

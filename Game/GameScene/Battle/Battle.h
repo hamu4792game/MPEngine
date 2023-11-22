@@ -23,6 +23,7 @@ public:
 
 private: // モデル
 	Model* playerModel_;
+	std::vector<std::shared_ptr<Model>> enemyModel_;
 	Model* floorModel_;
 
 private: // メンバ変数
@@ -35,9 +36,11 @@ private: // メンバ変数
 
 private: //	メンバ関数
 
+	void EnemySet();
 
 public: // ゲッター
 	void SetPlayerModel(std::vector<std::shared_ptr<Model>> model) { player_->SetPlayerModel(model); }
+	void SetEnemyModel(std::vector<std::shared_ptr<Model>> model) { enemyModel_ = model; }
 	void SetFloorModel(Model* model) { floorModel_ = model; };
 
 

@@ -2,23 +2,22 @@
 #include <externals/imgui/imgui.h>
 #include <numbers>
 
-Enemy::Enemy()
-{
-	model_.resize(PARTS::MaxSize);
-	for (auto& i : model_) {
-		i = std::make_unique<Model>();
-	}
-	
+Enemy::Enemy() {
+	// model_.resize(PARTS::MaxSize);	
 }
 
-void Enemy::Initialize()
+void Enemy::Initialize(const Vector3& startPos)
 {
-	parts_.resize(model_.size());
 	parts_[weapon].parent_ = &parts_[body];
-	parts_[body].translation_ = Vector3(-3.0f, 1.0f, 50.0f);
+	//parts_[body].translation_ = Vector3(-3.0f, 1.0f, 50.0f);
+	parts_[body].translation_ = startPos;
+	parts_[body].rotation_ = Vector3::zero;
 	parts_[weapon].translation_ = Vector3(0.0f, 2.5f, 0.0f);
 	parts_[weapon].rotation_ = Vector3(AngleToRadian(90.0f), 0.0f, 0.0f);
 
+	for (auto& i : parts_) {
+		i.UpdateMatrix();
+	}
 	aabb_.Update(parts_[body]);
 
 }
@@ -32,6 +31,9 @@ void Enemy::Update()
 	ImGui::DragFloat3("rotate", &parts_[weapon].rotation_.x, AngleToRadian(1.0f));
 	ImGui::End();
 #endif DEBUG
+	if (isAlive_) {
+		return;
+	}
 
 	if (true)
 	{
@@ -60,11 +62,4 @@ void Enemy::Draw(const Matrix4x4& viewProjection)
 		Model::ModelDraw(parts_[i], viewProjection, 0xffffffff, model_[i].get());
 	}
 	aabb_.DrawAABB(viewProjection, 0xffffffff);
-}
-
-void Enemy::ModelLoad()
-{
-	model_[body]->Texture("Resources/enemyBody/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
-	model_[weapon]->Texture("Resources/enemyWeapon/enemyWeapon.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
-
 }

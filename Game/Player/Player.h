@@ -8,6 +8,7 @@
 #include "math/Sphere/Sphere.h"
 #include <vector>
 #include <optional>
+#include <array>
 
 class Player
 {
@@ -80,6 +81,23 @@ private: // メンバ変数
 	WorkDash workDash_;
 	Vector3 offset_ = Vector3(0.0f, 2.0f, -30.0f);
 
+	bool resetFlag_ = false;
+
+	// 攻撃用定数
+	struct ConstAttack {
+		uint32_t anticipationTime; // 振りかぶりの時間<frame>
+		uint32_t chargeTime; // ため時間<frame>
+		uint32_t swingTime; // 攻撃振りの時間
+		uint32_t recoveryTime; // 硬直時間
+		float anticipationSpeed; // 振りかぶりの移動速度
+		float chargeSpeed; // ための移動速度
+		float swingSpeed; // 攻撃振りの移動速度
+	};
+public:
+	// コンボの数
+	static const int kComboNum = 3;
+	// コンボ定数表
+	static const std::array<ConstAttack, kComboNum> kConstAttacks_;
 
 private: // メンバ関数
 	//	プレイヤーの移動
@@ -119,5 +137,6 @@ private: // メンバ関数
 public: // セッター
 	void SetPlayerModel(std::vector<std::shared_ptr<Model>> player) { model_ = player; };
 	void SetStagePtr(Stage* stage) { stage_ = stage; };
+	bool GetResetFlag() { return resetFlag_; }
 
 };

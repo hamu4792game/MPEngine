@@ -8,12 +8,19 @@ Battle::Battle(Camera* camera)
 	this->camera_ = camera;
 	player_ = std::make_unique<Player>(camera);
 	stage_ = std::make_shared<Stage>();
-	enemys_.resize(1);
+	enemys_.resize(5);
 	for (auto& i : enemys_) {
 		i = std::make_unique<Enemy>();
-		i->ModelLoad();
 	}
 }
+
+Vector3 enePos[5]{
+		Vector3(8.0f,0.0f,0.0f),
+		Vector3(8.0f,1.0f,0.0f),
+		Vector3(8.0f,2.0f,0.0f),
+		Vector3(8.0f,3.0f,0.0f),
+		Vector3(-3.0f, 1.0f, 50.0f),
+};
 
 void Battle::Initialize()
 {
@@ -21,8 +28,12 @@ void Battle::Initialize()
 	stage_->SetFloorModel(floorModel_);
 	player_->Initialize();
 	player_->SetStagePtr(stage_.get());
+
+	int index = 0;
 	for (auto& i : enemys_) {
-		i->Initialize();
+		i->SetEnemyModel(enemyModel_);
+		i->Initialize(enePos[index]);
+		index++;
 	}
 }
 
@@ -63,13 +74,15 @@ void Battle::Update()
 			i->SetDead(true);
 		}
 	}
-	//	デスフラグの立った敵を削除
-	if (enemys_.remove_if([](const std::unique_ptr<Enemy>& ene)
-		{
-			return ene->IsDead();
-		})
-		) {
-	};
+
+	if (player_->GetResetFlag()) {
+		int index = 0;
+		for (auto& i : enemys_) {
+			i->SetDead(false);
+			i->Initialize(enePos[index]);
+			index++;
+		}
+	}
 	
 
 }
@@ -81,4 +94,8 @@ void Battle::Draw3D(const Matrix4x4& viewProjection)
 	for (auto& i : enemys_) {
 		i->Draw(viewProjection);
 	}
+}
+
+void Battle::EnemySet() {
+
 }

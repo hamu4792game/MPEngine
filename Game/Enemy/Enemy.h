@@ -9,17 +9,17 @@ public:
 	Enemy();
 	~Enemy() = default;
 
-	void Initialize();
+	void Initialize(const Vector3& startPos);
 
 	void Update();
 
 	void Draw(const Matrix4x4& viewProjection);
 
-	void ModelLoad();
-
 	bool IsDead() { return isAlive_; }
 
 	void SetDead(bool flag) { isAlive_ = flag; }
+
+	void SetEnemyModel(std::vector<std::shared_ptr<Model>> enemy) { model_ = enemy; parts_.resize(model_.size()); }
 
 private: // モデル
 	enum PARTS {
@@ -27,7 +27,7 @@ private: // モデル
 		weapon,
 		MaxSize
 	};
-	std::vector<std::unique_ptr<Model>> model_;
+	std::vector<std::shared_ptr<Model>> model_;
 
 private:
 	std::vector<WorldTransform> parts_;
