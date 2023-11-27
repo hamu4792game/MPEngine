@@ -8,9 +8,9 @@
 // コンボ定数表
 const std::array<Player::ConstAttack, Player::kComboNum> Player::kConstAttacks_ = {
 	{
-		{0,0,20,0,0.0f,0.0f,0.0f},
-		{0,0,20,0,0.0f,0.0f,0.0f},
-		{0,0,20,0,0.0f,0.0f,0.0f},
+		{0,0,20,20,0.0f,0.0f,0.0f},
+		{0,0,20,20,0.0f,0.0f,0.0f},
+		{10,20,20,30,0.0f,0.0f,0.0f},
 	}
 };
 
@@ -345,6 +345,14 @@ void Player::InitializeAttack() {
 	parts_[4].rotation_.x = 0.0f;
 
 	weaponTrans_.parent_ = &parts_[4];
+
+	// コンボ継続フラグをリセットする
+	workAttack_.comboNext_ = false;
+	// 攻撃のパラメーターリセット
+	workAttack_.attackParameter_ = 0;
+	workAttack_.inComboPhase_ = 0;
+	workAttack_.comboIndex_ = 0;
+
 }
 
 void Player::InitializeRoot() {
@@ -386,18 +394,79 @@ void Player::BehaviorRootUpdate() {
 }
 
 void Player::BehaviorAttackUpdate() {
-	if (attackFrame != 0) {
-		if (attackFrame < 20) {
+	// 予備動作の時間
+	auto input = KeyInput::GetInstance();
+
+	// コンボ上限に達していない
+	if (workAttack_.comboIndex_ < kComboNum - 1) {
+		// 攻撃ボタンをトリガーしたら
+		if (KeyInput::PushKey(DIK_V)) {
+			workAttack_.comboNext_ = true;
+		}
+	}
+	
+	// 既定の時間経過で通常行動に戻る
+	uint32_t totalTime = kConstAttacks_[workAttack_.comboIndex_].anticipationTime + kConstAttacks_[workAttack_.comboIndex_].chargeTime
+		+ kConstAttacks_[workAttack_.comboIndex_].recoveryTime + kConstAttacks_[workAttack_.comboIndex_].swingTime;
+	if (++workAttack_.attackParameter_ >= totalTime) {
+		// コンボ継続なら次のコンボに進む
+		if (workAttack_.comboNext_) {
+			// コンボ継続フラグをリセットする
+			workAttack_.comboNext_ = false;
+			workAttack_.comboIndex_++;
+			if (workAttack_.comboIndex_ >= kComboNum) {
+				workAttack_.comboIndex_ = 0;
+			};
+			// 攻撃のパラメーターリセット
+			workAttack_.attackParameter_ = 0;
+			workAttack_.inComboPhase_ = 0;
+		}
+		// コンボ継続出ないなら終了
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+
+	GetPhase();
+
+	// コンボ段階によってモーションを分岐
+	switch (workAttack_.comboIndex_) {
+	case 0:
+		if (workAttack_.inComboPhase_ == 2) {
 			parts_[2].rotation_.x += 0.1f;
 			parts_[3].rotation_.x += 0.1f;
 			parts_[4].rotation_.x += 0.1f;
 		}
-		else if (attackFrame > 30) {
-			behaviorRequest_ = Behavior::kRoot;
-			return;
+		break;
+	case 1:
+		if (workAttack_.inComboPhase_ == 2) {
+			parts_[2].rotation_.x -= 0.1f;
+			parts_[3].rotation_.x -= 0.1f;
+			parts_[4].rotation_.x -= 0.1f;
 		}
+		break;
+	case 2:
+
+		if (workAttack_.inComboPhase_ == 0) {
+			float a = 2.0f / kConstAttacks_[workAttack_.comboIndex_].anticipationTime;
+			parts_[2].rotation_.x += a;
+			parts_[3].rotation_.x += a;
+			parts_[4].rotation_.x += a;
+			playerTrans_.rotation_.y -= AngleToRadian(90.0f / kConstAttacks_[workAttack_.comboIndex_].anticipationTime);
+		}
+		else if (workAttack_.inComboPhase_ == 1) {
+			playerTrans_.rotation_.y += AngleToRadian(270.0f / kConstAttacks_[workAttack_.comboIndex_].chargeTime);
+		}
+		else if (workAttack_.inComboPhase_ == 2) {
+			float a = 1.5f / kConstAttacks_[workAttack_.comboIndex_].swingTime;
+			parts_[2].rotation_.x -= a;
+			parts_[3].rotation_.x -= a;
+			parts_[4].rotation_.x -= a;
+			playerTrans_.rotation_.y += AngleToRadian(180.0f / kConstAttacks_[workAttack_.comboIndex_].swingTime);
+		}
+		break;
 	}
-	attackFrame++;
+
 }
 
 void Player::BehaviorDashUpdate() {
@@ -436,6 +505,29 @@ void Player::ApplyGlobalVariables() {
 	workDash_.behaviorDashTime_ = globalManagement->GetIntValue(groupName, "Dash Time");
 	workDash_.delayTime_ = globalManagement->GetIntValue(groupName, "Deray Time");
 
+}
+
+void Player::GetPhase() {
+	uint32_t totalTime = kConstAttacks_[workAttack_.comboIndex_].anticipationTime;
+	if (workAttack_.attackParameter_ < totalTime) {
+		workAttack_.inComboPhase_ = 0;
+		return;
+	}
+	totalTime += kConstAttacks_[workAttack_.comboIndex_].chargeTime;
+	if (workAttack_.attackParameter_ < totalTime) {
+		workAttack_.inComboPhase_ = 1;
+		return;
+	}
+	totalTime += kConstAttacks_[workAttack_.comboIndex_].swingTime;
+	if (workAttack_.attackParameter_ < totalTime) {
+		workAttack_.inComboPhase_ = 2;
+		return;
+	}
+	totalTime += kConstAttacks_[workAttack_.comboIndex_].recoveryTime;
+	if (workAttack_.attackParameter_ < totalTime) {
+		workAttack_.inComboPhase_ = 3;
+		return;
+	}
 }
 
 void Player::UpdateTransform() {

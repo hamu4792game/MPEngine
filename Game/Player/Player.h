@@ -93,6 +93,16 @@ private: // メンバ変数
 		float chargeSpeed; // ための移動速度
 		float swingSpeed; // 攻撃振りの移動速度
 	};
+	// 攻撃用ワーク
+	struct WorkAttack {
+		// 攻撃ギミックの媒介変数
+		uint32_t attackParameter_ = 0;
+		int32_t comboIndex_ = 0;
+		int32_t inComboPhase_ = 0;
+		bool comboNext_ = false;
+	};
+	WorkAttack workAttack_;
+
 public:
 	// コンボの数
 	static const int kComboNum = 3;
@@ -133,6 +143,8 @@ private: // メンバ関数
 	void UpdateTransform();
 
 	void ApplyGlobalVariables();
+
+	void GetPhase();
 
 public: // セッター
 	void SetPlayerModel(std::vector<std::shared_ptr<Model>> player) { model_ = player; };
