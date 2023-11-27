@@ -15,8 +15,12 @@ public:
 	WorldTransform& operator=(const WorldTransform &trans);
 
 public:
+	struct TransformationMatrix	{
+		Matrix4x4 wvp;
+		Matrix4x4 world;
+	};
 
-	ConstantBuffer<Matrix4x4> cMat;
+	ConstantBuffer<TransformationMatrix> cMat;
 	ConstantBuffer<Vector4> cColor;
 	struct Mono {
 		Vector2 pibot;
@@ -26,6 +30,14 @@ public:
 	static Mono monocuro;
 
 	ConstantBuffer<Mono> cMono;
+
+	struct DirectionalLight {
+		Vector4 color; // ライトの色
+		Vector3 direction; // ライトの向き
+		float intensity; // 輝度
+	};
+	static DirectionalLight light;
+	ConstantBuffer<DirectionalLight> cDirectionalLight;
 
 	// ローカルスケール
 	Vector3 scale_ = { 1.0f, 1.0f, 1.0f };

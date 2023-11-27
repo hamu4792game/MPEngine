@@ -1,13 +1,21 @@
 #include "WorldTransform.h"
 
 decltype(WorldTransform::monocuro) WorldTransform::monocuro;
+decltype(WorldTransform::light) WorldTransform::light;
 
 WorldTransform::WorldTransform()
 {
-	*cMat = MakeIdentity4x4();
+	cMat->wvp = MakeIdentity4x4();
+	cMat->world = MakeIdentity4x4();
 	*cColor = { 1.0f,1.0f,1.0f,1.0f };
 	cMono->pibot = { 0.0f,0.0f };
 	cMono->rate = 1.0f;
+	cDirectionalLight->color = { 1.0f,1.0f,1.0f,1.0f };
+	cDirectionalLight->direction = { 0.0f,-1.0f,0.0f };
+	cDirectionalLight->intensity = 1.0f;
+	light.color = cDirectionalLight->color;
+	light.direction = cDirectionalLight->direction;
+	light.intensity = cDirectionalLight->intensity;
 }
 
 WorldTransform::WorldTransform(const WorldTransform& transform)
@@ -34,6 +42,8 @@ Matrix4x4 WorldTransform::UpdateMatrix()
 {
 	//	monocuroを動かせばcMonoに代入される
 	//this->cMono->pibot = monocuro.pibot;
+	this->cDirectionalLight->direction = light.direction;
+	this->cDirectionalLight->intensity = light.intensity;
 
 	//	スケール、回転、平行移動を合成して行列を計算する
 	this->worldMatrix = MakeAffineMatrix(scale_, rotation_, translation_);

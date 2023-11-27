@@ -71,6 +71,8 @@ void Player::Update() {
 	ImGui::DragFloat3("scale", &playerTrans_.scale_.x, 0.1f);
 	ImGui::DragFloat3("translate", &playerTrans_.translation_.x, 1.0f);
 	ImGui::DragFloat3("rotate", &playerTrans_.rotation_.x, AngleToRadian(1.0f));
+	ImGui::DragFloat3("direction", &playerTrans_.light.direction.x, 0.1f);
+	ImGui::DragFloat("intensity", &playerTrans_.light.intensity, 0.1f);
 
 	int dash = static_cast<int>(workDash_.behaviorDashTime_);
 	ImGui::DragInt("dash", &dash, 1, 0, 500);

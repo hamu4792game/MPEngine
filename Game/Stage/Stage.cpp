@@ -19,6 +19,7 @@ void Stage::Initialize()
 
 void Stage::Update()
 {
+
 	for (uint8_t i = 0; i < 2; i++) {
 		floor_[i].Update();
 	}

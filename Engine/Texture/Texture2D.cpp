@@ -64,7 +64,7 @@ void Texture2D::Texture(const std::string& filePath, const std::string& vsFileNa
 	range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER rootParameter[4] = {};
+	D3D12_ROOT_PARAMETER rootParameter[5] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
@@ -82,10 +82,14 @@ void Texture2D::Texture(const std::string& filePath, const std::string& vsFileNa
 	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[3].Descriptor.ShaderRegister = 2;
+	
+	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[4].Descriptor.ShaderRegister = 3;
 
 
 	if (!rootSignature) {
-		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
+		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 5);
 	}
 	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
 		if (!graphicsPipelineState[i]) {
@@ -129,10 +133,10 @@ void Texture2D::CreateVertexResource(AnchorPoint anchor)
 	//	頂点データ
 
 	VertexData vertex[4] = {
-		{{-0.5f,0.5f,0.1f,1.0f},{0.0f,0.0f}},
-		{{0.5f,0.5f,0.1f,1.0f},{1.0f,0.0f}},
-		{{0.5f,-0.5f,0.1f,1.0f},{1.0f,1.0f}},
-		{{-0.5f,-0.5f,0.1f,1.0f},{0.0f,1.0f}},
+		{{-0.5f,0.5f,0.1f,1.0f},{0.0f,0.0f},{0.0f,0.0f,0.0f}},
+		{{0.5f,0.5f,0.1f,1.0f},{1.0f,0.0f},{0.0f,0.0f,0.0f}},
+		{{0.5f,-0.5f,0.1f,1.0f},{1.0f,1.0f},{0.0f,0.0f,0.0f}},
+		{{-0.5f,-0.5f,0.1f,1.0f},{0.0f,1.0f},{0.0f,0.0f,0.0f}},
 	};
 
 	switch (anchor)
@@ -171,9 +175,9 @@ void Texture2D::CreateVertexResource(AnchorPoint anchor)
 
 
 	for (uint8_t i = 0; i < 4; i++) {
-		vertex[i].normal.x = vertex[i].position.x;
-		vertex[i].normal.y = vertex[i].position.y;
-		vertex[i].normal.z = vertex[i].position.z;
+		vertex[i].normal.x = 0.0f;
+		vertex[i].normal.y = 0.0f;
+		vertex[i].normal.z = -1.0f;
 	}
 	
 	vertexResource = Engine::CreateBufferResource(Engine::GetDevice(), sizeof(vertex));
@@ -248,11 +252,12 @@ void Texture2D::Draw(Vector2 pos, Vector2 scale, float rotate, Matrix4x4 viewPro
 
 void Texture2D::TextureDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Texture2D* texture)
 {
-	*worldTransform.cMat = MakeAffineMatrix(
+	worldTransform.cMat->world = MakeAffineMatrix(
 		{ worldTransform.scale_.x * static_cast<float>(texture->textureWidth),worldTransform.scale_.y * static_cast<float>(texture->textureHeight),1.0f },
 		{ 0.0f,0.0f,worldTransform.rotation_.z },
 		{ worldTransform.translation_.x,worldTransform.translation_.y,0.5f }
-	) * viewProjectionMat;
+	);
+	worldTransform.cMat->wvp = worldTransform.cMat->world * viewProjectionMat;
 	*worldTransform.cColor = ChangeColor(color);
 
 	Engine::GetList()->SetGraphicsRootSignature(texture->rootSignature.Get());
@@ -271,6 +276,7 @@ void Texture2D::TextureDraw(WorldTransform& worldTransform, const Matrix4x4& vie
 	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cMat.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(2, worldTransform.cColor.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(3, worldTransform.cMono.GetGPUVirtualAddress());
+	Engine::GetList()->SetGraphicsRootConstantBufferView(4, worldTransform.cDirectionalLight.GetGPUVirtualAddress());
 
 	Engine::GetList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

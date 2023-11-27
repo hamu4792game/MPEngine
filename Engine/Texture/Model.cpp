@@ -90,7 +90,7 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 		range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-		D3D12_ROOT_PARAMETER rootParameter[4] = {};
+		D3D12_ROOT_PARAMETER rootParameter[5] = {};
 		rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 		rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
@@ -109,8 +109,12 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 		rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameter[3].Descriptor.ShaderRegister = 2;
 
+		rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameter[4].Descriptor.ShaderRegister = 3;
+
 		//	ルートシグネチャの作成
-		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
+		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 5);
 	}
 	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
 		if (!graphicsPipelineState[i]) {
@@ -146,7 +150,7 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 		range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-		D3D12_ROOT_PARAMETER rootParameter[4] = {};
+		D3D12_ROOT_PARAMETER rootParameter[5] = {};
 		rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 		rootParameter[0].Descriptor.ShaderRegister = D3D12_SHADER_VISIBILITY_ALL;
@@ -165,8 +169,12 @@ void Model::Texture(const std::string& filePath, const std::string& vsFileName, 
 		rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameter[3].Descriptor.ShaderRegister = 2;
 
+		rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameter[4].Descriptor.ShaderRegister = 3;
+
 		//	ルートシグネチャの作成
-		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 4);
+		rootSignature = GraphicsPipeline::GetInstance()->CreateRootSignature(rootParameter, 5);
 	}
 	for (uint16_t i = 0; i < static_cast<uint16_t>(BlendMode::BlendCount); i++) {
 		if (!graphicsPipelineState[i]) {
@@ -253,7 +261,8 @@ void Model::CreateVertexResource()
 
 void Model::ModelDraw(WorldTransform& worldTransform, const Matrix4x4& viewProjectionMat, uint32_t color, Model* model)
 {
-	*worldTransform.cMat = worldTransform.worldMatrix * viewProjectionMat;
+	worldTransform.cMat->wvp = worldTransform.worldMatrix * viewProjectionMat;
+	worldTransform.cMat->world = worldTransform.worldMatrix;
 	*worldTransform.cColor = ChangeColor(color);
 
 	//ConstantBuffer<Matrix4x4> cMat;
@@ -273,6 +282,7 @@ void Model::ModelDraw(WorldTransform& worldTransform, const Matrix4x4& viewProje
 	Engine::GetList()->SetGraphicsRootConstantBufferView(1, worldTransform.cMat.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(2, worldTransform.cColor.GetGPUVirtualAddress());
 	Engine::GetList()->SetGraphicsRootConstantBufferView(3, worldTransform.cMono.GetGPUVirtualAddress());
+	Engine::GetList()->SetGraphicsRootConstantBufferView(4, worldTransform.cDirectionalLight.GetGPUVirtualAddress());
 
 	Engine::GetList()->DrawInstanced(UINT(model->modelData.vertices.size()), 1, 0, 0);
 

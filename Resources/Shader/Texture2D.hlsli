@@ -8,4 +8,12 @@ struct VertexOutput
 struct TransformationMatrix
 {
     float4x4 WVP;
+    float4x4 World;
+};
+
+struct DirectionalLight
+{
+	float4 color;
+	float3 direction;
+	float intensity;
 };
