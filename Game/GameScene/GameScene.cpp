@@ -20,7 +20,7 @@ void GameScene::Initialize()
 	viewProjectionMatrix2d = camera2d->GetViewProMat();
 
 	//	シーンの生成
-	battle_ = std::make_unique<Battle>(camera.get());
+	battle_ = std::make_unique<Battle>(camera.get(),camera2d.get());
 
 	//	モデルのロード
 	for (uint8_t i = 0u; i < 5u; i++) {
@@ -135,6 +135,7 @@ void GameScene::Draw()
 	case GameScene::Scene::TITLE:
 		break;
 	case GameScene::Scene::BATTLE:
+		battle_->Draw2D(viewProjectionMatrix2d);
 		break;
 	case GameScene::Scene::RESULT:
 		break;

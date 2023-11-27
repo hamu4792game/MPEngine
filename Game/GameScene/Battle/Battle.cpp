@@ -3,15 +3,17 @@
 #include "Engine/Input/KeyInput/KeyInput.h"
 #include <cmath>
 
-Battle::Battle(Camera* camera)
+Battle::Battle(Camera* camera, Camera* camera2d)
 {
 	this->camera_ = camera;
+	this->camera2d_ = camera2d;
 	player_ = std::make_unique<Player>(camera);
 	stage_ = std::make_shared<Stage>();
 	enemys_.resize(5);
 	for (auto& i : enemys_) {
 		i = std::make_unique<Enemy>();
 	}
+	lockOn_ = std::make_unique<LockOn>();
 }
 
 Vector3 enePos[5]{
@@ -35,6 +37,10 @@ void Battle::Initialize()
 		i->Initialize(enePos[index]);
 		index++;
 	}
+	lockOn_->Initialize();
+
+	player_->SetLockOn(lockOn_.get());
+
 }
 
 void Battle::Update()
@@ -83,7 +89,9 @@ void Battle::Update()
 			index++;
 		}
 	}
-	
+	camera_->GetViewProMat();
+	camera2d_->GetViewProMat();
+	lockOn_->Update(enemys_, camera_, camera_->GetViewMat());
 
 }
 
@@ -94,6 +102,10 @@ void Battle::Draw3D(const Matrix4x4& viewProjection)
 	for (auto& i : enemys_) {
 		i->Draw(viewProjection);
 	}
+}
+
+void Battle::Draw2D(const Matrix4x4& viewProjection) {
+	lockOn_->Draw2D(viewProjection);
 }
 
 void Battle::EnemySet() {

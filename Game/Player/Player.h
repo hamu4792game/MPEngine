@@ -10,6 +10,8 @@
 #include <optional>
 #include <array>
 
+class LockOn;
+
 class Player
 {
 public:
@@ -103,6 +105,8 @@ private: // メンバ変数
 	};
 	WorkAttack workAttack_;
 
+	const LockOn* lockOn_ = nullptr;
+
 public:
 	// コンボの数
 	static const int kComboNum = 3;
@@ -150,5 +154,7 @@ public: // セッター
 	void SetPlayerModel(std::vector<std::shared_ptr<Model>> player) { model_ = player; };
 	void SetStagePtr(Stage* stage) { stage_ = stage; };
 	bool GetResetFlag() { return resetFlag_; }
+
+	void SetLockOn(const LockOn* target) { lockOn_ = target; }
 
 };

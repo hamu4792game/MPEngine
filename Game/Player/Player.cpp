@@ -4,6 +4,7 @@
 #include "GlobalVariables/GlobalVariables.h"
 #include <algorithm>
 #include "Engine/Easing/Easing.h"
+#include "Game/LockOn/LockOn.h"
 
 // コンボ定数表
 const std::array<Player::ConstAttack, Player::kComboNum> Player::kConstAttacks_ = {
@@ -335,6 +336,13 @@ void Player::CameraMove() {
 	interTarget_ = Lerp(interTarget_, playerTrans_.translation_, cameraT_);
 
 	camera_->transform.translation_ = interTarget_ + offset;
+
+	if (lockOn_->ExistTarget()) {
+		Vector3 lockPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockPos - playerTrans_.translation_;
+		camera_->transform.rotation_.y = std::atan2f(sub.x, sub.z);
+	}
+	
 	camera_->transform.UpdateMatrix();
 }
 

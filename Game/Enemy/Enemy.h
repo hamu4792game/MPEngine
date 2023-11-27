@@ -21,6 +21,8 @@ public:
 
 	void SetEnemyModel(std::vector<std::shared_ptr<Model>> enemy) { model_ = enemy; parts_.resize(model_.size()); }
 
+	Vector3 GetPosition() const { return parts_[0].GetTranslate(); }
+
 private: // モデル
 	enum PARTS {
 		body,

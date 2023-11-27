@@ -38,6 +38,8 @@ public:
 	Matrix4x4 GetViewProMat();
 	//	ビルボードの取得
 	Matrix4x4 GetBillboardMat() { return billboardMatrix; }
+	Matrix4x4 GetViewMat() { return viewMatrix; }
+	Matrix4x4 GetProMat() { return projectionMatrix; }
 
 public:
 	//ワールドトランスフォームの親ポインタのセット

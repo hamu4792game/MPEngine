@@ -134,6 +134,9 @@
     <ClCompile Include="Game\FollowCamera\FollowCamera.cpp">
       <Filter>Game\FollowCamera</Filter>
     </ClCompile>
+    <ClCompile Include="Game\LockOn\LockOn.cpp">
+      <Filter>Game\LockOn</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -281,6 +284,9 @@
     <ClInclude Include="Game\FollowCamera\FollowCamera.h">
       <Filter>Game\FollowCamera</Filter>
     </ClInclude>
+    <ClInclude Include="Game\LockOn\LockOn.h">
+      <Filter>Game\LockOn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -399,6 +405,9 @@
     </Filter>
     <Filter Include="Game\FollowCamera">
       <UniqueIdentifier>{581d9e45-6d99-4e0c-810b-f9862db22495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\LockOn">
+      <UniqueIdentifier>{2d494fbb-656a-49af-a13a-9398e8f6734a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -6,13 +6,14 @@
 #include "Game/Player/Player.h"
 #include "Game/Stage/Stage.h"
 #include "Game/Enemy/Enemy.h"
+#include "Game/LockOn/LockOn.h"
 
 #include <list>
 
 class Battle
 {
 public:
-	Battle(Camera* camera);
+	Battle(Camera* camera, Camera* camera2d);
 	~Battle() = default;
 
 	void Initialize();
@@ -20,6 +21,7 @@ public:
 	void Update();
 
 	void Draw3D(const Matrix4x4& viewProjection);
+	void Draw2D(const Matrix4x4& viewProjection);
 
 private: // モデル
 	Model* playerModel_;
@@ -30,9 +32,11 @@ private: // メンバ変数
 	std::unique_ptr<Player> player_;
 	std::shared_ptr<Stage> stage_;
 	std::list<std::unique_ptr<Enemy>> enemys_;
+	std::unique_ptr<LockOn> lockOn_;
 
 	//	カメラのポインタ
 	Camera* camera_;
+	Camera* camera2d_;
 
 private: //	メンバ関数
 

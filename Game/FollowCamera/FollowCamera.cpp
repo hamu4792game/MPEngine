@@ -1,6 +1,7 @@
 #include "FollowCamera.h"
 #include "Engine/Easing/Easing.h"
 #include <algorithm>
+#include "Game/LockOn/LockOn.h"
 
 FollowCamera* FollowCamera::GetInstance() {
 	static FollowCamera instance;
@@ -20,6 +21,7 @@ void FollowCamera::Update() {
 	//	ダッシュの時間<frame>
 	//workDash_.behaviorDashTime_ = 120u;
 	
+
 	if (target_) {
 		cameraT_ += 1.0f / 20.0f;
 		cameraT_ = std::clamp(cameraT_, 0.0f, 1.0f);
@@ -27,6 +29,11 @@ void FollowCamera::Update() {
 		interTarget_ = Lerp(interTarget_, target_->translation_, T);
 	}
 
+	if (lockOn_) {
+		Vector3 lockPos = lockOn_->GetTargetPosition();
+		Vector3 sub = lockPos - target_->GetTranslate();
+		camera_->transform.rotation_.y = std::atan2f(sub.x, sub.z);
+	}
 	camera_->transform.translation_ = interTarget_ + offset_;
 	camera_->transform.UpdateMatrix();
 
