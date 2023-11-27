@@ -169,6 +169,13 @@ void Texture2D::CreateVertexResource(AnchorPoint anchor)
 		break;
 	}
 
+
+	for (uint8_t i = 0; i < 4; i++) {
+		vertex[i].normal.x = vertex[i].position.x;
+		vertex[i].normal.y = vertex[i].position.y;
+		vertex[i].normal.z = vertex[i].position.z;
+	}
+	
 	vertexResource = Engine::CreateBufferResource(Engine::GetDevice(), sizeof(vertex));
 
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
