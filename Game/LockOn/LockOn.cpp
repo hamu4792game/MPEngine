@@ -31,6 +31,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, Camera* ca
 		if (KeyInput::PushKey(DIK_0)) {
 			auto iterator = targets.begin();
 			num++;
+			if (num >= targets.size()) {
+				num = 0;
+			}
 			for (int8_t i = 0; i < num; i++) {
 				iterator++;
 			}
@@ -77,20 +80,27 @@ Vector3 LockOn::GetTargetPosition() const {
 
 void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matrix4x4& view) {
 	// ロックオン対象の絞り込み
-	
+
+	targets.clear();
 	// 全ての敵に対してロックオン判定
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
+
+		if (enemy->IsDead()) {
+			continue;
+		}
+
 		Vector3 positionWorld = enemy->GetPosition();
 		// ワールドからビューへ変換
 		Vector3 positionView = Transform(positionWorld, view);
 
 		// 距離条件チェック
-		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_ && !enemy->IsDead()) {
+		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 			// カメラ前方との角度を計算
 			Vector3 viewAngle = Vector3(view.m[3][0], view.m[3][1], view.m[3][2]);
-			float arcTangent = Dot(Normalize(positionView), Normalize(viewAngle));
+			//float arcTangent = Dot(Normalize(positionView), Normalize(viewAngle));
+			float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
 			// 角度条件チェック
-			if (std::fabsf(arcTangent) <= angleRange_) {
+			if (std::fabsf(arcTangent) <= std::cosf(angleRange_)) {
 				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 			}
 		}
@@ -131,7 +141,7 @@ Vector3 LockOn::ChangeScreen(const Vector3& worldPos, Camera* camera) {
 	//	ビューポート行列
 	Matrix4x4 matViewport = MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 	//	ビュー行列とプロジェクション行列、ビューポート行列を合成する
-	matViewProjectionViewport = camera->GetViewProMat() * matViewport;
+	Matrix4x4 matViewProjectionViewport = camera->GetViewProMat() * matViewport;
 	//	ワールドからスクリーン座標へ変換（ここで2Dから3Dになる）
 	Vector3 result = Transform(worldPos, matViewProjectionViewport);
 

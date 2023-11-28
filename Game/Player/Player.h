@@ -107,6 +107,8 @@ private: // メンバ変数
 
 	const LockOn* lockOn_ = nullptr;
 
+	Vector3 preMove_;
+
 public:
 	// コンボの数
 	static const int kComboNum = 3;

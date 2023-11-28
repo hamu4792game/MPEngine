@@ -214,13 +214,14 @@ void Player::Move() {
 		move.y = 0.0f;
 		move*= speed;
 		
-		//Matrix4x4 rot = DirectionToDirection(Vector3(0.0f,0.0f,1.0f), move);
 		//	移動方向に見た目を合わせる
 		// atan2fは消せませんでした(泣
-		destinationAngleY_ = std::atan2f(move.x, move.z);
-		playerTrans_.rotation_.y = std::atan2f(move.x, move.z);
-
-
+		playerTrans_.rotation_.y = FindAngle(move,Vector3(0.0f,0.0f,1.0f));
+		destinationAngleY_ = playerTrans_.rotation_.y;
+		//playerTrans_.rotateMatrix = MakeRotateAxisAngle(Vector3(0.0f,1.0f,0.0f), AngleToRadian(move.x));
+		//playerTrans_.rotateMatrix = DirectionToDirection(move, preMove_);
+		preMove_ = move;
+		
 		//	座標更新
 		playerTrans_.translation_ += move;
 		playerTrans_.UpdateMatrix();
@@ -342,7 +343,7 @@ void Player::CameraMove() {
 	if (lockOn_->ExistTarget()) {
 		Vector3 lockPos = lockOn_->GetTargetPosition();
 		Vector3 sub = lockPos - playerTrans_.translation_;
-		camera_->transform.rotation_.y = std::atan2f(sub.x, sub.z);
+		camera_->transform.rotation_.y = FindAngle(sub, Vector3(0.0f, 0.0f, 1.0f));
 	}
 	
 	camera_->transform.UpdateMatrix();

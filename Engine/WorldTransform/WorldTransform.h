@@ -43,6 +43,7 @@ public:
 	Vector3 scale_ = { 1.0f, 1.0f, 1.0f };
 	// X,Y,Z軸回りのローカル回転角
 	Vector3 rotation_ = { 0.0f, 0.0f, 0.0f };
+	Matrix4x4 rotateMatrix;
 	// ローカル座標
 	Vector3 translation_ = { 0.0f, 0.0f, 0.0f };
 	// ローカル → ワールド変換行列

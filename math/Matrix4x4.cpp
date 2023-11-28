@@ -69,6 +69,24 @@ Matrix4x4& Matrix4x4::operator=(const Matrix4x4& mat)
 	this->m = mat.m;
 	return *this;
 }
+
+bool Matrix4x4::operator==(const Matrix4x4& mat) const {
+	for (uint8_t y = 0; y < 4; y++) {
+		for (uint8_t x = 0; x < 4; x++) {
+			if (this->m[y][x] != mat.m[y][x]) { return false; }
+		}
+	}
+	return true;
+}
+
+bool Matrix4x4::operator!=(const Matrix4x4& mat) const {
+	for (uint8_t y = 0; y < 4; y++) {
+		for (uint8_t x = 0; x < 4; x++) {
+			if (this->m[y][x] == mat.m[y][x]) { return false; }
+		}
+	}
+	return true;
+}
 //	逆行列
 Matrix4x4 Inverse(const Matrix4x4& m) {
 	Matrix4x4 result;
@@ -389,11 +407,11 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 	return result;
 }
 
-Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 	Matrix4x4 result;
-	Vector3 n = Normalize(Cross(from, to));
-	float rcos = Dot(Normalize(from), Normalize(to));
-	float rsin = Length(Cross(Normalize(from), Normalize(to)));
+	Vector3 n = Normalize(axis);
+	float rcos = std::cosf(angle);
+	float rsin = std::sinf(angle);
 
 	result.m[0][0] = n.x * n.x * (1 - rcos) + rcos;
 	result.m[0][1] = n.x * n.y * (1 - rcos) + n.z * rsin;
@@ -404,8 +422,34 @@ Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 	result.m[1][2] = n.y * n.z * (1 - rcos) + n.x * rsin;
 
 	result.m[2][0] = n.x * n.z * (1 - rcos) + n.y * rsin;
-	result.m[2][2] = n.y * n.z * (1 - rcos) - n.x * rsin;
-	result.m[2][1] = n.z * n.z * (1 - rcos) + rcos;
+	result.m[2][1] = n.y * n.z * (1 - rcos) - n.x * rsin;
+	result.m[2][2] = n.z * n.z * (1 - rcos) + rcos;
+
+	result.m[3][3] = 1.0f;
+
+	return result;
+}
+
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+	Matrix4x4 result;
+	Vector3 n = Normalize(Cross(from, to));
+	float rcos = Dot((from), (to));
+	float rsin = Length(Cross((from), (to)));
+	if (n == Vector3::zero && rcos == -1.0f) {
+		n = Vector3(from.z,0.0f, -from.x);
+	}
+
+	result.m[0][0] = n.x * n.x * (1 - rcos) + rcos;
+	result.m[0][1] = n.x * n.y * (1 - rcos) + n.z * rsin;
+	result.m[0][2] = n.x * n.z * (1 - rcos) - n.y * rsin;
+
+	result.m[1][0] = n.x * n.y * (1 - rcos) - n.z * rsin;
+	result.m[1][1] = n.y * n.y * (1 - rcos) + rcos;
+	result.m[1][2] = n.y * n.z * (1 - rcos) + n.x * rsin;
+
+	result.m[2][0] = n.x * n.z * (1 - rcos) + n.y * rsin;
+	result.m[2][1] = n.y * n.z * (1 - rcos) - n.x * rsin;
+	result.m[2][2] = n.z * n.z * (1 - rcos) + rcos;
 
 	result.m[3][3] = 1.0f;
 	return result;

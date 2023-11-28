@@ -82,6 +82,13 @@ Vector3& Vector3::operator*=(const float& num) {
 	return *this;
 }
 
+bool Vector3::operator==(const Vector3& num) const {
+	if (this->x != num.x) { return false; }
+	if (this->y != num.y) { return false; }
+	if (this->z != num.z) { return false; }
+	return true;
+}
+
 bool Vector3::operator!=(const Vector3& num) const {
 	if (this->x == num.x) { return false; }
 	if (this->y == num.y) { return false; }
@@ -189,4 +196,15 @@ float RandNum(float min, float max) {
 	std::uniform_real_distribution<> dist(min, max);
 
 	return static_cast<float>(dist(randNum));
+}
+
+float FindAngle(const Vector3& vecA, const Vector3& vecB) {
+	float dot = Dot(vecA, vecB);
+	float a = Length(vecA);
+	float b = Length(vecB);
+	float result = std::acosf(dot / (a * b));
+	if (vecA.x < 0) {
+		result = -result;
+	}
+	return result;
 }

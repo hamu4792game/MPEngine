@@ -16,6 +16,8 @@ WorldTransform::WorldTransform()
 	light.color = cDirectionalLight->color;
 	light.direction = cDirectionalLight->direction;
 	light.intensity = cDirectionalLight->intensity;
+
+	rotateMatrix = MakeIdentity4x4();
 }
 
 WorldTransform::WorldTransform(const WorldTransform& transform)
@@ -47,6 +49,11 @@ Matrix4x4 WorldTransform::UpdateMatrix()
 
 	//	スケール、回転、平行移動を合成して行列を計算する
 	this->worldMatrix = MakeAffineMatrix(scale_, rotation_, translation_);
+
+	Matrix4x4 identity = MakeIdentity4x4();
+	if (rotateMatrix.m[0][0] != identity.m[0][0] || rotateMatrix.m[1][1] != identity.m[1][1] || rotateMatrix.m[2][2] != identity.m[2][2]) {
+		this->worldMatrix = (MakeScaleMatrix(scale_) * (rotateMatrix /** MakeRotateMatrix(rotation_)*/)) * MakeTranslateMatrix(translation_);
+	}
 
 	//	親があれば親のワールド行列を掛ける
 	if (parent_)
