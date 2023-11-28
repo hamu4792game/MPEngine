@@ -73,7 +73,7 @@ void Particle::Finalize() {
 	}
 }
 
-void Particle::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& textureFilePath, uint16_t num)
+void Particle::Texture(const std::string& filePath, const std::string& vsFileName, const std::string& psFileName, const std::string& textureFilePath, uint32_t num)
 {
 	//	個数の設定
 	kNumInstance = num;

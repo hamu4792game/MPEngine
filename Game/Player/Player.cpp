@@ -85,6 +85,13 @@ void Player::Update() {
 	ImGui::End();
 #endif //DEBUG
 
+	ImGui::Begin("INPUT");
+	ImGui::Text("Move : WASD");
+	ImGui::Text("Jamp : SPACE");
+	ImGui::Text("Attack : V");
+	ImGui::Text("Dash : B");
+	ImGui::End();
+
 	resetFlag_ = false;
 	ApplyGlobalVariables();
 
@@ -443,6 +450,7 @@ void Player::BehaviorAttackUpdate() {
 	// コンボ段階によってモーションを分岐
 	switch (workAttack_.comboIndex_) {
 	case 0:
+		attackDamage_ = 20;
 		if (workAttack_.inComboPhase_ == 2) {
 			parts_[2].rotation_.x += 0.1f;
 			parts_[3].rotation_.x += 0.1f;
@@ -450,6 +458,7 @@ void Player::BehaviorAttackUpdate() {
 		}
 		break;
 	case 1:
+		attackDamage_ = 30;
 		if (workAttack_.inComboPhase_ == 2) {
 			parts_[2].rotation_.x -= 0.1f;
 			parts_[3].rotation_.x -= 0.1f;
@@ -457,7 +466,7 @@ void Player::BehaviorAttackUpdate() {
 		}
 		break;
 	case 2:
-
+		attackDamage_ = 100;
 		if (workAttack_.inComboPhase_ == 0) {
 			float a = 2.0f / kConstAttacks_[workAttack_.comboIndex_].anticipationTime;
 			parts_[2].rotation_.x += a;

@@ -26,9 +26,12 @@ public:
 
 	bool EnemyColl(AABB* enemy);
 
-private: // メンバ変数
+	int GetDamage() const { return attackDamage_; }
+
+public:
 	// player関連
 	WorldTransform playerTrans_;
+private: // メンバ変数
 	//	宙に浮いているか
 	bool isFloating_ = false;
 	//	ジャンプしているか
@@ -108,6 +111,8 @@ private: // メンバ変数
 	const LockOn* lockOn_ = nullptr;
 
 	Vector3 preMove_;
+
+	int attackDamage_ = 0;
 
 public:
 	// コンボの数

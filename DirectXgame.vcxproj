@@ -129,6 +129,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Game\Enemy\Enemy.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyParticle.cpp" />
     <ClCompile Include="Game\Floor\Floor.cpp" />
     <ClCompile Include="Game\Floor\MoveFloor\MoveFloor.cpp" />
     <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
@@ -181,6 +182,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Game\Enemy\Enemy.h" />
+    <ClInclude Include="Game\Enemy\EnemyParticle.h" />
     <ClInclude Include="Game\Floor\Floor.h" />
     <ClInclude Include="Game\Floor\MoveFloor\MoveFloor.h" />
     <ClInclude Include="Game\FollowCamera\FollowCamera.h" />

@@ -3,10 +3,9 @@
 #include "Engine/Input/KeyInput/KeyInput.h"
 #include <cmath>
 
-Battle::Battle(Camera* camera, Camera* camera2d)
+Battle::Battle(Camera* camera)
 {
 	this->camera_ = camera;
-	this->camera2d_ = camera2d;
 	player_ = std::make_unique<Player>(camera);
 	stage_ = std::make_shared<Stage>();
 	enemys_.resize(5);
@@ -17,11 +16,11 @@ Battle::Battle(Camera* camera, Camera* camera2d)
 }
 
 Vector3 enePos[5]{
-		Vector3(8.0f,0.0f,0.0f),
-		Vector3(8.0f,1.0f,0.0f),
-		Vector3(8.0f,2.0f,0.0f),
-		Vector3(8.0f,3.0f,0.0f),
-		Vector3(-3.0f, 1.0f, 50.0f),
+	Vector3(30.0f,1.0f,10.0f),
+	Vector3(-20.0f,1.0f,40.0f),
+	Vector3(8.0f,1.0f,-10.0f),
+	Vector3(20.0f,1.0f,70.0f),
+	Vector3(-3.0f, 1.0f, 55.0f),
 };
 
 void Battle::Initialize()
@@ -78,7 +77,8 @@ void Battle::Update()
 		if (!i->IsDead()) {
 			i->Update();
 			if (player_->EnemyColl(&i->aabb_)) {
-				i->SetDead(true);
+				Vector3 hit = FindVector(player_->playerTrans_.GetTranslate(), i->GetPosition());
+				i->HitDamage(player_->GetDamage(), hit);
 			}
 		}
 	}

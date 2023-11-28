@@ -6,6 +6,7 @@
 #include "Game/Player/Player.h"
 #include "Game/Stage/Stage.h"
 #include "Game/Enemy/Enemy.h"
+#include "Game/Enemy/EnemyParticle.h"
 #include "Game/LockOn/LockOn.h"
 
 #include <list>
@@ -13,7 +14,7 @@
 class Battle
 {
 public:
-	Battle(Camera* camera, Camera* camera2d);
+	Battle(Camera* camera);
 	~Battle() = default;
 
 	void Initialize();
@@ -36,7 +37,6 @@ private: // メンバ変数
 
 	//	カメラのポインタ
 	Camera* camera_;
-	Camera* camera2d_;
 
 private: //	メンバ関数
 

@@ -20,7 +20,7 @@ void GameScene::Initialize()
 	viewProjectionMatrix2d = camera2d->GetViewProMat();
 
 	//	シーンの生成
-	battle_ = std::make_unique<Battle>(camera.get(),camera2d.get());
+	battle_ = std::make_unique<Battle>(camera.get());
 
 	//	モデルのロード
 	for (uint8_t i = 0u; i < 5u; i++) {
@@ -29,7 +29,8 @@ void GameScene::Initialize()
 	for (uint8_t i = 0u; i < 2u; i++) {
 		enemy_.push_back(std::make_shared<Model>());
 	}
-	
+	particle_ = std::make_shared<Particle>();
+
 	floor_ = std::make_shared<Model>();
 
 	player_[0]->Texture("Resources/player/body/body.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
@@ -42,6 +43,7 @@ void GameScene::Initialize()
 	enemy_[0]->Texture("Resources/enemyBody/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 	enemy_[1]->Texture("Resources/enemyWeapon/enemyWeapon.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
 
+	particle_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Particle.VS.hlsl", "./Resources/Shader/Particle.PS.hlsl", "Resources/uvChecker.png", 100);
 
 	skydome_.Initialize();
 	skydome_.ModelLoad();
@@ -109,6 +111,7 @@ void GameScene::Update() {
 	//	カメラ行列の更新
 	viewProjectionMatrix = camera->GetViewProMat();
 	viewProjectionMatrix2d = camera2d->GetViewProMat();
+	billborld_ = camera->GetBillboardMat();
 
 }
 

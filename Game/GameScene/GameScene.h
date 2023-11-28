@@ -31,6 +31,8 @@ public:
 
 	//	シングルトンインスタンス
 	static GameScene* GetInstance();
+
+	Matrix4x4 billborld_;
 	
 private:
 	
@@ -48,6 +50,7 @@ private:
 	std::vector<std::shared_ptr<Model>> player_;
 	std::vector<std::shared_ptr<Model>> enemy_;
 	std::shared_ptr<Model> floor_;
+	std::shared_ptr<Particle> particle_;
 	Skydome skydome_;
 	Ground ground_;
 

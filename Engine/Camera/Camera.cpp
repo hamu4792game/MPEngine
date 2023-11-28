@@ -34,7 +34,9 @@ Matrix4x4 Camera::GetViewProMat() {
 	viewMatrix = Inverse(cameraMatrix);
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
 	//	ビルボードも作る
-	CreateBillboard();
+	if (type) {
+		CreateBillboard();
+	}
 
 	return viewProjectionMatrix;
 }

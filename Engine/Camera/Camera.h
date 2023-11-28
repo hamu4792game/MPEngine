@@ -13,6 +13,7 @@ public:
 	Camera(float farClip_ = 1000.0f, bool proType = false);
 	~Camera() = default;
 
+
 private:
 	//	深度値
 	float farZ;

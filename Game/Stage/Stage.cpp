@@ -10,8 +10,8 @@ Stage::Stage()
 void Stage::Initialize()
 {
 	floor_[0].Initialize(Vector3(0.0f, 0.0f, 0.0f));
-	floor_[1].Initialize(Vector3(0.0f, 0.0f, 50.0f));
-	moveFloor_.Initialize(Vector3(0.0f, 0.0f, 25.0f));
+	floor_[1].Initialize(Vector3(0.0f, 0.0f, 80.0f));
+	moveFloor_.Initialize(Vector3(0.0f, 0.0f, 40.0f));
 
 	goalTrans.translation_ = floor_[1].transform_.translation_;
 	goalTrans.translation_.y = 1.0f;

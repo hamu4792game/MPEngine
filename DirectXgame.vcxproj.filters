@@ -137,6 +137,9 @@
     <ClCompile Include="Game\LockOn\LockOn.cpp">
       <Filter>Game\LockOn</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Enemy\EnemyParticle.cpp">
+      <Filter>Game\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -286,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="Game\LockOn\LockOn.h">
       <Filter>Game\LockOn</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enemy\EnemyParticle.h">
+      <Filter>Game\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,9 @@ public:
 	Vector3 GetTargetPosition() const;
 	bool ExistTarget() const { return target_ ? true : false; }
 
+	// true : 自動/false : 手動
+	bool isAutoLockOn_ = false;
+
 private:
 	// ロックオンマーク用スプライト
 	std::unique_ptr<Texture2D> lockOnMark_;

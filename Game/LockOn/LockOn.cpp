@@ -13,41 +13,55 @@ void LockOn::Initialize() {
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, Camera* camera, const Matrix4x4& view) {
-	ImGui::DragFloat3("LockOn", &lockOnMarkTransform_.translation_.x, 0.1f);
-	
-	// ロックオン状態なら
-	if (target_) {
-		// ロックオンボタンをトリガーしたらロックオンを外す
-		if (KeyInput::PushKey(DIK_M)) {
-			target_ = nullptr;
-		}
-		else if (DeterminationWithOutArea(view)) {
-			// ロックオンを外す
-			target_ = nullptr;
-		}
-		else if (target_->IsDead()) {
-			target_ = nullptr;
-		}
-		if (KeyInput::PushKey(DIK_0)) {
-			auto iterator = targets.begin();
-			num++;
-			if (num >= targets.size()) {
-				num = 0;
-			}
-			for (int8_t i = 0; i < num; i++) {
-				iterator++;
-			}
-			target_ = iterator->second;
-		}
+	ImGui::Begin("INPUT");
+	ImGui::Text("isLockOn : DIK_P");
+	ImGui::Text("LockOn	  : DIK_M");
+	ImGui::Text("Changed  : DIK_0");
+	ImGui::End();
 
+	if (KeyInput::PushKey(DIK_P)) {
+		isAutoLockOn_ = !isAutoLockOn_;
+	}
+
+	if (isAutoLockOn_) {
+		Search(enemies, view);
 	}
 	else {
-		// ロックオン対象の検索
-		if (KeyInput::PushKey(DIK_M)) {
-			Search(enemies, view);
-			num = 0;
+		// ロックオン状態なら
+		if (target_) {
+			// ロックオンボタンをトリガーしたらロックオンを外す
+			if (KeyInput::PushKey(DIK_M)) {
+				target_ = nullptr;
+			}
+			else if (DeterminationWithOutArea(view)) {
+				// ロックオンを外す
+				target_ = nullptr;
+			}
+			else if (target_->IsDead()) {
+				target_ = nullptr;
+			}
+			if (KeyInput::PushKey(DIK_0)) {
+				auto iterator = targets.begin();
+				num++;
+				if (num >= targets.size()) {
+					num = 0;
+				}
+				for (int8_t i = 0; i < num; i++) {
+					iterator++;
+				}
+				target_ = iterator->second;
+			}
+
+		}
+		else {
+			// ロックオン対象の検索
+			if (KeyInput::PushKey(DIK_M)) {
+				Search(enemies, view);
+				num = 0;
+			}
 		}
 	}
+
 
 	// ロックオン状態なら
 	if (target_) {
@@ -66,7 +80,6 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, Camera* ca
 void LockOn::Draw2D(const Matrix4x4& viewProjection) {
 	if (target_) {
 		// 描画
-		
 		Texture2D::TextureDraw(lockOnMarkTransform_, viewProjection, 0xffffffff, lockOnMark_.get());
 	}
 }
@@ -96,9 +109,11 @@ void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matr
 		// 距離条件チェック
 		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 			// カメラ前方との角度を計算
-			Vector3 viewAngle = Vector3(view.m[3][0], view.m[3][1], view.m[3][2]);
-			//float arcTangent = Dot(Normalize(positionView), Normalize(viewAngle));
-			float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+			Vector3 viewPos = Vector3(view.m[3][0], view.m[3][1], view.m[3][2]);
+			Vector3 enemyVec = enemy->GetPosition() - viewPos;
+			float arc = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+			float arcTangent = //std::acosf(Dot(Normalize(positionView), Normalize(enemyVec)));
+			FindAngle(Vector3(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), 0.0f, positionView.z), Vector3(0.0f, 0.0f, 1.0f));
 			// 角度条件チェック
 			if (std::fabsf(arcTangent) <= std::cosf(angleRange_)) {
 				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
@@ -113,8 +128,6 @@ void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matr
 		// ソートの結果一番近い敵をロックオン対象とする
 		target_ = targets.front().second;
 	}
-
-
 }
 
 bool LockOn::DeterminationWithOutArea(const Matrix4x4& view) {

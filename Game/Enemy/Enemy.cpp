@@ -3,7 +3,7 @@
 #include <numbers>
 
 Enemy::Enemy() {
-	// model_.resize(PARTS::MaxSize);	
+	particle_ = std::make_shared<EnemyParticle>();
 }
 
 void Enemy::Initialize(const Vector3& startPos)
@@ -19,7 +19,10 @@ void Enemy::Initialize(const Vector3& startPos)
 		i.UpdateMatrix();
 	}
 	aabb_.Update(parts_[body]);
-
+	particle_->initialize(parts_[body].translation_);
+	isAlive_ = false;
+	isDeth_ = false;
+	Hp_ = 100;
 }
 
 void Enemy::Update()
@@ -32,6 +35,9 @@ void Enemy::Update()
 	ImGui::End();
 #endif DEBUG
 	if (isAlive_) {
+
+		particle_->Update();
+		isDeth_ = particle_->FinishEffect();
 		return;
 	}
 
@@ -50,15 +56,13 @@ void Enemy::Update()
 		parts_[weapon].rotation_.y -= AngleToRadian(10.0f);
 	}
 
-	for (auto& i : parts_) {
-		i.UpdateMatrix();
-	}
-	aabb_.Update(parts_[body]);
+	UpdateTrans();
 }
 
 void Enemy::Draw(const Matrix4x4& viewProjection)
 {
 	if (isAlive_) {
+		particle_->Draw(viewProjection);
 		return;
 	}
 
@@ -66,4 +70,23 @@ void Enemy::Draw(const Matrix4x4& viewProjection)
 		Model::ModelDraw(parts_[i], viewProjection, 0xffffffff, model_[i].get());
 	}
 	aabb_.DrawAABB(viewProjection, 0xffffffff);
+}
+
+void Enemy::HitDamage(const int& damage, const Vector3& hit) {
+	Hp_ -= damage;
+	Vector3 knockBack = Normalize(hit) * 10.0f;
+	knockBack.y = 0.0f;
+	parts_[body].translation_ += knockBack;
+	if (Hp_ <= 0) {
+		isAlive_ = true;
+		particle_->initialize(parts_[body].translation_);
+	}
+	UpdateTrans();
+}
+
+void Enemy::UpdateTrans() {
+	for (auto& i : parts_) {
+		i.UpdateMatrix();
+	}
+	aabb_.Update(parts_[body]);
 }
