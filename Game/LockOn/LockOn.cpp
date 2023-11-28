@@ -8,6 +8,10 @@ LockOn::LockOn() {
 	
 }
 
+LockOn::~LockOn() {
+	targets.clear();
+}
+
 void LockOn::Initialize() {
 	lockOnMarkTransform_.scale_ = Vector3(0.2f, 0.2f, 0.1f);
 }
@@ -110,12 +114,10 @@ void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matr
 		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 			// カメラ前方との角度を計算
 			Vector3 viewPos = Vector3(view.m[3][0], view.m[3][1], view.m[3][2]);
-			Vector3 enemyVec = enemy->GetPosition() - viewPos;
-			float arc = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
 			float arcTangent = //std::acosf(Dot(Normalize(positionView), Normalize(enemyVec)));
 			FindAngle(Vector3(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), 0.0f, positionView.z), Vector3(0.0f, 0.0f, 1.0f));
 			// 角度条件チェック
-			if (std::fabsf(arcTangent) <= std::cosf(angleRange_)) {
+			if (std::fabsf(arcTangent) <= angleRange_) {
 				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 			}
 		}
