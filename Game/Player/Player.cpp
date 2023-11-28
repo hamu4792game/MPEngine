@@ -438,6 +438,7 @@ void Player::BehaviorAttackUpdate() {
 			// 攻撃のパラメーターリセット
 			workAttack_.attackParameter_ = 0;
 			workAttack_.inComboPhase_ = 0;
+			Move();
 		}
 		// コンボ継続出ないなら終了
 		else {

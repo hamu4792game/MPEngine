@@ -74,7 +74,7 @@ void Enemy::Draw(const Matrix4x4& viewProjection)
 
 void Enemy::HitDamage(const int& damage, const Vector3& hit) {
 	Hp_ -= damage;
-	Vector3 knockBack = Normalize(hit) * 10.0f;
+	Vector3 knockBack = Normalize(hit) * 5.0f;
 	knockBack.y = 0.0f;
 	parts_[body].translation_ += knockBack;
 	if (Hp_ <= 0) {

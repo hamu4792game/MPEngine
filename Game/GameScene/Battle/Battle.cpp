@@ -15,10 +15,11 @@ Battle::Battle(Camera* camera)
 	lockOn_ = std::make_unique<LockOn>();
 }
 
-Vector3 enePos[5]{
+Vector3 enePos[7]{
 	Vector3(10.0f,1.0f,10.0f),
+	Vector3(10.0f,3.0f,10.0f),
+	Vector3(10.0f,1.0f,15.0f),
 	Vector3(10.0f,1.0f,20.0f),
-	Vector3(10.0f,1.0f,30.0f),
 	Vector3(-10.0f,1.0f,20.0f),
 	Vector3(-3.0f, 1.0f, 70.0f),
 };
