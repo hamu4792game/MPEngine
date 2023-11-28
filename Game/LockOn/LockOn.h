@@ -32,8 +32,8 @@ private:
 	int num = 0;
 
 	float minDistance_ = 20.0f; // 最小距離
-	float maxDistance_ = 60.0f; // 最大距離
-	float angleRange_ = AngleToRadian(60.0f); // 角度範囲
+	float maxDistance_ = 80.0f; // 最大距離
+	float angleRange_ = AngleToRadian(90.0f); // 角度範囲
 private:
 	void Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matrix4x4& view);
 
