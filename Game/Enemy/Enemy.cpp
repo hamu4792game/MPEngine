@@ -58,6 +58,10 @@ void Enemy::Update()
 
 void Enemy::Draw(const Matrix4x4& viewProjection)
 {
+	if (isAlive_) {
+		return;
+	}
+
 	for (uint8_t i = 0; i < parts_.size(); i++) {
 		Model::ModelDraw(parts_[i], viewProjection, 0xffffffff, model_[i].get());
 	}

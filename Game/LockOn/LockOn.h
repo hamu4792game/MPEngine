@@ -24,6 +24,9 @@ private:
 
 	// ロックオン対象
 	const Enemy* target_ = nullptr;
+	// 目標
+	std::list<std::pair<float, const Enemy*>> targets;
+	int num = 0;
 
 	float minDistance_ = 20.0f; // 最小距離
 	float maxDistance_ = 60.0f; // 最大距離

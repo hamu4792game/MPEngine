@@ -25,12 +25,24 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, Camera* ca
 			// ロックオンを外す
 			target_ = nullptr;
 		}
+		else if (target_->IsDead()) {
+			target_ = nullptr;
+		}
+		if (KeyInput::PushKey(DIK_0)) {
+			auto iterator = targets.begin();
+			num++;
+			for (int8_t i = 0; i < num; i++) {
+				iterator++;
+			}
+			target_ = iterator->second;
+		}
 
 	}
 	else {
 		// ロックオン対象の検索
 		if (KeyInput::PushKey(DIK_M)) {
 			Search(enemies, view);
+			num = 0;
 		}
 	}
 
@@ -60,13 +72,12 @@ Vector3 LockOn::GetTargetPosition() const {
 	if (target_) {
 		return target_->GetPosition();
 	}
-	return Vector3();
+	return Vector3::zero;
 }
 
 void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matrix4x4& view) {
 	// ロックオン対象の絞り込み
-	// 目標
-	std::list<std::pair<float, const Enemy*>> targets;
+	
 	// 全ての敵に対してロックオン判定
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 		Vector3 positionWorld = enemy->GetPosition();
@@ -74,7 +85,7 @@ void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const Matr
 		Vector3 positionView = Transform(positionWorld, view);
 
 		// 距離条件チェック
-		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
+		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_ && !enemy->IsDead()) {
 			// カメラ前方との角度を計算
 			Vector3 viewAngle = Vector3(view.m[3][0], view.m[3][1], view.m[3][2]);
 			float arcTangent = Dot(Normalize(positionView), Normalize(viewAngle));

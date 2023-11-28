@@ -19,13 +19,13 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b3);
 
 float4 main(VertexOutput input) : SV_TARGET
 {
-    //float NdotL = dot(normalize(input.normal),-gDirectionalLight.direction);
-    //float cos = pow(NdotL * 0.5f + 0.5f,2.0f);
+    float NdotL = dot(normalize(input.normal),-gDirectionalLight.direction);
+    float cos = pow(NdotL * 0.5f + 0.5f,2.0f);
 
-    float cos = saturate(dot(normalize(input.normal),-gDirectionalLight.direction));
+    //float cos = saturate(dot(normalize(input.normal),-gDirectionalLight.direction));
     float4 textureColor = gTexture.Sample(gSampler, input.texcoord) * color;
     
-    textureColor = textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-    
+    textureColor.rgb = textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+
     return textureColor;
 }

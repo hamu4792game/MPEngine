@@ -75,9 +75,11 @@ void Battle::Update()
 	stage_->Update();
 	player_->Update();
 	for (auto& i : enemys_) {
-		i->Update();
-		if (player_->EnemyColl(&i->aabb_)) {
-			i->SetDead(true);
+		if (!i->IsDead()) {
+			i->Update();
+			if (player_->EnemyColl(&i->aabb_)) {
+				i->SetDead(true);
+			}
 		}
 	}
 
@@ -90,7 +92,6 @@ void Battle::Update()
 		}
 	}
 	camera_->GetViewProMat();
-	camera2d_->GetViewProMat();
 	lockOn_->Update(enemys_, camera_, camera_->GetViewMat());
 
 }

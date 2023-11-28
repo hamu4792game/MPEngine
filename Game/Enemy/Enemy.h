@@ -15,7 +15,7 @@ public:
 
 	void Draw(const Matrix4x4& viewProjection);
 
-	bool IsDead() { return isAlive_; }
+	bool IsDead() const { return isAlive_; }
 
 	void SetDead(bool flag) { isAlive_ = flag; }
 
