@@ -1,6 +1,8 @@
 #include "GameScene.h"
 #include "externals/imgui/imgui.h"
 #include "Engine/Input/KeyInput/KeyInput.h"
+#include "Engine/Texture/Line/Line.h"
+#include "Engine/Texture/Particle/Particle.h"
 
 GameScene* GameScene::GetInstance()
 {
@@ -18,21 +20,13 @@ void GameScene::Initialize()
 	viewProjectionMatrix = camera->GetViewProMat();
 	viewProjectionMatrix2d = camera2d->GetViewProMat();
 
-	//	モデルのロード
-	player_ = std::make_shared<Model>();
-	floor_ = std::make_shared<Model>();
+	inputHandler_ = new InputHandle();
 
-	player_->Texture("Resources/player/enemyBody.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl");
-	floor_->Texture("Resources/plane/plane.obj", "./Resources/Shader/Texture2D.VS.hlsl", "./Resources/Shader/Texture2D.PS.hlsl", "Resources/uvChecker.png");
-	
-	skydome_.Initialize();
-	skydome_.ModelLoad();
-	ground_.Initialize();
-	ground_.ModelLoad();
-	
-	//	シーンの生成と初期化
-	battle_ = std::make_unique<Battle>(camera.get());
-	battle_->Initialize();
+	inputHandler_->AssignMoveLeftCommand2PressKeyA();
+	inputHandler_->AssignMoveRightCommand2PressKeyD();
+
+	player_ = new Player();
+	player_->Init();
 
 	//	変数の初期化
 	scene = Scene::BATTLE;
@@ -40,48 +34,25 @@ void GameScene::Initialize()
 
 
 	//	モデルの引き渡し
-	battle_->SetPlayerModel(player_.get());
-	battle_->SetFloorModel(floor_.get());
 
 }
 
 void GameScene::Update()
 {
 #ifdef _DEBUG
-	ImGui::Begin("camera");
-	ImGui::DragFloat3("scale", &camera->transform.scale_.x, 0.1f);
-	ImGui::DragFloat3("translate", &camera->transform.translation_.x, 1.0f);
-	ImGui::DragFloat3("rotate", &camera->transform.rotation_.x, AngleToRadian(1.0f));
-	ImGui::End();
+	//ImGui::Begin("camera");
+	//ImGui::DragFloat3("scale", &camera->transform.scale_.x, 0.1f);
+	//ImGui::DragFloat3("translate", &camera->transform.translation_.x, 1.0f);
+	//ImGui::DragFloat3("rotate", &camera->transform.rotation_.x, AngleToRadian(1.0f));
+	//ImGui::End();
 #endif DEBUG
 
-	
+	command_ = inputHandler_->HandleInput();
 
-	//	シーン切替わり時の初期化
-	if (oldscene != scene) {
-		switch (scene)
-		{
-		case GameScene::Scene::TITLE:
-			break;
-		case GameScene::Scene::BATTLE:
-			battle_->Initialize();
-			break;
-		case GameScene::Scene::RESULT:
-			break;
-		}
+	if (this->command_) {
+		command_->Exec(*player_);
 	}
-	oldscene = scene;
-
-	switch (scene)
-	{
-	case GameScene::Scene::TITLE:
-		break;
-	case GameScene::Scene::BATTLE:
-		battle_->Update();
-		break;
-	case GameScene::Scene::RESULT:
-		break;
-	}
+	player_->Update();
 
 	//	カメラ行列の更新
 	viewProjectionMatrix = camera->GetViewProMat();
@@ -89,34 +60,8 @@ void GameScene::Update()
 
 }
 
-void GameScene::Draw()
-{
-	skydome_.Draw(viewProjectionMatrix);
-	//ground_.Draw(viewProjectionMatrix);
-
-	//	3D描画
-	switch (scene)
-	{
-	case GameScene::Scene::TITLE:
-		break;
-	case GameScene::Scene::BATTLE:
-		battle_->Draw3D(viewProjectionMatrix);
-		break;
-	case GameScene::Scene::RESULT:
-		break;
-	}
-
-	//	2D描画
-	switch (scene)
-	{
-	case GameScene::Scene::TITLE:
-		break;
-	case GameScene::Scene::BATTLE:
-		break;
-	case GameScene::Scene::RESULT:
-		break;
-	}
-
+void GameScene::Draw() {
+	player_->Draw(viewProjectionMatrix2d);
 }
 
 void GameScene::Finalize()
@@ -125,6 +70,9 @@ void GameScene::Finalize()
 	Model::Finalize();
 	Texture2D::Finalize();
 	Particle::Finalize();
+
+	delete player_;
+	delete inputHandler_;
 }
 
 

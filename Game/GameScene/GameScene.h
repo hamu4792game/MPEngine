@@ -6,12 +6,10 @@
 #include "Engine/Input/AudioInput/AudioInput.h"
 
 #include "Engine/WorldTransform/WorldTransform.h"
-#include "Engine/Texture/Particle/Particle.h"
-#include "Engine/Texture/Line/Line.h"
 
-#include "Game/GameScene/Battle/Battle.h"
-#include "Game/Ground/Ground.h"
-#include "Game/Skydome/Skydome.h"
+#include "Game/InputHandle/InputHandle.h"
+#include "Game/Player/Player.h"
+
 
 class GameScene
 {
@@ -41,16 +39,10 @@ private:
 	Matrix4x4 viewProjectionMatrix{};
 	Matrix4x4 viewProjectionMatrix2d{};
 
-	//	シーン用インスタンス
-	std::unique_ptr<Battle> battle_;
+	InputHandle* inputHandler_ = nullptr;
+	ICommand* command_ = nullptr;
+	Player* player_ = nullptr;
 
-	//	モデル
-	std::shared_ptr<Model> player_;
-	std::shared_ptr<Model> floor_;
-	Skydome skydome_;
-	Ground ground_;
-
-	
 public:
 
 	void Initialize();
