@@ -86,10 +86,10 @@ void Player::Update() {
 #endif //DEBUG
 
 	ImGui::Begin("INPUT");
-	ImGui::Text("Move : WASD");
-	ImGui::Text("Jamp : SPACE");
-	ImGui::Text("Attack : V");
-	ImGui::Text("Dash : B");
+	ImGui::Text("Move : WASD / Rstick");
+	ImGui::Text("Jamp : SPACE / A");
+	ImGui::Text("Attack : V / RT");
+	ImGui::Text("Dash : B / B");
 	ImGui::End();
 
 	resetFlag_ = false;
@@ -238,21 +238,19 @@ void Player::Move() {
 void Player::Jamp() {
 
 	if (!isJamp_ && !isFloating_) {
+		velocity_ = 0.0f;
 		if (KeyInput::PushKey(DIK_SPACE)) {
 			isJamp_ = true;
 			//	初速度を与える
 			velocity_ = 1.0f;
 		}
-		else if (KeyInput::GetInstance()->GetPadConnect()) {
+		if (KeyInput::GetInstance()->GetPadConnect()) {
 			if (KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_A)) {
 				isJamp_ = true;
 				//	初速度を与える
 				velocity_ = 1.0f;
 			}
-		}
-		else {
-			velocity_ = 0.0f;
-		}
+		}	
 	}
 	else {
 		//	重力
@@ -420,6 +418,11 @@ void Player::BehaviorAttackUpdate() {
 		// 攻撃ボタンをトリガーしたら
 		if (KeyInput::PushKey(DIK_V)) {
 			workAttack_.comboNext_ = true;
+		}
+		if (KeyInput::GetInstance()->GetPadConnect()) {
+			if (KeyInput::GetInstance()->GetRTriggerDown()) {
+				workAttack_.comboNext_ = true;
+			}
 		}
 	}
 	

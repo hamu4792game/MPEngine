@@ -65,11 +65,11 @@ void Battle::Update()
 		}else if (pMove.x > 0.5f)	{
 			camera_->transform.rotation_.y += AngleToRadian(1.0f);
 		}
-		if (pMove.y < -0.5f)	{
+		/*if (pMove.y < -0.5f)	{
 			camera_->transform.rotation_.x -= AngleToRadian(1.0f);
 		}else if (pMove.y > 0.5f)	{
 			camera_->transform.rotation_.x += AngleToRadian(1.0f);
-		}
+		}*/
 	}
 
 	stage_->Update();

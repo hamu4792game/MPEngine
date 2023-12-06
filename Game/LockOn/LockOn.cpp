@@ -18,48 +18,70 @@ void LockOn::Initialize() {
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, Camera* camera, const Matrix4x4& view) {
 	ImGui::Begin("INPUT");
-	ImGui::Text("isLockOn : DIK_P");
-	ImGui::Text("LockOn	  : DIK_M");
-	ImGui::Text("Changed  : DIK_0");
+	ImGui::Text("isLockOn : DIK_P / LB");
+	ImGui::Text("LockOn	  : DIK_M / RB");
+	ImGui::Text("Changed+ : DIK_0 / DPAD_UP");
+	ImGui::Text("Changed- : DIK_1 / DPAD_DOWN");
 	ImGui::End();
 
 	if (KeyInput::PushKey(DIK_P)) {
 		isAutoLockOn_ = !isAutoLockOn_;
 	}
+	if (KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+		isAutoLockOn_ = !isAutoLockOn_;
+	}
 
-	if (isAutoLockOn_) {
-		Search(enemies, view);
+	// ロックオン状態なら
+	if (target_) {
+		// ロックオンボタンをトリガーしたらロックオンを外す
+		if (KeyInput::PushKey(DIK_M) || KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
+			if (!isAutoLockOn_) {
+				target_ = nullptr;
+			}
+		}
+		else if (DeterminationWithOutArea(view)) {
+			// ロックオンを外す
+			target_ = nullptr;
+		}
+		else if (target_->IsDead()) {
+			target_ = nullptr;
+		}
+		if (KeyInput::PushKey(DIK_0) || KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_DPAD_UP)) {
+			auto iterator = targets.begin();
+			num++;
+			if (num >= targets.size()) {
+				num = 0;
+			}
+			for (int8_t i = 0; i < num; i++) {
+				iterator++;
+			}
+			target_ = iterator->second;
+		}
+		if (KeyInput::PushKey(DIK_1) || KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_DPAD_DOWN)) {
+			auto iterator = targets.begin();
+			num--;
+			if (num < 0) {
+				num = static_cast<int>(targets.size()) - 1;
+			}
+			for (int8_t i = 0; i < num; i++) {
+				iterator++;
+			}
+			target_ = iterator->second;
+		}
+
 	}
 	else {
-		// ロックオン状態なら
-		if (target_) {
-			// ロックオンボタンをトリガーしたらロックオンを外す
-			if (KeyInput::PushKey(DIK_M)) {
-				target_ = nullptr;
-			}
-			else if (DeterminationWithOutArea(view)) {
-				// ロックオンを外す
-				target_ = nullptr;
-			}
-			else if (target_->IsDead()) {
-				target_ = nullptr;
-			}
-			if (KeyInput::PushKey(DIK_0)) {
-				auto iterator = targets.begin();
-				num++;
-				if (num >= targets.size()) {
-					num = 0;
-				}
-				for (int8_t i = 0; i < num; i++) {
-					iterator++;
-				}
-				target_ = iterator->second;
-			}
-
-		}
+		// ロックオン対象の検索
+		if (isAutoLockOn_) {
+			Search(enemies, view);
+			num = 0;
+		} 
 		else {
-			// ロックオン対象の検索
 			if (KeyInput::PushKey(DIK_M)) {
+				Search(enemies, view);
+				num = 0;
+			}
+			if (KeyInput::GetInstance()->GetPadButtonDown(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
 				Search(enemies, view);
 				num = 0;
 			}
