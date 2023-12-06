@@ -1,6 +1,7 @@
 #pragma once
 #include "math/Vector3.h"
 #include "math/Matrix4x4.h"
+#include "math/Quaternion.h"
 
 class GameScene {
 public:
@@ -15,20 +16,17 @@ public:
 
 	void Draw();
 private:
-	void DrawMatrix4x4(Matrix4x4 mat);
 	void DrawImGui();
 
 private:
-	Vector3 axis;
-	float angle = 0.44f;
-	Matrix4x4 rotateMat;
-
-	Vector3 from0;
-	Vector3 to0;
-	Vector3 from1;
-	Vector3 to1;
-	Matrix4x4 rotateMatrix0;
-	Matrix4x4 rotateMatrix1;
-	Matrix4x4 rotateMatrix2;
+	Quaternion q1;
+	Quaternion q2;
+	Quaternion identity;
+	Quaternion conj;
+	Quaternion inv;
+	Quaternion normal;
+	Quaternion mul1;
+	Quaternion mul2;
+	float norm = 0.0f;
 
 };

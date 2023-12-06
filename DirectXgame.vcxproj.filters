@@ -95,6 +95,9 @@
     <ClCompile Include="Game\GameScene\GameScene.cpp">
       <Filter>Game\GameScene</Filter>
     </ClCompile>
+    <ClCompile Include="math\Quaternion.cpp">
+      <Filter>math\Quaternion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera\Camera.h">
@@ -203,6 +206,9 @@
     <ClInclude Include="Game\GameScene\GameScene.h">
       <Filter>Game\GameScene</Filter>
     </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>math\Quaternion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -282,6 +288,9 @@
     </Filter>
     <Filter Include="Game\GameScene">
       <UniqueIdentifier>{ced454d2-7abf-4c4b-98de-b3feafdfada3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\Quaternion">
+      <UniqueIdentifier>{f24e4088-a043-4f2b-aba7-1835b23f0358}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
