@@ -9,15 +9,11 @@ GameScene* GameScene::GetInstance() {
 }
 
 void GameScene::Initialize() {
-	q1 = Quaternion(2.0f, 3.0f, 4.0f, 1.0f);
-	q2 = Quaternion(1.0f, 3.0f, 5.0f, 2.0f);
-	identity = identity.IdentityQuaternion();
-	conj = q1.Conjugate();
-	inv = q1.Inverse();
-	normal = q1.Normalize();
-	mul1 = q1.Multiply(q2);
-	mul2 = q2.Multiply(q1);
-	norm = q1.Norm();
+	rotation = Quaternion::MakeRotateAxisAngleQuaternion(Vector3(1.0f, 0.4f, -0.2f).Normalize(), 0.45f);
+	pointY = Vector3(2.1f, -0.9f, 1.3f);
+	rotateMatrix = Quaternion::MakeRotateMatrix(rotation);
+	rotateByQuaternion = Quaternion::RotateVector(pointY, rotation);
+	rotateByMatrix = Transform(pointY, rotateMatrix);
 }
 
 void GameScene::Update() {
@@ -35,12 +31,13 @@ void GameScene::Draw() {
 
 void GameScene::DrawImGui() {
 	ImGui::Begin("Quaternion");
-	ImGui::Text("%.2f : %.2f : %.2f : %.2f : Identity", identity.x, identity.y, identity.z, identity.w);
-	ImGui::Text("%.2f : %.2f : %.2f : %.2f : Conjugate", conj.x, conj.y, conj.z, conj.w);
-	ImGui::Text("%.2f : %.2f : %.2f : %.2f : Inverse", inv.x, inv.y, inv.z, inv.w);
-	ImGui::Text("%.2f : %.2f : %.2f : %.2f : Normal", normal.x, normal.y, normal.z, normal.w);
-	ImGui::Text("%.2f : %.2f : %.2f : %.2f : Multiply(q1,q2)", mul1.x, mul1.y, mul1.z, mul1.w);
-	ImGui::Text("%.2f : %.2f : %.2f : %.2f : Multiply(q2,q1)", mul2.x, mul2.y, mul2.z, mul2.w);
-	ImGui::Text("%.2f : Norm", norm);
+	ImGui::Text("%.2f : %.2f : %.2f : %.2f : rotation", rotation.x, rotation.y, rotation.z, rotation.w);
+	ImGui::Text("rotateMatrix");
+	ImGui::Text("%.3f : %.3f : %.3f : %.3f", rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3]);
+	ImGui::Text("%.3f : %.3f : %.3f : %.3f", rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3]);
+	ImGui::Text("%.3f : %.3f : %.3f : %.3f", rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3]);
+	ImGui::Text("%.3f : %.3f : %.3f : %.3f", rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]);
+	ImGui::Text("%.2f : %.2f : %.2f : rotateByQuaternion", rotateByQuaternion.x, rotateByQuaternion.y, rotateByQuaternion.z);
+	ImGui::Text("%.2f : %.2f : %.2f : rotateByMatrix", rotateByMatrix.x, rotateByMatrix.y, rotateByMatrix.z);
 	ImGui::End();
 }

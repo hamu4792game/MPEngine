@@ -19,14 +19,10 @@ private:
 	void DrawImGui();
 
 private:
-	Quaternion q1;
-	Quaternion q2;
-	Quaternion identity;
-	Quaternion conj;
-	Quaternion inv;
-	Quaternion normal;
-	Quaternion mul1;
-	Quaternion mul2;
-	float norm = 0.0f;
+	Quaternion rotation;
+	Vector3 pointY;
+	Matrix4x4 rotateMatrix;
+	Vector3 rotateByQuaternion;
+	Vector3 rotateByMatrix;
 
 };

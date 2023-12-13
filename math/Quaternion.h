@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Matrix4x4.h"
 
 class Quaternion {
 public:
@@ -11,6 +12,7 @@ public:
 	float x = 0.0f, y = 0.0f, z = 0.0f, w = 1.0f;
 
 public:
+	Quaternion operator*(const Quaternion& quaternion) const;
 	Quaternion& operator=(const Quaternion& quaternion);
 	Quaternion& operator=(const Vector3& vec);
 
@@ -27,6 +29,11 @@ public:
 	Quaternion Normalize() const;
 	// 逆Quaternionを返す
 	Quaternion Inverse() const;
-
+	// 任意軸回転を表すQuaternionの生成
+	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& vector, const float& angle);
+	// ベクトルをQuaternionで回転させた結果のベクトルを求める
+	static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
+	// Quaternionから回転行列を求める
+	static Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
 };

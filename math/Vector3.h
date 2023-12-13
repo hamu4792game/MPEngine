@@ -34,6 +34,9 @@ public:
 	bool operator==(const Vector3& num) const;
 	bool operator!=(const Vector3& num) const;
 
+	//	正規化
+	Vector3 Normalize() const;
+
 public: // 定数
 	static const Vector3 zero;
 	static const Vector3 one;
