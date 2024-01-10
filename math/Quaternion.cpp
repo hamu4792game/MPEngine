@@ -12,9 +12,21 @@ Quaternion::Quaternion(const float& x, const float& y, const float& z, const flo
 	this->w = w;
 }
 
+Quaternion Quaternion::operator*(const float& num) const {
+	return Quaternion(this->x * num, this->y * num, this->z * num, this->w * num);
+}
+
+Quaternion Quaternion::operator+(const Quaternion& quaternion) const {
+	return Quaternion(this->x + quaternion.x, this->y + quaternion.y, this->z + quaternion.z, this->w + quaternion.w);
+}
+
 Quaternion Quaternion::operator*(const Quaternion& quaternion) const {
 	Quaternion result = this->Multiply(quaternion);
 	return result;
+}
+
+Quaternion Quaternion::operator-() const {
+	return Quaternion(-this->x, -this->y, -this->z, -this->w);
 }
 
 Quaternion& Quaternion::operator=(const Quaternion& quaternion) {
@@ -111,6 +123,29 @@ Matrix4x4 Quaternion::MakeRotateMatrix(const Quaternion& quaternion) {
 	result.m[2][1] = 2.0f * ((quaternion.y * quaternion.z) - (quaternion.w * quaternion.x));
 	result.m[2][2] = (quaternion.w * quaternion.w) - (quaternion.x * quaternion.x) - (quaternion.y * quaternion.y) + (quaternion.z * quaternion.z);
 	result.m[3][3] = 1.0f;
+
+	return result;
+}
+
+float Quaternion::Dot(const Quaternion& q0, const Quaternion& q1) {
+	float dot = (q0.x * q1.x) + (q0.y * q1.y) + (q0.z* q1.z) + (q0.w * q1.w);
+	return dot;
+}
+
+Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, const float& t) {
+	float dot = Quaternion::Dot(q0, q1);
+	Quaternion localQ0 = q0;
+	if (dot < 0.0f) {
+		localQ0 = (-q0); // もう片方の回転を利用する
+		dot = -dot; // 内積も反転
+	}
+	// なす角を求める
+	float theta = std::acosf(dot);
+
+	float scale0 = std::sinf((1.0f - t) * theta) * (1.0f / std::sinf(theta));
+	float scale1 = std::sinf(t * theta) * (1.0f / std::sinf(theta));
+
+	Quaternion result = (localQ0 * scale0) + (q1 * scale1);
 
 	return result;
 }

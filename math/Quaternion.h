@@ -12,7 +12,10 @@ public:
 	float x = 0.0f, y = 0.0f, z = 0.0f, w = 1.0f;
 
 public:
+	Quaternion operator*(const float& num) const;
+	Quaternion operator+(const Quaternion& quaternion) const;
 	Quaternion operator*(const Quaternion& quaternion) const;
+	Quaternion operator-() const;
 	Quaternion& operator=(const Quaternion& quaternion);
 	Quaternion& operator=(const Vector3& vec);
 
@@ -35,5 +38,9 @@ public:
 	static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 	// Quaternionから回転行列を求める
 	static Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
+	// 内積
+	static float Dot(const Quaternion& q0, const Quaternion& q1);
+
+	static Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, const float& t);
 
 };
