@@ -10,7 +10,7 @@ GameScene* GameScene::GetInstance() {
 
 void GameScene::Initialize() {
 	rotation0 = Quaternion::MakeRotateAxisAngleQuaternion(Vector3(0.71f, 0.71f, 0.0f).Normalize(), 0.3f);
-	rotation1 = Quaternion::MakeRotateAxisAngleQuaternion(Vector3(0.71f, 0.0f, 0.71f).Normalize(), 3.141592f);
+	rotation1 = -rotation0;
 
 	interpolate0 = Quaternion::Slerp(rotation0, rotation1, 0.0f);
 	interpolate1 = Quaternion::Slerp(rotation0, rotation1, 0.3f);

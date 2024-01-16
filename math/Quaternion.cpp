@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 #include <cmath>
+#include <functional>
 
 Quaternion::Quaternion() {
 	*this = IdentityQuaternion();
@@ -135,10 +136,16 @@ float Quaternion::Dot(const Quaternion& q0, const Quaternion& q1) {
 Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, const float& t) {
 	float dot = Quaternion::Dot(q0, q1);
 	Quaternion localQ0 = q0;
-	if (dot < 0.0f) {
+	if (dot <= 1.0f - std::numeric_limits<float>::epsilon()) {
+		Vector3 resultVec = Lerp(Vector3(q0.x, q0.y, q0.z), Vector3(q1.x, q1.y, q1.z), t);
+		float resultW = Lerp(q0.w, q1.w, t);
+		return Quaternion(resultVec.x, resultVec.y, resultVec.z, resultW);
+	}
+	else if (dot < 0.0f) {
 		localQ0 = (-q0); // もう片方の回転を利用する
 		dot = -dot; // 内積も反転
 	}
+	
 	// なす角を求める
 	float theta = std::acosf(dot);
 
